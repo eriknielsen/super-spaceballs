@@ -17,6 +17,3 @@ Här beskriver vi vårt projekt, t.ex. hur man installerar eller kör spelet/pro
 //##################
 //public funtions  #
 //##################
-
-
-ändring - Johan
