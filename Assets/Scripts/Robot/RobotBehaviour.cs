@@ -30,7 +30,7 @@ public class RobotBehaviour : MonoBehaviour {
         {
             Debug.Log("command 0 was null or finished");
         }
-        currentState.updateState();
+        currentState.UpdateState();
     }
   
 }

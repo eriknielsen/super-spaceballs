@@ -24,6 +24,6 @@ public class PauseState : IRobotState
 
     public void UpdateState()
     {
-        throw new NotImplementedException();
+        
     }
 }
