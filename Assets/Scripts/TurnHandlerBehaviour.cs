@@ -85,11 +85,11 @@ public class TurnHandlerBehaviour : MonoBehaviour {
     {
         //remove all shockwaves
         //reset all robots to the previous' move's position
-        for(int i = 0; i < robots.Count; i++)
+        for(int i = 1; i < robots.Count; i++)
         {
             Debug.Log("hej");
-            robots[i].transform.position = moves[i].position;
-            robots[i].GetComponent<Rigidbody2D>().velocity = moves[i].velocity;
+            robots[i].transform.position = moves[i-1].position;
+            robots[i].GetComponent<Rigidbody2D>().velocity = moves[i-1].velocity;
         }
     }
 }
