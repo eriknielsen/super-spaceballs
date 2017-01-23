@@ -16,7 +16,7 @@ public class MoveCommand : Command {
     }
 	public override void Execute()
     {
-        Debug.Log(targetPosition.x);
+
         //move towards target
         robot.GetComponent<Rigidbody2D>().AddForce(force*targetPosition.normalized);
     }
@@ -25,6 +25,6 @@ public class MoveCommand : Command {
         yield return new WaitForSeconds(commandLifetime);
         isFinished = true;
 
-        Debug.Log("should move onto next command");
+
     }
 }

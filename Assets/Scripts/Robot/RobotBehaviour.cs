@@ -14,12 +14,18 @@ public class RobotBehaviour : MonoBehaviour {
     //when switching commands, call the FinishedCoroutine coroutine
     //robot's playstate's updatestate calls the current command's execute
     public Command currentCommand = null;
-    void Start()
+    void Awake()
     {
+        commands = new List<Command>();
         pauseState = new PauseState(gameObject);
         playState = new PlayState(gameObject);
         currentState = pauseState;
-        commands = new List<Command>();
+    }
+    void Start()
+    {
+        
+       
+        
     }
     void FixedUpdate()
     {
@@ -28,7 +34,7 @@ public class RobotBehaviour : MonoBehaviour {
     public void DecideCommand()
     {
         bool search = true;
-        Debug.Log(commands.Count);
+
         foreach (Command c in commands)
         {
             if (search == true && c.isFinished == false)
@@ -38,6 +44,12 @@ public class RobotBehaviour : MonoBehaviour {
                 StartCoroutine(currentCommand.FinishedCoroutine());
                 
             }
+            
+        }
+        if(search == true)
+        {
+            //no commands where found
+            currentCommand = null;
         }
     }
 }

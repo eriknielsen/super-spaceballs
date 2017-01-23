@@ -24,11 +24,13 @@ public class PlayState : IRobotState {
     public void UpdateState()
     {
         //Debug.Log(robot.GetComponent<Rigidbody2D>().velocity);
+        
         if (robotScript.currentCommand.isFinished)
         {
             robotScript.DecideCommand();
-            Debug.Log("changing command");
         }
-        robotScript.currentCommand.Execute();
+        //if currentcommand is null there are no more commands to execute
+        if (robotScript.currentCommand != null)
+            robotScript.currentCommand.Execute();
     }
 }
