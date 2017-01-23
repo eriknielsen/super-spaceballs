@@ -6,12 +6,13 @@ public class MoveCommand : Command {
   
     float force;
     float commandLifetime;
-    public MoveCommand(GameObject r, Vector2 target, float lifetime)
+    public MoveCommand(GameObject r, Vector2 target, float lifetime, int turn)
     {
         force = 1f;
         targetPosition = target;
         robot = r;
         commandLifetime = lifetime;
+        this.turn = turn;
     }
 	public override void Execute()
     {

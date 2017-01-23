@@ -9,4 +9,5 @@ public abstract class Command {
     public bool isFinished;
     public abstract IEnumerator FinishedCoroutine();
     public Vector2 targetPosition;
+    public int turn;
 }

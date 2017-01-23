@@ -21,7 +21,7 @@ public class RobotBehaviour : MonoBehaviour {
         currentState = pauseState;
         commands = new List<Command>();
     }
-    void Update()
+    void FixedUpdate()
     {
         currentState.UpdateState();
     }
