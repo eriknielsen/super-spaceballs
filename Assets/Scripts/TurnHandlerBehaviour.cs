@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class TurnHandlerBehaviour : MonoBehaviour {
 
     private GameObject selectedRobot;
-    private Command selectedCommand;
-    private List<Command> availableCommands;
+    private AvailableCommands selectedCommand;
+    private enum AvailableCommands { MoveCommand};
+    private List<RobotBehaviour> testRobots;
 
     public GameObject testRobot;
     public List<GameObject> robots;
@@ -15,8 +17,9 @@ public class TurnHandlerBehaviour : MonoBehaviour {
     public List<Move> moves;
 	// Use this for initialization
 	void Start () {
-        availableCommands = new List<Command>();
-        
+        selectedCommand = AvailableCommands.MoveCommand;
+        testRobots = new List<RobotBehaviour>();
+        testRobots = FindObjectsOfType<RobotBehaviour>().ToList();
 
         moves = new List<Move>();
         RobotBehaviour.OnClick += new RobotBehaviour.ClickedOnRobot(ChooseRobot);
@@ -29,9 +32,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 
     }
 	void TestRobotCommands()
-    {
-        
-        
+    { 
         List<Command> testCommands = new List<Command>();
           
         foreach (GameObject r in robots)
@@ -47,10 +48,13 @@ public class TurnHandlerBehaviour : MonoBehaviour {
     }
     void CreateTestRobots()
     {
-        for(int i = 0;i < 3; i++)
+        if (testRobot != null)
         {
-            GameObject r = Instantiate(testRobot, new Vector2(i+1, i+1), new Quaternion()) as GameObject;
-            robots.Add(r);
+            for (int i = 0; i < 3; i++)
+            {
+                GameObject r = Instantiate(testRobot, new Vector2(i + 1, i + 1), new Quaternion()) as GameObject;
+                robots.Add(r);
+            }
         }
     }
 
@@ -89,41 +93,51 @@ public class TurnHandlerBehaviour : MonoBehaviour {
     }
     void UndoLastMove()
     {
-        if(turns > 0)
+        if (turns > 0)
         {
             //remove all shockwaves
             //reset all robots to the previous' move's position
             int turnIndex = 0;
-            for (int i = turns-1; i < turns*robots.Count; i++)
+            for (int i = turns - 1; i < turns * robots.Count; i++)
             {
-                
+
                 turnIndex = (turns - 1) * robots.Count + i;
                 robots[i].transform.position = moves[turnIndex].position;
                 robots[i].GetComponent<Rigidbody2D>().velocity = moves[turnIndex].velocity;
             }
         }
-<<<<<<< HEAD
-   } 
-=======
-       
+
     }
->>>>>>> origin/master
+
     void ChooseRobot(GameObject r)
     {
         selectedRobot = r;
+        Debug.Log("Robot selected!");
+        Destroy(selectedRobot);
     }
 
     void GiveCommandToSelectedRobot()
     {
         if(selectedRobot != null)
         {
-
+            if(selectedCommand == AvailableCommands.MoveCommand)
+            {
+                Vector3 mousePosition = Input.mousePosition;
+                Vector3 pointPosition = Camera.main.ScreenToWorldPoint(mousePosition);
+                selectedRobot.GetComponent<RobotBehaviour>().commands.Add(new MoveCommand(selectedRobot, pointPosition, 1, turns));
+                Debug.Log("Command Added!");
+            }
         }
     }
     
     void Update()
     {
-        if(Input.GetMouseButtonDown(1))
+        DetectMouseClick();
+    }
+
+    void DetectMouseClick()
+    {
+        if (Input.GetMouseButtonDown(1))
         {
             GiveCommandToSelectedRobot();
         }
