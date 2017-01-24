@@ -77,21 +77,28 @@ public class TurnHandlerBehaviour : MonoBehaviour {
     IEnumerator TestPausing()
     {
         yield return new WaitForSeconds(4f);
-        //PauseGame();
-       
+        PauseGame();
+        yield return new WaitForSeconds(1f);
+        Debug.Log("s");
         //UndoLastMove();
-        
+
     }
     void UndoLastMove()
     {
-        //remove all shockwaves
-        //reset all robots to the previous' move's position
-        for(int i = 1; i < robots.Count; i++)
+        if(turns > 0)
         {
-            Debug.Log("hej");
-            robots[i].transform.position = moves[i-1].position;
-            robots[i].GetComponent<Rigidbody2D>().velocity = moves[i-1].velocity;
+            //remove all shockwaves
+            //reset all robots to the previous' move's position
+            int turnIndex = 0;
+            for (int i = turns-1; i < turns*robots.Count; i++)
+            {
+                
+                turnIndex = (turns - 1) * robots.Count + i;
+                robots[i].transform.position = moves[turnIndex].position;
+                robots[i].GetComponent<Rigidbody2D>().velocity = moves[turnIndex].velocity;
+            }
         }
+       
     }
     void ChooseRobot(GameObject r)
     {

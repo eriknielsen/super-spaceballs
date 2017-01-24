@@ -4,7 +4,7 @@ using System;
 
 public class PauseState : IRobotState
 {
-    public GameObject robot;
+    private GameObject robot;
     private RobotBehaviour robotScript;
    
 
@@ -21,12 +21,9 @@ public class PauseState : IRobotState
     public void EnterPlayState()
     {
         robotScript.currentState = robotScript.playState;
-
-        if (robotScript.commands.Count > 0)
-        {
-            Debug.Log("entering robotplaystate");
-            robotScript.DecideCommand();
-        }   
+   
+        robotScript.DecideCommand();
+          
     }
     public void UpdateState()
     {

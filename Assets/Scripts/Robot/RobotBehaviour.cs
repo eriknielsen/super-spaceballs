@@ -14,7 +14,7 @@ public class RobotBehaviour : MonoBehaviour {
     public List<Command> commands;
     //when switching commands, call the FinishedCoroutine coroutine
     //robot's playstate's updatestate calls the current command's execute
-    public Command currentCommand = null;
+    private Command currentCommand;
     void Awake()
     {
         commands = new List<Command>();
@@ -24,40 +24,47 @@ public class RobotBehaviour : MonoBehaviour {
     }
     void Start()
     {
-        
        
-        
     }
     void FixedUpdate()
     {
         currentState.UpdateState();
     }
+    /// <summary>
+    /// Picks the oldest command if possible and 
+    /// starts the commands lifetimetimer
+    /// </summary>
     public void DecideCommand()
     {
-        bool search = true;
-
-        foreach (Command c in commands)
+        Debug.Log(commands.Count);
+        if(commands.Count > 0)
         {
-            if (search == true && c.isFinished == false)
+            if (commands[0].isFinished == false)
             {
-                search = false;
-                currentCommand = c;
+                currentCommand = commands[0];
+                //begin the lifetime timer on currentCommand
                 StartCoroutine(currentCommand.FinishedCoroutine());
-                
             }
             
         }
-        if(search == true)
+    }
+    public void ExecuteRobotCommand()
+    {
+        if (currentCommand != null && currentCommand.isFinished)
         {
-            //no commands where found
+            //remove the currentcommand from the command list
+            commands.Remove(currentCommand);
             currentCommand = null;
+            DecideCommand();
         }
-
+        else if(currentCommand != null)
+        {
+            currentCommand.Execute();
+        }
     }
     void OnMouseDown()
     {
         OnClick(gameObject);
-      
     }
 }
 
