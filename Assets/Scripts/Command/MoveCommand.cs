@@ -24,7 +24,5 @@ public class MoveCommand : Command {
     {
         yield return new WaitForSeconds(commandLifetime);
         isFinished = true;
-
-
     }
 }

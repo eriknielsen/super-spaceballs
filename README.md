@@ -6,8 +6,10 @@ Game project at HIS
 En match består av ett antal rundor. I varje runda så får spelaren göra ett drag per robot.
 Ett drag består av flera handlingar/kommandon.
 ## Todo
-
-
+#Replaysystem
+*Spara ner listan med Moves(drag)
+*Klass Replayer som öppnar listan och skapar robotar på de positionerna
+*Starta runda och ge robotarna kommandon, pausa, och starta igen.
 
 
 
