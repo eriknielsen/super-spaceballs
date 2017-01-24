@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 public class TurnHandlerBehaviour : MonoBehaviour {
 
+    private GameObject selectedRobot;
+    private Command selectedCommand;
+    private List<Command> availableCommands;
+
     public GameObject testRobot;
     public List<GameObject> robots;
     public int turns;
@@ -11,6 +15,9 @@ public class TurnHandlerBehaviour : MonoBehaviour {
     public List<Move> moves;
 	// Use this for initialization
 	void Start () {
+        availableCommands = new List<Command>();
+        
+
         moves = new List<Move>();
         RobotBehaviour.OnClick += new RobotBehaviour.ClickedOnRobot(ChooseRobot);
         CreateTestRobots();
@@ -46,10 +53,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
             robots.Add(r);
         }
     }
-	// Update is called once per frame
-	void Update () {
-	    
-	}
+
     public void PauseGame()
     {
         //change timescale
@@ -92,9 +96,26 @@ public class TurnHandlerBehaviour : MonoBehaviour {
             robots[i].transform.position = moves[i-1].position;
             robots[i].GetComponent<Rigidbody2D>().velocity = moves[i-1].velocity;
         }
-    }
+   } 
     void ChooseRobot(GameObject r)
     {
-        Debug.Log(r);
+        selectedRobot = r;
     }
+
+    void GiveCommandToSelectedRobot()
+    {
+        if(selectedRobot != null)
+        {
+
+        }
+    }
+    
+    void Update()
+    {
+        if(Input.GetMouseButtonDown(1))
+        {
+            GiveCommandToSelectedRobot();
+        }
+    }
+
 }
