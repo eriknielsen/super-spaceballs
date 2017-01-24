@@ -6,13 +6,13 @@ Game project at HIS
 En match består av ett antal rundor. I varje runda så får spelaren göra ett drag per robot.
 Ett drag består av flera handlingar/kommandon.
 ## Todo
-*En TurnHandler som alltid funkar lokalt med två spelare, i replay och i nätverk.
-*Spelet styrs av GameObjekt GameBehaviour som har 4 olika states: Play(lokalt), Menu, Replay och Networked.
- * Play har två styckna Turnhandlers, en för varje lag och PlayState håller koll på turordningen.
- * Menu instanserar en UI prefab.
- * Replay har en ReplayerBehaviour samt två styckna turnhandlers så att man kan ge nya kommandon till robotarna eller bara se spelet hända.
- * Networked har en turnhandler samt en nätverksklass som spelar för det andra laget.
- *Statesen instanserar de objekt som behövs och håller koll på det. T.ex. **MenuState** instanserar en menyprefab.
+- En TurnHandler som alltid funkar lokalt med två spelare, i replay och i nätverk.
+- Spelet styrs av GameObjekt GameBehaviour som har 4 olika states: Play(lokalt), Menu, Replay och Networked.
+ - Play har två styckna Turnhandlers, en för varje lag och PlayState håller koll på turordningen.
+ - Menu instanserar en UI prefab.
+ - Replay har en ReplayerBehaviour samt två styckna turnhandlers så att man kan ge nya kommandon till robotarna eller bara se spelet hända.
+ - Networked har en turnhandler samt en nätverksklass som spelar för det andra laget.
+ - Statesen instanserar de objekt som behövs och håller koll på det. T.ex. **MenuState** instanserar en menyprefab.
 
 #Replaysystem
 *Spara ner listan med Moves(drag)
