@@ -7,7 +7,8 @@ public class RobotBehaviour : MonoBehaviour {
     public IRobotState currentState;
     public PauseState pauseState;
     public PlayState playState;
-
+    public delegate void ClickedOnRobot(GameObject robot);
+    public static event ClickedOnRobot OnClick;
     //the robot goes through each commando and checks each update if the latest commando is finished or not
     //if it is finished then the robot starts the next commando
     public List<Command> commands;
@@ -52,6 +53,11 @@ public class RobotBehaviour : MonoBehaviour {
             currentCommand = null;
         }
 
+    }
+    void OnMouseDown()
+    {
+        OnClick(gameObject);
+      
     }
 }
 

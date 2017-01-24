@@ -12,7 +12,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         moves = new List<Move>();
-        
+        RobotBehaviour.OnClick += new RobotBehaviour.ClickedOnRobot(ChooseRobot);
         CreateTestRobots();
         TestRobotCommands();
         UnpauseGame();
@@ -57,7 +57,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
         //put all robots into pausestate
         foreach(GameObject r in robots)
         {
-            moves.Add(new Move(r, turns, r.GetComponent<RobotBehaviour>().commands));
+           
             r.GetComponent<RobotBehaviour>().currentState.EnterPauseState();
         }
     }
@@ -68,6 +68,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
         //put all robots into play
         foreach (GameObject r in robots)
         {
+            moves.Add(new Move(r, turns, r.GetComponent<RobotBehaviour>().commands));
             r.GetComponent<RobotBehaviour>().currentState.EnterPlayState();
         }
         turns++;
@@ -76,7 +77,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
     IEnumerator TestPausing()
     {
         yield return new WaitForSeconds(4f);
-        PauseGame();
+        //PauseGame();
        
         //UndoLastMove();
         
@@ -91,5 +92,9 @@ public class TurnHandlerBehaviour : MonoBehaviour {
             robots[i].transform.position = moves[i-1].position;
             robots[i].GetComponent<Rigidbody2D>().velocity = moves[i-1].velocity;
         }
+    }
+    void ChooseRobot(GameObject r)
+    {
+        Debug.Log(r);
     }
 }
