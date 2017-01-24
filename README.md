@@ -6,10 +6,17 @@ Game project at HIS
 En match består av ett antal rundor. I varje runda så får spelaren göra ett drag per robot.
 Ett drag består av flera handlingar/kommandon.
 ## Todo
+*Låta spelet ha olika states: meny,replay, pause och play. **GameBehaviour** har en **currentState**
+som bestämmer vad som visas och händer i spelet. I **MenuState** visas gränssnitt för meny osv. I **ReplayState** spelas 
+ett tidigare spel upp. I **PlayState** spelas/pausas spelet. 
+Statesen instanserar de objekt som behövs och håller koll på det. T.ex. **MenuState** instanserar en menyprefab.
 #Replaysystem
 *Spara ner listan med Moves(drag)
 *Klass Replayer som öppnar listan och skapar robotar på de positionerna
 *Starta runda och ge robotarna kommandon, pausa, och starta igen.
+*Låt spelaren ändra kommandon
+*Spara moves som en doubly linked list istället.
+
 
 
 

@@ -87,22 +87,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
         //UndoLastMove();
 
     }
-    void UndoLastMove()
-    {
-        if (turns > 0)
-        {
-            //remove all shockwaves
-            //reset all robots to the previous' move's position
-            int turnIndex = 0;
-            for (int i = turns - 1; i < turns * robots.Count; i++)
-            {
-
-                turnIndex = (turns - 1) * robots.Count + i;
-                robots[i].transform.position = moves[turnIndex].position;
-                robots[i].GetComponent<Rigidbody2D>().velocity = moves[turnIndex].velocity;
-            }
-        }
-    }
+    
     void ChooseRobot(GameObject r)
     {
         selectedRobot = r;
@@ -123,5 +108,21 @@ public class TurnHandlerBehaviour : MonoBehaviour {
             GiveCommandToSelectedRobot();
         }
     }
-
+    /*
+    void UndoLastMove()
+    {
+        if (turns > 0)
+        {
+            //remove all shockwaves
+            //reset all robots to the previous' move's position
+            int turnIndex = 0;
+            for (int i = turns - 1; i < turns * robots.Count; i++)
+            {
+                turnIndex = (turns - 1) * robots.Count + i;
+                robots[i].transform.position = moves[turnIndex].position;
+                robots[i].GetComponent<Rigidbody2D>().velocity = moves[turnIndex].velocity;
+            }
+        }
+    }
+    */
 }
