@@ -13,17 +13,24 @@ public class PlayState : IRobotState {
     public void EnterPauseState()
     {
         robotScript.currentState = robotScript.pauseState;
+        //empty the command list?
+        robotScript.commands.Clear();
     }
-
     public void EnterPlayState()
     {
-        throw new NotImplementedException();
+        Debug.Log("already in playstate");
+       
     }
-
     public void UpdateState()
     {
-        throw new NotImplementedException();
+        //Debug.Log(robot.GetComponent<Rigidbody2D>().velocity);
+        
+        if (robotScript.currentCommand.isFinished)
+        {
+            robotScript.DecideCommand();
+        }
+        //if currentcommand is null there are no more commands to execute
+        if (robotScript.currentCommand != null)
+            robotScript.currentCommand.Execute();
     }
-
- 
 }

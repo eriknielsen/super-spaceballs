@@ -5,12 +5,13 @@ using System;
 public class PauseState : IRobotState
 {
     public GameObject robot;
-    private RobotBehaviour robotBehaviour;
-
+    private RobotBehaviour robotScript;
+   
 
     public PauseState(GameObject r)
     {
         robot = r;
+        robotScript = robot.GetComponent<RobotBehaviour>();
     }
     public void EnterPauseState()
     {
@@ -19,11 +20,16 @@ public class PauseState : IRobotState
 
     public void EnterPlayState()
     {
-        robotBehaviour.currentState = robot.GetComponent<RobotBehaviour>().playState;
-    }
+        robotScript.currentState = robotScript.playState;
 
+        if (robotScript.commands.Count > 0)
+        {
+            Debug.Log("entering robotplaystate");
+            robotScript.DecideCommand();
+        }   
+    }
     public void UpdateState()
     {
-        
+
     }
 }
