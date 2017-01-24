@@ -15,11 +15,11 @@ Ett drag består av flera handlingar/kommandon.
  - Statesen instanserar de objekt som behövs och håller koll på det. T.ex. **MenuState** instanserar en menyprefab.
 
 #Replaysystem
-*Spara ner listan med Moves(drag)
-*Klass Replayer som öppnar listan och skapar robotar på de positionerna
-*Starta runda och ge robotarna kommandon, pausa, och starta igen.
-*Låt spelaren ändra kommandon
-*Spara moves som en doubly linked list istället.
+* Spara ner listan med Moves(drag)
+* Klass Replayer som öppnar listan och skapar robotar på de positionerna
+* Starta runda och ge robotarna kommandon, pausa, och starta igen.
+* Låt spelaren ändra kommandon
+* Spara moves som en doubly linked list istället.
 
 
 
