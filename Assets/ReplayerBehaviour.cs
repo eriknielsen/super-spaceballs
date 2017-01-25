@@ -3,13 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class ReplayerBehaviour : MonoBehaviour {
-
-    private List<Move> movesToReplay;
+    
+    //####
+    //private vars
+    List<Move> movesToReplay;
+    //#####
+    //public vars
 
 	// Use this for initialization
 	void Start () {
-	
-	}
+        GameObject.Find("TurnHandler").SetActive(false);
+        
+        Debug.Log(GameObject.Find("TurnHandler").
+            GetComponent<TurnHandlerBehaviour>().robots);
+
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -26,7 +34,11 @@ public class ReplayerBehaviour : MonoBehaviour {
     /// should take the moves from TurnHandler(or whichever class has them)
     /// and load them into movesToReplay
     /// </summary>
-    void LoadMovesFromGame() { }
+    void LoadMovesFromGame() {
+        movesToReplay.AddRange(GameObject.Find("TurnHandler").
+            GetComponent<TurnHandlerBehaviour>().moves);
+
+    }
     /// <summary>
     /// should begin the game with robots at the starting positions
     /// found in the movesToReplay list in a paused state
@@ -43,4 +55,6 @@ public class ReplayerBehaviour : MonoBehaviour {
     {
 
     }
+    static void SaveMovesToFile() { }
+
 }
