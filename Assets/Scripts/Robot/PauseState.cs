@@ -20,7 +20,7 @@ public class PauseState : IRobotState
 
     public void EnterPlayState()
     {
-        robotScript.currentState = robotScript.playState;
+        robotScript.CurrentState = robotScript.playState;
    
         robotScript.DecideCommand();
           

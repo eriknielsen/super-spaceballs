@@ -3,58 +3,59 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class TurnHandlerBehaviour : MonoBehaviour {
+public class TurnHandlerBehaviour : MonoBehaviour
+{
+    [SerializeField]
+    private RobotBehaviour robotPrefab;
+    [SerializeField]
+    private int numberOfRobots;
+    [SerializeField]
+    float roundTime;
 
     private GameObject selectedRobot;
     private AvailableCommands selectedCommand;
-    private enum AvailableCommands { MoveCommand};
-    private List<RobotBehaviour> testRobots;
+    private enum AvailableCommands { MoveCommand };
 
-    public GameObject testRobot;
-    public List<GameObject> robots;
-    public int turns;
+    private List<GameObject> robots;
+    private int turns;
     //en lista med drag
     public List<Move> moves;
-	// Use this for initialization
-	void Start () {
-        selectedCommand = AvailableCommands.MoveCommand;
-        testRobots = new List<RobotBehaviour>();
-        testRobots = FindObjectsOfType<RobotBehaviour>().ToList();
+    // Use this for initialization
 
+    void OnValidate()
+    {
+        if (roundTime < 0)
+        {
+            roundTime = 0;
+        }
+    }
+
+    void Awake()
+    {
+        selectedCommand = AvailableCommands.MoveCommand;
         moves = new List<Move>();
         RobotBehaviour.OnClick += new RobotBehaviour.ClickedOnRobot(ChooseRobot);
-        CreateTestRobots();
-        TestRobotCommands();
-        UnpauseGame();
-        //remember which commands were for which turn
+        robots = new List<GameObject>();
+
+        CreateRobots();
+        PauseGame();
         turns = 1;
-     
-
     }
-	void TestRobotCommands()
-    { 
-        List<Command> testCommands = new List<Command>();
-          
-        foreach (GameObject r in robots)
-        {
-            Debug.Log("testing the move command");
-            Command moveForward = new MoveCommand(r, new Vector2(3, 3), 1,turns);
-            Command moveBack = new MoveCommand(r, new Vector2(-1, 0), 1,turns);
 
-            r.GetComponent<RobotBehaviour>().commands.Add(moveForward);
-            r.GetComponent<RobotBehaviour>().commands.Add(moveBack);
-        } 
-        
-    }
-    void CreateTestRobots()
+    void CreateRobots()
     {
-        if (testRobot != null)
+        if (robotPrefab != null)
         {
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < numberOfRobots; i++)
             {
-                GameObject r = Instantiate(testRobot, new Vector2(i + 1, i + 1), new Quaternion()) as GameObject;
-                robots.Add(r);
+                GameObject r = Instantiate(robotPrefab.gameObject, new Vector2(i + 1, i + 1), new Quaternion()) as GameObject;
+                if(robots == null)
+                {
+                    Debug.Log("Null as fuuuuck");
+                }
+                robots.Add(r);                
             }
+            Debug.Log("Robots in list: " + robots.Count);
         }
     }
 
@@ -63,10 +64,9 @@ public class TurnHandlerBehaviour : MonoBehaviour {
         //change timescale
         Time.timeScale = 0;
         //put all robots into pausestate
-        foreach(GameObject r in robots)
+        foreach (GameObject r in robots)
         {
-           
-            r.GetComponent<RobotBehaviour>().currentState.EnterPauseState();
+            r.GetComponent<RobotBehaviour>().CurrentState.EnterPauseState();
         }
     }
     public void UnpauseGame()
@@ -74,15 +74,21 @@ public class TurnHandlerBehaviour : MonoBehaviour {
         //change timescale
         Time.timeScale = 1;
         //put all robots into play
+        int i = 0;
         foreach (GameObject r in robots)
         {
-            moves.Add(new Move(r, turns, r.GetComponent<RobotBehaviour>().commands));
-            r.GetComponent<RobotBehaviour>().currentState.EnterPlayState();
+            if(r == null)
+            {
+                Debug.Log("Null at " + i);
+            }
+            i++;
+            moves.Add(new Move(r, turns, r.GetComponent<RobotBehaviour>().Commands));
+            r.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
         }
         turns++;
     }
 
-  
+
     void UndoLastMove()
     {
         if (turns > 0)
@@ -103,38 +109,59 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 
     void ChooseRobot(GameObject r)
     {
-        selectedRobot = r;
-        Debug.Log("Robot selected!");
-        //Destroy(selectedRobot);
+        if (Input.GetMouseButtonDown(0))
+        {
+            selectedRobot = r;
+            Debug.Log("Robot selected!");
+        }
     }
 
     void GiveCommandToSelectedRobot()
     {
-        if(selectedRobot != null)
+        if (selectedRobot != null)
         {
-            selectedRobot.GetComponent<RobotBehaviour>().currentState.EnterPauseState();
             if (selectedCommand == AvailableCommands.MoveCommand)
             {
                 Vector3 mousePosition = Input.mousePosition;
                 Vector3 pointPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-                selectedRobot.GetComponent<RobotBehaviour>().commands.Add(new MoveCommand(selectedRobot, pointPosition, 1, turns));
-                selectedRobot.GetComponent<RobotBehaviour>().currentState.EnterPlayState();
-
+                selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(new MoveCommand(selectedRobot, pointPosition, 3, turns));
                 Debug.Log("Command Added!");
             }
         }
     }
-    
-    void Update()
+
+    void ActivateRobots()
     {
-        DetectMouseClick();
+        selectedRobot.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
+        StartCoroutine(RobotActivatedDuration());
+        Debug.Log("Round started!");
+        UnpauseGame();
+
     }
 
-    void DetectMouseClick()
+    IEnumerator RobotActivatedDuration()
+    {
+        Debug.Log("Co-routine started!");
+        yield return new WaitForSeconds(roundTime);
+        selectedRobot.GetComponent<RobotBehaviour>().CurrentState.EnterPauseState();
+        PauseGame();
+        Debug.Log("Game paused!");
+    }
+
+    void Update()
+    {
+        ReactToUserInput();
+    }
+
+    void ReactToUserInput()
     {
         if (Input.GetMouseButtonDown(1))
         {
             GiveCommandToSelectedRobot();
+        }
+        if (Input.GetButtonDown("StartRound"))
+        {
+            ActivateRobots();
         }
     }
     /*

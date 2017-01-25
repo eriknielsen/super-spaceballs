@@ -12,9 +12,9 @@ public class PlayState : IRobotState {
     }
     public void EnterPauseState()
     {
-        robotScript.currentState = robotScript.pauseState;
+        robotScript.CurrentState = robotScript.pauseState;
         //empty the command list
-        robotScript.commands.Clear();
+        robotScript.Commands.Clear();
     }
     public void EnterPlayState()
     {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class RobotBehaviour : MonoBehaviour {
 
-    public IRobotState currentState;
+    private IRobotState currentState;
     public PauseState pauseState;
     public PlayState playState;
     public delegate void ClickedOnRobot(GameObject robot);
@@ -15,9 +15,22 @@ public class RobotBehaviour : MonoBehaviour {
     //when switching commands, call the FinishedCoroutine coroutine
     //robot's playstate's updatestate calls the current command's execute
     private Command currentCommand;
+
+    public IRobotState CurrentState
+    {
+        get { return currentState; }
+        set { currentState = value; }
+    }
+
+    public List<Command> Commands
+    {
+        get { return commands; }
+        set { commands = value; }
+    }
+
     void Awake()
     {
-        commands = new List<Command>();
+        Commands = new List<Command>();
         pauseState = new PauseState(gameObject);
         playState = new PlayState(gameObject);
         currentState = pauseState;
@@ -28,7 +41,7 @@ public class RobotBehaviour : MonoBehaviour {
     }
     void FixedUpdate()
     {
-        currentState.UpdateState();
+        CurrentState.UpdateState();
     }
     /// <summary>
     /// Picks the oldest command if possible and 
@@ -36,23 +49,29 @@ public class RobotBehaviour : MonoBehaviour {
     /// </summary>
     public void DecideCommand()
     {
-        if(commands.Count > 0)
+        if(Commands.Count > 0)
         {
-            if (commands[0].isFinished == false)
+            if (Commands[0].isFinished == false)
             {
-                currentCommand = commands[0];
+                currentCommand = Commands[0];
                 //begin the lifetime timer on currentCommand
                 StartCoroutine(currentCommand.FinishedCoroutine());
             }
             
         }
     }
+    
+    public void ClearCommands()
+    {
+        Commands.Clear();
+    }
+
     public void ExecuteRobotCommand()
     {
         if (currentCommand != null && currentCommand.isFinished)
         {
             //remove the currentcommand from the command list
-            commands.Remove(currentCommand);
+            Commands.Remove(currentCommand);
             currentCommand = null;
             DecideCommand();
         }
