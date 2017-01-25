@@ -3,9 +3,11 @@ using System.Collections;
 
 public class MenuBehaviour : MonoBehaviour {
 
-	// instantiates the menu prefab
+    GameObject menuPrefab;
+	// instantiates the menu prefab as child
 	void Start () {
-        gameObject.SetActive(false);
+        
+        Debug.Log("menustart");
 	}
 	
 	// Update is called once per frame

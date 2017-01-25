@@ -3,10 +3,13 @@ using System.Collections;
 
 public class GameBehaviour : MonoBehaviour {
 
-    //game behaviour enables and unenables the different "states'" behaviour
+    //gamebehaviour decides which behaviour should be ran
+    //either the menubehaviour or the playbehaviour
+
+
 	// Use this for initialization
 	void Start () {
-	
+	    //instansera soundmanager
 	}
 	
 	// Update is called once per frame

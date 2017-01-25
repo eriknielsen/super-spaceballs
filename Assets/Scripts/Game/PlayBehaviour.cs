@@ -23,21 +23,54 @@ public class PlayBehaviour : MonoBehaviour {
         //listen  for buttonpresses like wanting to send your move etc
         if (Input.GetKeyDown("Enter"))
         {
-            //decide if both turnhandlers have been activated yet or not.
+            // are both players done?
+            if (turnHandler1Activated && turnHandler2Activated)
+            {
+                //then play the game and pause in 4 seconds
+                //UnpauseGame();
+            }
+            else
+            {
+                //
+            }
         }
 	}
+    IEnumerator UnpauseGame()
+    {
+        Time.timeScale = 1;
+        //rename to pauserobots?
+        turnHandler1.UnpauseGame();
+        turnHandler2.UnpauseGame();
+        yield return new WaitForSeconds(4f);
+        
+    }
+    void PauseGame()
+    {
+        Time.timeScale = 0;
+        turnHandler1.PauseGame();
+        turnHandler2.PauseGame();
+        NewTurn();
+    }
+    void NextPlayer()
+    {
+        if (!turnHandler1Activated)
+            //turnHandler1.activate();
+            ;
+        if (!turnHandler2Activated)
+            //turnHandler2.activate();
+            ;
+    }
     void NewTurn()
     {
-        //count turns to decide who starts?
-        //turnHandler1.activate();
-        //turnhandler1activated= true
-        //OR
-        //turnHandler2.activate();
-        //turnhandler2activated= true
-
-
-
-
-
+        if(turnHandler1.turns % 2 == 0)
+        {
+            //turnHandler1.activate();
+            turnHandler1Activated = true;
+        }
+        else
+        {
+            //turnHandler2.activate();
+            turnHandler2Activated = true;
+        }
     }
 }
