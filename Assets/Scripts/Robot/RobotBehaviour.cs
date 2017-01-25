@@ -36,7 +36,6 @@ public class RobotBehaviour : MonoBehaviour {
     /// </summary>
     public void DecideCommand()
     {
-        Debug.Log(commands.Count);
         if(commands.Count > 0)
         {
             if (commands[0].isFinished == false)
@@ -64,7 +63,10 @@ public class RobotBehaviour : MonoBehaviour {
     }
     void OnMouseDown()
     {
-        OnClick(gameObject);
+        if (OnClick != null)
+        {
+            OnClick(gameObject);
+        }
     }
 }
 

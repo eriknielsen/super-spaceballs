@@ -28,7 +28,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
         UnpauseGame();
         //remember which commands were for which turn
         turns = 1;
-        StartCoroutine(TestPausing());
+     
 
     }
 	void TestRobotCommands()
@@ -82,16 +82,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
         turns++;
     }
 
-    IEnumerator TestPausing()
-    {
-        yield return new WaitForSeconds(4f);
-        PauseGame();
-        yield return new WaitForSeconds(1f);
-        Debug.Log("s");
-        //UndoLastMove();
-
-    }
-
+  
     void UndoLastMove()
     {
         if (turns > 0)
@@ -114,18 +105,21 @@ public class TurnHandlerBehaviour : MonoBehaviour {
     {
         selectedRobot = r;
         Debug.Log("Robot selected!");
-        Destroy(selectedRobot);
+        //Destroy(selectedRobot);
     }
 
     void GiveCommandToSelectedRobot()
     {
         if(selectedRobot != null)
         {
-            if(selectedCommand == AvailableCommands.MoveCommand)
+            selectedRobot.GetComponent<RobotBehaviour>().currentState.EnterPauseState();
+            if (selectedCommand == AvailableCommands.MoveCommand)
             {
                 Vector3 mousePosition = Input.mousePosition;
                 Vector3 pointPosition = Camera.main.ScreenToWorldPoint(mousePosition);
                 selectedRobot.GetComponent<RobotBehaviour>().commands.Add(new MoveCommand(selectedRobot, pointPosition, 1, turns));
+                selectedRobot.GetComponent<RobotBehaviour>().currentState.EnterPlayState();
+
                 Debug.Log("Command Added!");
             }
         }
