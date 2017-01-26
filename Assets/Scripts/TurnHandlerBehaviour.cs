@@ -22,6 +22,14 @@ public class TurnHandlerBehaviour : MonoBehaviour
     public List<Move> moves;
     // Use this for initialization
 
+    public int Turns
+    {
+        get
+        {
+            return turns;
+        }
+    }
+
     void OnValidate()
     {
         if (roundTime < 0)
@@ -49,11 +57,11 @@ public class TurnHandlerBehaviour : MonoBehaviour
             for (int i = 0; i < numberOfRobots; i++)
             {
                 GameObject r = Instantiate(robotPrefab.gameObject, new Vector2(i + 1, i + 1), new Quaternion()) as GameObject;
-                if(robots == null)
+                if (robots == null)
                 {
                     Debug.Log("Null as fuuuuck");
                 }
-                robots.Add(r);                
+                robots.Add(r);
             }
             Debug.Log("Robots in list: " + robots.Count);
         }
@@ -77,12 +85,12 @@ public class TurnHandlerBehaviour : MonoBehaviour
         int i = 0;
         foreach (GameObject r in robots)
         {
-            if(r == null)
+            if (r == null)
             {
                 Debug.Log("Null at " + i);
             }
             i++;
-            moves.Add(new Move(r, turns, r.GetComponent<RobotBehaviour>().Commands));
+            moves.Add(new Move(r, Turns, r.GetComponent<RobotBehaviour>().Commands));
             r.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
         }
         turns++;
@@ -91,15 +99,15 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
     void UndoLastMove()
     {
-        if (turns > 0)
+        if (Turns > 0)
         {
             //remove all shockwaves
             //reset all robots to the previous' move's position
             int turnIndex = 0;
-            for (int i = turns - 1; i < turns * robots.Count; i++)
+            for (int i = Turns - 1; i < Turns * robots.Count; i++)
             {
 
-                turnIndex = (turns - 1) * robots.Count + i;
+                turnIndex = (Turns - 1) * robots.Count + i;
                 robots[i].transform.position = moves[turnIndex].position;
                 robots[i].GetComponent<Rigidbody2D>().velocity = moves[turnIndex].velocity;
             }
@@ -124,7 +132,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
             {
                 Vector3 mousePosition = Input.mousePosition;
                 Vector3 pointPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-                selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(new MoveCommand(selectedRobot, pointPosition, 3, turns));
+                selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(new MoveCommand(selectedRobot, pointPosition, 2, Turns));
                 Debug.Log("Command Added!");
             }
         }
@@ -132,10 +140,17 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
     void ActivateRobots()
     {
-        selectedRobot.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
-        StartCoroutine(RobotActivatedDuration());
-        Debug.Log("Round started!");
-        UnpauseGame();
+        if (robots != null)
+        {
+            for (int i = 0; i < robots.Count; i++)
+            {
+                robots[i].GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
+                StartCoroutine(RobotActivatedDuration());
+                Debug.Log("Round started!");
+                UnpauseGame();
+            }
+        }
+
 
     }
 

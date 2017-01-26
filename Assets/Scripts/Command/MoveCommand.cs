@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MoveCommand : Command {
+public class MoveCommand : Command
+{
 
-  
+
     float force;
     float commandLifetime;
-    Vector2 resultingForce, initialForce;
-    bool afterInitialForce = false;
+    Vector2 resultingForce;
     float angle;
+    float intialForceTimeLeft;
 
     public MoveCommand(GameObject r, Vector2 target, float lifetime, int turn)
     {
@@ -17,28 +18,32 @@ public class MoveCommand : Command {
         robot = r;
         commandLifetime = lifetime;
         this.turn = turn;
-
-        Vector2 positionDifference = targetPosition - (Vector2)robot.transform.position;
-        angle = Mathf.Atan(positionDifference.y / positionDifference.x);
-        float yForce = Mathf.Sin(angle) * force;
-        float xForce = Mathf.Cos(angle) * force;
-        //resultingForce = new Vector2(xForce, yForce);
-        resultingForce = force * positionDifference.normalized;
-        initialForce = resultingForce * 4;
+        intialForceTimeLeft = lifetime;
     }
-	public override void Execute()
+    public override void Execute()
     {
         Vector2 positionDifference = targetPosition - (Vector2)robot.transform.position;
-        robot.transform.RotateAround(robot.transform.position, robot.transform.forward, Time.deltaTime * 90);
-        if (afterInitialForce)
+        angle = Mathf.Atan2(positionDifference.y, positionDifference.x);
+        if (angle < 0)
         {
-            robot.GetComponent<Rigidbody2D>().AddForce(resultingForce);
+            angle = 2 * Mathf.PI + angle;
+        }
+        float yForce = Mathf.Sin(angle) * force;
+        float xForce = Mathf.Cos(angle) * force;
+        Debug.Log(angle * Mathf.Rad2Deg);
+        resultingForce = new Vector2(xForce, yForce);
+
+        if (intialForceTimeLeft > 0)
+        {
+            Vector2 initialForce = resultingForce * 2;
+            robot.transform.rotation = Quaternion.Lerp(robot.transform.rotation, Quaternion.Euler(0, 0, angle * Mathf.Rad2Deg), Time.deltaTime);
+            robot.GetComponent<Rigidbody2D>().AddForce(initialForce);
+            intialForceTimeLeft -= Time.fixedDeltaTime;
         }
         else
         {
-            robot.GetComponent<Rigidbody2D>().AddForce(initialForce);
-            Debug.Log("Initial force");
-            afterInitialForce = true;
+            robot.transform.rotation = Quaternion.Lerp(robot.transform.rotation, Quaternion.Euler(0, 0, angle * Mathf.Rad2Deg), Time.deltaTime);
+            robot.GetComponent<Rigidbody2D>().AddForce(resultingForce);
         }
 
     }

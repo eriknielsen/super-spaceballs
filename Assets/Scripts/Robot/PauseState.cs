@@ -13,6 +13,7 @@ public class PauseState : IRobotState
         robot = r;
         robotScript = robot.GetComponent<RobotBehaviour>();
     }
+
     public void EnterPauseState()
     {
         Debug.Log("already in pause");

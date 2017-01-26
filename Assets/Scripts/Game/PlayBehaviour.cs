@@ -62,7 +62,7 @@ public class PlayBehaviour : MonoBehaviour {
     }
     void NewTurn()
     {
-        if(turnHandler1.turns % 2 == 0)
+        if(turnHandler1.Turns % 2 == 0)
         {
             //turnHandler1.activate();
             turnHandler1Activated = true;
