@@ -20,7 +20,10 @@ Ett drag består av flera handlingar/kommandon.
 * Starta runda och ge robotarna kommandon, pausa, och starta igen.
 * Låt spelaren ändra kommandon
 * Spara moves som en doubly linked list istället.
-
+#
+* Menu som aktiveras/avaktiveras av GameBehaviour
+* Man ska kunna gå från ett aktiverat PlayBehaviour(alltså att man spelar) till menyn och sedan tillbaka.
+* PlayBehaviour ska aktiveras, turnhandlers instanseras av PB och spelet hålls igång av PB
 
 
 

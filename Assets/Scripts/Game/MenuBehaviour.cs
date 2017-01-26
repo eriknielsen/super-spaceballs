@@ -1,19 +1,44 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using UnityEngine.UI;
 public class MenuBehaviour : MonoBehaviour {
-
-    GameObject menuPrefab;
-	// instantiates the menu prefab as child
-	void Start () {
+   
+    public GameObject menuUIPrefab;
+    public GameObject menuUIInstance;
+ 
+    public delegate void PlayButtonClicked();
+    public static event PlayButtonClicked OnPlayButtonClick;
+    void Awake()
+    {
+        menuUIInstance = Instantiate(menuUIPrefab) as GameObject;
         
-        Debug.Log("menustart");
+    }
+    void Start () {
+       
+       
+        
+       
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        Debug.Log("menu");
-	}
+        
+    }
 
     //sends event to gamebehaviour when it is time to start playing
+    public void PressPlay()
+    {
+
+        Debug.Log(OnPlayButtonClick);
+        OnPlayButtonClick();
+    }
+    public void PressQuit()
+    {
+        Application.Quit();
+        //quitting?
+    }
+    public void Activate(bool b)
+    {
+        menuUIInstance.SetActive(b);
+    }
 }
