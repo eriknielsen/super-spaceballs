@@ -12,8 +12,14 @@ public class ReplayerBehaviour : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
         GameObject.Find("TurnHandler").SetActive(false);
        
+
+        //GameObject.Find("TurnHandler").SetActive(false);
+        
+        
+
 
     }
 	

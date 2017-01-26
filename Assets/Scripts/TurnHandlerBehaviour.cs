@@ -49,7 +49,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
         PauseGame();
         turns = 1;
     }
-
     void CreateRobots()
     {
         if (robotPrefab != null)
@@ -178,6 +177,14 @@ public class TurnHandlerBehaviour : MonoBehaviour
         {
             ActivateRobots();
         }
+    }
+    void Activate(bool b)
+    {
+        if(b)
+            RobotBehaviour.OnClick += new RobotBehaviour.ClickedOnRobot(ChooseRobot);
+        else
+            RobotBehaviour.OnClick -= new RobotBehaviour.ClickedOnRobot(ChooseRobot);
+
     }
     /*
     void UndoLastMove()
