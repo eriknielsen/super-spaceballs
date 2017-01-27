@@ -46,15 +46,19 @@ public class TurnHandlerBehaviour : MonoBehaviour
         bc2D = GetComponent<BoxCollider2D>();
         selectedCommand = AvailableCommands.MoveCommand;
         moves = new List<Move>();
-        RobotBehaviour.OnClick += new RobotBehaviour.ClickedOnRobot(ChooseRobot);
         robots = new List<GameObject>();
 
+
         CreateRobots();
-        PauseGame();
         turns = 1;
+        
 
         
         
+    }
+    void Start()
+    {
+       
     }
     void CreateRobots()
     {
@@ -71,14 +75,13 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 }
                 robots.Add(r);
             }
-            Debug.Log("Robots in list: " + robots.Count);
+
         }
+        bc2D.enabled = false;
     }
 
     public void PauseGame()
     {
-        //change timescale
-        Time.timeScale = 0;
         //put all robots into pausestate
         foreach (GameObject r in robots)
         {
@@ -87,8 +90,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
     }
     public void UnpauseGame()
     {
-        //change timescale
-        Time.timeScale = 1;
         //put all robots into play
         int i = 0;
         foreach (GameObject r in robots)
@@ -145,33 +146,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
             }
         }
     }
-
-    void ActivateRobots()
-    {
-        if (robots != null)
-        {
-            for (int i = 0; i < robots.Count; i++)
-            {
-                robots[i].GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
-                //starta en coroutine per robot, på en och samma robot?
-                StartCoroutine(RobotActivatedDuration());
-                Debug.Log("Round started!");
-                UnpauseGame();
-            }
-        }
-
-
-    }
-    //test function?
-    IEnumerator RobotActivatedDuration()
-    {
-        Debug.Log("Co-routine started!");
-        yield return new WaitForSeconds(roundTime);
-        selectedRobot.GetComponent<RobotBehaviour>().CurrentState.EnterPauseState();
-        PauseGame();
-        Debug.Log("Game paused!");
-    }
-
     void Update()
     {
         ReactToUserInput();
@@ -183,21 +157,29 @@ public class TurnHandlerBehaviour : MonoBehaviour
         {
             GiveCommandToSelectedRobot();
         }
-        if (Input.GetButtonDown("StartRound"))
-        {
-            ActivateRobots();
-        }
     }
-    public void Activate(bool b)
+    public void Activate(bool activate)
     {
-        if (b)
+        if (activate == true)
         {
+            //visually indicate that this turnhandlers robots are now active
+            Debug.Log("select robot");
+            //start taking events
             RobotBehaviour.OnClick += new RobotBehaviour.ClickedOnRobot(ChooseRobot);
+
+            foreach (GameObject r in robots)
+            {
+                r.GetComponent<RobotBehaviour>().shouldSendEvent = true;
+            }
         }
         else
         {
+            Debug.Log("stop selecting robot");
             RobotBehaviour.OnClick -= new RobotBehaviour.ClickedOnRobot(ChooseRobot);
-
+            foreach (GameObject r in robots)
+            {
+                r.GetComponent<RobotBehaviour>().shouldSendEvent = false;
+            }
         }
 
     }

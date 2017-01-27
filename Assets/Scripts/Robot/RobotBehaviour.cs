@@ -9,6 +9,7 @@ public class RobotBehaviour : MonoBehaviour {
     public PlayState playState;
     public delegate void ClickedOnRobot(GameObject robot);
     public static event ClickedOnRobot OnClick;
+    public bool shouldSendEvent = false;
     //the robot goes through each commando and checks each update if the latest commando is finished or not
     //if it is finished then the robot starts the next commando
     public List<Command> commands;
@@ -82,7 +83,7 @@ public class RobotBehaviour : MonoBehaviour {
     }
     void OnMouseDown()
     {
-        if (OnClick != null)
+        if (OnClick != null && shouldSendEvent)
         {
             OnClick(gameObject);
         }
