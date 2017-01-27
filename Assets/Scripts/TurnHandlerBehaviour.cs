@@ -18,9 +18,12 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
     private List<GameObject> robots;
     private int turns;
+
+    BoxCollider2D bc2D;
+
     //en lista med drag
     public List<Move> moves;
-    // Use this for initialization
+    
 
     public int Turns
     {
@@ -48,6 +51,8 @@ public class TurnHandlerBehaviour : MonoBehaviour
         CreateRobots();
         PauseGame();
         turns = 1;
+
+        bc2D = GetComponent<BoxCollider2D>();
     }
     void CreateRobots()
     {
@@ -144,6 +149,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
             for (int i = 0; i < robots.Count; i++)
             {
                 robots[i].GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
+                //starta en coroutine per robot, på en och samma robot?
                 StartCoroutine(RobotActivatedDuration());
                 Debug.Log("Round started!");
                 UnpauseGame();
@@ -152,7 +158,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
 
     }
-
+    //test function?
     IEnumerator RobotActivatedDuration()
     {
         Debug.Log("Co-routine started!");
@@ -178,29 +184,17 @@ public class TurnHandlerBehaviour : MonoBehaviour
             ActivateRobots();
         }
     }
-    void Activate(bool b)
+    public void Activate(bool b)
     {
-        if(b)
+        if (b)
+        {
             RobotBehaviour.OnClick += new RobotBehaviour.ClickedOnRobot(ChooseRobot);
+        }
         else
+        {
             RobotBehaviour.OnClick -= new RobotBehaviour.ClickedOnRobot(ChooseRobot);
 
-    }
-    /*
-    void UndoLastMove()
-    {
-        if (turns > 0)
-        {
-            //remove all shockwaves
-            //reset all robots to the previous' move's position
-            int turnIndex = 0;
-            for (int i = turns - 1; i < turns * robots.Count; i++)
-            {
-                turnIndex = (turns - 1) * robots.Count + i;
-                robots[i].transform.position = moves[turnIndex].position;
-                robots[i].GetComponent<Rigidbody2D>().velocity = moves[turnIndex].velocity;
-            }
         }
+
     }
-    */
 }

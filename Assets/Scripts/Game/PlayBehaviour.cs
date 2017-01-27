@@ -4,18 +4,21 @@ using System.Collections;
 public class PlayBehaviour : MonoBehaviour {
     //class for local play
 
-    public GameObject InGameUIPrefab;
+  
+    
+    
     GameObject InGameUIInstance;
-
-    public delegate void ReturnMenuButtonClicked();
-    public static event ReturnMenuButtonClicked OnReturnMenuButtonClick;
-    //instanitate turnhandlers, one for each team
-    public GameObject turnHandlerPrefab;
     TurnHandlerBehaviour turnHandler1;
     TurnHandlerBehaviour turnHandler2;
     bool isTH1Done = false;
     bool isTH2Done = false;
-    public int currentTurnHandler;
+    int currentTurnHandler;
+
+    public GameObject InGameUIPrefab;
+    public GameObject turnHandlerPrefab;
+
+    public delegate void ReturnMenuButtonClicked();
+    public static event ReturnMenuButtonClicked OnReturnMenuButtonClick;
 
     void Awake()
     {
@@ -40,19 +43,26 @@ public class PlayBehaviour : MonoBehaviour {
             if(currentTurnHandler == 1)
             {
                 isTH1Done = true;
+                
             }
             else if(currentTurnHandler == 2)
             {
                 isTH2Done = true;
+                
             }
             // are both players done?
             if (isTH1Done && isTH2Done)
             {
-                //then play the game and pause in 4 seconds
-                //UnpauseGame();
+                //then play the game and pause again in 4 seconds
+                StartCoroutine(UnpauseGame());
             }
-            //decides who plays next
-            GiveControlToNextPlayer();
+            //decides who plays next if both players arent done
+            else
+            {
+                GiveControlToNextPlayer();
+            }
+            
+            
         }
 	}
     IEnumerator UnpauseGame()
@@ -74,24 +84,39 @@ public class PlayBehaviour : MonoBehaviour {
         NewTurn();
     }
     /// <summary>
-    /// gives control back to currentTurnhandler when coming back from menu
+    /// gives or takes control from the current turnhandler
+    /// activate true means to activate current turnhandler
+    /// activate false means to deactivate current turnhandler
     /// </summary>
-    void ActivateCorrectTurnHandler()
+    void ActivateCorrectTurnHandler(bool activate)
     {
-        if(currentTurnHandler == 1 && !isTH1Done)
+        if (activate)
         {
-            //turnHandler1.activate();
+            if (currentTurnHandler == 1 && !isTH1Done)
+            {
+                turnHandler1.Activate(true);
+            }
+            else if (currentTurnHandler == 2 && !isTH2Done)
+            {
+                turnHandler2.Activate(true);
+            }
         }
-        else if(currentTurnHandler == 2 && !isTH2Done)
+        else
         {
-            //turnHandler2.activate();
+            if(currentTurnHandler == 1)
+            {
+                turnHandler1.Activate(false);
+            }
+            else if(currentTurnHandler == 2)
+            {
+                turnHandler2.Activate(false);
+            }
         }
+       
     }
     void NewTurn()
     {
-
-        /*
-        if(turnHandler1.turns % 2 == 0)
+        if(turnHandler1.Turns % 2 == 0)
 
         {
             //turnHandler1.activate();
@@ -104,7 +129,6 @@ public class PlayBehaviour : MonoBehaviour {
             currentTurnHandler = 2;
             isTH2Done = false;
         }
-        */
     }
     void GiveControlToNextPlayer()
     {
@@ -119,26 +143,27 @@ public class PlayBehaviour : MonoBehaviour {
             //turnhandler1.activate();
         }
     }
-    public void Activate(bool b)
+    /// <summary>
+    /// this either pauses the game and deactivates ui and active turnhandler
+    ///  or it activates ui and active turnhandler
+    ///  Is called by GameBehaviour
+    /// </summary>
+    /// <param name="b"></param>
+    public void Activate(bool activate)
     {
-        if(b == false)
+        if(activate == false)
         {
-            //activate(false) would probably mean to go to the mainmenu but we dont want to destroy anything
-            //so that we can go back to the game and play
-            
             //DEACTIVATE CURRENT TURNHANDLER
-
+            ActivateCorrectTurnHandler(false);
             PauseGame();
             InGameUIInstance.SetActive(false);
-            enabled = b;
+            enabled = false;
 
         }
         else
         {
-            enabled = b;
-            //ACTIVATE CURRENT TURNHANDLER
-            ActivateCorrectTurnHandler();
-
+            enabled = false;
+            ActivateCorrectTurnHandler(true);
             InGameUIInstance.SetActive(true);
         }
         
