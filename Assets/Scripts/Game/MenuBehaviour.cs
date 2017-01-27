@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+
 public class MenuBehaviour : MonoBehaviour {
    
     public GameObject menuUIPrefab;
@@ -14,9 +15,6 @@ public class MenuBehaviour : MonoBehaviour {
         
     }
     void Start () {
-       
-       
-        
        
 	}
 	

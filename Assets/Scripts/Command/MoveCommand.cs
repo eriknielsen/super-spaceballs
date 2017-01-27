@@ -3,20 +3,51 @@ using System.Collections;
 
 public class MoveCommand : Command
 {
-
-
     float force;
-    float commandLifetime;
+    float lifeDuration;
     Vector2 resultingForce;
     float angle;
     float intialForceTimeLeft;
+
+    public Vector2 ResultingForce
+    {
+        get
+        {
+            Vector2 positionDifference = targetPosition - (Vector2)robot.transform.position;
+            angle = Mathf.Atan2(positionDifference.y, positionDifference.x);
+            if (angle < 0)
+            {
+                angle = 2 * Mathf.PI + angle;
+            }
+            float yForce = Mathf.Sin(angle) * force;
+            float xForce = Mathf.Cos(angle) * force;
+            resultingForce = new Vector2(xForce, yForce);
+            return resultingForce;
+        }
+    }
+
+    public float LifeDuration
+    {
+        get
+        {
+            return lifeDuration;
+        }
+    }
+
+    public GameObject Robot
+    {
+        get
+        {
+            return robot;
+        }
+    }
 
     public MoveCommand(GameObject r, Vector2 target, float lifetime, int turn)
     {
         force = 3f;
         targetPosition = target;
         robot = r;
-        commandLifetime = lifetime;
+        lifeDuration = lifetime;
         this.turn = turn;
         intialForceTimeLeft = lifetime;
     }
@@ -30,7 +61,6 @@ public class MoveCommand : Command
         }
         float yForce = Mathf.Sin(angle) * force;
         float xForce = Mathf.Cos(angle) * force;
-        Debug.Log(angle * Mathf.Rad2Deg);
         resultingForce = new Vector2(xForce, yForce);
 
         if (intialForceTimeLeft > 0)
@@ -49,7 +79,7 @@ public class MoveCommand : Command
     }
     public override IEnumerator FinishedCoroutine()
     {
-        yield return new WaitForSeconds(commandLifetime);
+        yield return new WaitForSeconds(lifeDuration);
         isFinished = true;
     }
 }
