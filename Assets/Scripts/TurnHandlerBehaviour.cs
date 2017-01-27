@@ -101,6 +101,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
             i++;
             moves.Add(new Move(r, Turns, r.GetComponent<RobotBehaviour>().Commands));
             r.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
+            
         }
         turns++;
     }
@@ -163,7 +164,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         if (activate == true)
         {
             //visually indicate that this turnhandlers robots are now active
-            Debug.Log("select robot");
+       
             //start taking events
             RobotBehaviour.OnClick += new RobotBehaviour.ClickedOnRobot(ChooseRobot);
 
@@ -171,16 +172,59 @@ public class TurnHandlerBehaviour : MonoBehaviour
             {
                 r.GetComponent<RobotBehaviour>().shouldSendEvent = true;
             }
+            enabled = true;
         }
         else
         {
-            Debug.Log("stop selecting robot");
+            
             RobotBehaviour.OnClick -= new RobotBehaviour.ClickedOnRobot(ChooseRobot);
             foreach (GameObject r in robots)
             {
                 r.GetComponent<RobotBehaviour>().shouldSendEvent = false;
             }
+            enabled = false;
         }
 
+    }
+    public IEnumerator ReplayLastTurn()
+    {
+        //save commando lists in robots where they are longer than 0
+        //and put them in that robots oldCommands<List>
+        foreach(GameObject r in robots)
+        {
+            if(r.GetComponent<RobotBehaviour>().Commands.Count > 0)
+            {
+                r.GetComponent<RobotBehaviour>().oldCommands = r.
+                    GetComponent<RobotBehaviour>().Commands;
+            }
+        }
+        //go through the last 8 moves and move each robot to their old position
+        for(int i = moves.Count-1; i > moves.Count - numberOfRobots-1; i--)
+        {
+
+            Move m = moves[i];
+            GameObject r = m.robot;
+            r.GetComponent<Rigidbody2D>().angularVelocity = m.angularVelocity;
+            r.GetComponent<Rigidbody2D>().velocity = m.velocity;
+            r.transform.position = m.position;
+            r.transform.rotation = m.rotation;
+            Debug.Log("count of mcomands: " + m.commands.Count);
+            r.GetComponent<RobotBehaviour>().Commands.AddRange(m.commands);
+        }
+
+        //wait the round time and fill the commandlist with the oldCommands
+        yield return new WaitForSeconds(roundTime);
+        foreach (GameObject r in robots)
+        {
+            if (r.GetComponent<RobotBehaviour>().oldCommands.Count > 0)
+            {
+                RobotBehaviour robot = r.GetComponent<RobotBehaviour>();
+                robot.commands = robot.oldCommands;
+                robot.oldCommands.Clear();
+
+            }
+        }
+
+        
     }
 }

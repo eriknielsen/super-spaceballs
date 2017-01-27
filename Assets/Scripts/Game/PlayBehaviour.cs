@@ -19,6 +19,9 @@ public class PlayBehaviour : MonoBehaviour {
     public delegate void ReturnMenuButtonClicked();
     public static event ReturnMenuButtonClicked OnReturnMenuButtonClick;
 
+    public delegate void ReplayButtonClicked();
+    public static event ReplayButtonClicked OnReplayButtonClick;
+
     void Awake()
     {
         
@@ -54,21 +57,21 @@ public class PlayBehaviour : MonoBehaviour {
             if (currentTurnHandler == 1)
             {
 
-                Debug.Log("TURNHANDLER1.done is: " + isTH1Done);
+               
                 isTH1Done = true;
-                Debug.Log("TURNHANDLER1.done is: " + isTH1Done);
+                
             }
             else if(currentTurnHandler == 2)
             {
-                Debug.Log("TURNHANDLER2.done is: " + isTH2Done);
+
                 isTH2Done = true;
-                Debug.Log("TURNHANDLER2.done is: " + isTH2Done);
+              
             }
             // are both players done?
             if (isTH1Done && isTH2Done)
             {
                 //then play the game and pause again in 4 seconds
-                StartCoroutine(UnpauseGame());
+                StartCoroutine(UnpauseGame(false));
             }
             //decides who plays next if both players arent done
             else
@@ -80,16 +83,25 @@ public class PlayBehaviour : MonoBehaviour {
             
         }
     }
-    IEnumerator UnpauseGame()
+    ///if we replayed the last turn, then we dont want to do the newturn stuff
+    IEnumerator UnpauseGame(bool asReplay)
     {
         Time.timeScale = 1;
         ActivateCorrectTurnHandler(false);
-        //rename to pauserobots?
-        currentTurnHandler = -1;
+      
+        
         turnHandler1.UnpauseGame();
         turnHandler2.UnpauseGame();
         yield return new WaitForSeconds(4f);
-        NewTurn();
+        if(asReplay == false)
+        {
+            currentTurnHandler = -1;
+            NewTurn();
+        }
+        else
+        {
+            ActivateCorrectTurnHandler(true);
+        }            
         PauseGame();
         
         
@@ -153,7 +165,7 @@ public class PlayBehaviour : MonoBehaviour {
         }
         isTH1Done = false;
         isTH2Done = false;
-        Debug.Log("new turn gives turnhandler: " + currentTurnHandler);
+
         ActivateCorrectTurnHandler(true);
     }
     void ChooseNextCurrentTurnHandler()
@@ -183,7 +195,7 @@ public class PlayBehaviour : MonoBehaviour {
     {
         if(activate == false)
         {
-            Debug.Log("Deactivate");
+            
             //DEACTIVATE CURRENT TURNHANDLER
             ActivateCorrectTurnHandler(false);
             PauseGame();
@@ -210,5 +222,23 @@ public class PlayBehaviour : MonoBehaviour {
         
     }
 
-
+    public void ReplayLastTurn()
+    {
+        Debug.Log("replay?");
+        if(turnHandler1.Turns > 1)
+        {
+            Debug.Log("replaying");
+            StartCoroutine(turnHandler1.ReplayLastTurn());
+            StartCoroutine(turnHandler2.ReplayLastTurn());
+            StartCoroutine(UnpauseGame(true));
+        }
+        else
+        {
+            Debug.Log("there needs to be at least one turn");
+        } 
+    }
+    public void ReplayButtonClick()
+    {
+        OnReplayButtonClick();
+    }
 }

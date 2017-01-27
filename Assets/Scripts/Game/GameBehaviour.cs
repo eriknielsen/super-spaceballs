@@ -22,6 +22,8 @@ public class GameBehaviour : MonoBehaviour {
         MainMenuInstance.transform.parent = gameObject.transform;
         MenuBehaviour.OnPlayButtonClick += new MenuBehaviour.PlayButtonClicked(EnterLocalPlay);
         PlayBehaviour.OnReturnMenuButtonClick += new PlayBehaviour.ReturnMenuButtonClicked(EnterMenuFromPlay);
+        PlayBehaviour.OnReplayButtonClick += new PlayBehaviour.ReplayButtonClicked(LocalPlayReplayLastTurn);
+
     }
     // Use this for initialization
     void Start () {
@@ -63,4 +65,9 @@ public class GameBehaviour : MonoBehaviour {
         //let mainmenu activate itself
         MainMenuInstance.GetComponent<MenuBehaviour>().Activate(true);
     }
+    void LocalPlayReplayLastTurn()
+    {
+        LocalPlayInstance.GetComponent<PlayBehaviour>().ReplayLastTurn();
+    }
+  
 }
