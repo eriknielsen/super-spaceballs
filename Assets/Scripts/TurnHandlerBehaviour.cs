@@ -43,6 +43,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
     void Awake()
     {
+        bc2D = GetComponent<BoxCollider2D>();
         selectedCommand = AvailableCommands.MoveCommand;
         moves = new List<Move>();
         RobotBehaviour.OnClick += new RobotBehaviour.ClickedOnRobot(ChooseRobot);
@@ -52,7 +53,8 @@ public class TurnHandlerBehaviour : MonoBehaviour
         PauseGame();
         turns = 1;
 
-        bc2D = GetComponent<BoxCollider2D>();
+        
+        
     }
     void CreateRobots()
     {
@@ -60,7 +62,9 @@ public class TurnHandlerBehaviour : MonoBehaviour
         {
             for (int i = 0; i < numberOfRobots; i++)
             {
-                GameObject r = Instantiate(robotPrefab.gameObject, new Vector2(i + 1, i + 1), new Quaternion()) as GameObject;
+                float x = Random.Range(bc2D.bounds.min.x, bc2D.bounds.max.x);
+                float y = Random.Range(bc2D.bounds.min.y, bc2D.bounds.max.y);
+                GameObject r = Instantiate(robotPrefab.gameObject, new Vector2(x, y), new Quaternion()) as GameObject;
                 if (robots == null)
                 {
                     Debug.Log("Null as fuuuuck");

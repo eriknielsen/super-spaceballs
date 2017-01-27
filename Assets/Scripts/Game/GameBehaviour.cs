@@ -46,10 +46,10 @@ public class GameBehaviour : MonoBehaviour {
         //do stuff to make local play happen
      
 
-        Debug.Log(LocalPlayInstance);
-        Debug.Log(MainMenuInstance);
+ 
         MainMenuInstance.GetComponent<MenuBehaviour>().Activate(false);
         //LocalPlayInstance.GetComponent<PlayBehaviour>().enabled = true;
+        Debug.Log(LocalPlayInstance);
         LocalPlayInstance.GetComponent<PlayBehaviour>().Activate(true);
         
         

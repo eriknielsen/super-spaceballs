@@ -29,7 +29,7 @@ public class MenuBehaviour : MonoBehaviour {
     public void PressPlay()
     {
 
-        Debug.Log(OnPlayButtonClick);
+
         OnPlayButtonClick();
     }
     public void PressQuit()

@@ -24,15 +24,16 @@ public class PlayBehaviour : MonoBehaviour {
     {
         
         InGameUIInstance = Instantiate(InGameUIPrefab);
+        turnHandler1 = transform.FindChild("TurnHandlerLeft").GetComponent<TurnHandlerBehaviour>();
+        turnHandler2 = transform.FindChild("TurnHandlerRight").GetComponent<TurnHandlerBehaviour>();
+        
     }
-	// Use this for initialization
-	void Start () {
-      
-        //turn handlers start "deactivated"
-        turnHandler1 = Instantiate(turnHandlerPrefab).GetComponent<TurnHandlerBehaviour>();
-        turnHandler2 = Instantiate(turnHandlerPrefab).GetComponent<TurnHandlerBehaviour>();
+    // Use this for initialization
+    void Start () {
+        Debug.Log("hej");
+        transform.FindChild("TurnHandlerRight").gameObject.SetActive(true);
+        transform.FindChild("TurnHandlerLeft").gameObject.SetActive(true);
         InGameUIInstance.SetActive(true);
-
     }
 
     // Update is called once per frame
@@ -162,7 +163,7 @@ public class PlayBehaviour : MonoBehaviour {
         }
         else
         {
-            enabled = false;
+            enabled = true;
             ActivateCorrectTurnHandler(true);
             InGameUIInstance.SetActive(true);
         }
