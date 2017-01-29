@@ -53,6 +53,7 @@ public class MoveCommand : Command
     }
     public override void Execute()
     {
+
         Vector2 positionDifference = targetPosition - (Vector2)robot.transform.position;
         angle = Mathf.Atan2(positionDifference.y, positionDifference.x);
         if (angle < 0)
@@ -61,6 +62,7 @@ public class MoveCommand : Command
         }
         float yForce = Mathf.Sin(angle) * force;
         float xForce = Mathf.Cos(angle) * force;
+
         resultingForce = new Vector2(xForce, yForce);
 
         if (intialForceTimeLeft > 0)

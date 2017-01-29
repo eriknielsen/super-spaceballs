@@ -7,23 +7,12 @@ En match består av ett antal rundor. I varje runda så får spelaren göra ett 
 Ett drag består av flera handlingar/kommandon.
 ## Todo
 - En TurnHandler som alltid funkar lokalt med två spelare, i replay och i nätverk.
-- Spelet styrs av GameObjekt GameBehaviour som har 4 olika states: Play(lokalt), Menu, Replay och Networked.
- - Play har två styckna Turnhandlers, en för varje lag och PlayState håller koll på turordningen.
- - Menu instanserar en UI prefab.
- - Replay har en ReplayerBehaviour samt två styckna turnhandlers så att man kan ge nya kommandon till robotarna eller bara se spelet hända.
- - Networked har en turnhandler samt en nätverksklass som spelar för det andra laget.
- - Statesen instanserar de objekt som behövs och håller koll på det. T.ex. **MenuState** instanserar en menyprefab.
 
-#Replaysystem
-* Spara ner listan med Moves(drag)
-* Klass Replayer som öppnar listan och skapar robotar på de positionerna
-* Starta runda och ge robotarna kommandon, pausa, och starta igen.
-* Låt spelaren ändra kommandon
-* Spara moves som en doubly linked list istället.
+
 #
-* Menu som aktiveras/avaktiveras av GameBehaviour
-* Man ska kunna gå från ett aktiverat PlayBehaviour(alltså att man spelar) till menyn och sedan tillbaka.
-* PlayBehaviour ska aktiveras, turnhandlers instanseras av PB och spelet hålls igång av PB
+* Menu som aktiveras/avaktiveras av GameBehaviour.done
+* Man ska kunna gå från ett aktiverat PlayBehaviour(alltså att man spelar) till menyn och sedan tillbaka. done
+* PlayBehaviour ska aktiveras, turnhandlers instanseras av PB och spelet hålls igång av PB. done
 
 
 

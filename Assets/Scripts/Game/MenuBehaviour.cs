@@ -26,9 +26,17 @@ public class MenuBehaviour : MonoBehaviour {
     //sends event to gamebehaviour when it is time to start playing
     public void PressPlay()
     {
+        if(OnPlayButtonClick != null)
+        {
+            OnPlayButtonClick();
+          
+        }
+        else
+        {
+            Debug.Log("no one is listening to the play button click");
 
-
-        OnPlayButtonClick();
+        }
+        
     }
     public void PressQuit()
     {

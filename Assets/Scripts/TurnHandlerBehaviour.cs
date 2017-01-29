@@ -46,15 +46,19 @@ public class TurnHandlerBehaviour : MonoBehaviour
         bc2D = GetComponent<BoxCollider2D>();
         selectedCommand = AvailableCommands.MoveCommand;
         moves = new List<Move>();
-        RobotBehaviour.OnClick += new RobotBehaviour.ClickedOnRobot(ChooseRobot);
         robots = new List<GameObject>();
 
+
         CreateRobots();
-        PauseGame();
         turns = 1;
+        
 
         
         
+    }
+    void Start()
+    {
+       
     }
     void CreateRobots()
     {
@@ -71,14 +75,13 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 }
                 robots.Add(r);
             }
-            Debug.Log("Robots in list: " + robots.Count);
+
         }
+        bc2D.enabled = false;
     }
 
     public void PauseGame()
     {
-        //change timescale
-        Time.timeScale = 0;
         //put all robots into pausestate
         foreach (GameObject r in robots)
         {
@@ -87,8 +90,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
     }
     public void UnpauseGame()
     {
-        //change timescale
-        Time.timeScale = 1;
         //put all robots into play
         int i = 0;
         foreach (GameObject r in robots)
@@ -100,6 +101,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
             i++;
             moves.Add(new Move(r, Turns, r.GetComponent<RobotBehaviour>().Commands));
             r.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
+            
         }
         turns++;
     }
@@ -145,33 +147,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
             }
         }
     }
-
-    void ActivateRobots()
-    {
-        if (robots != null)
-        {
-            for (int i = 0; i < robots.Count; i++)
-            {
-                robots[i].GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
-                //starta en coroutine per robot, på en och samma robot?
-                StartCoroutine(RobotActivatedDuration());
-                Debug.Log("Round started!");
-                UnpauseGame();
-            }
-        }
-
-
-    }
-    //test function?
-    IEnumerator RobotActivatedDuration()
-    {
-        Debug.Log("Co-routine started!");
-        yield return new WaitForSeconds(roundTime);
-        selectedRobot.GetComponent<RobotBehaviour>().CurrentState.EnterPauseState();
-        PauseGame();
-        Debug.Log("Game paused!");
-    }
-
     void Update()
     {
         ReactToUserInput();
@@ -183,22 +158,73 @@ public class TurnHandlerBehaviour : MonoBehaviour
         {
             GiveCommandToSelectedRobot();
         }
-        if (Input.GetButtonDown("StartRound"))
-        {
-            ActivateRobots();
-        }
     }
-    public void Activate(bool b)
+    public void Activate(bool activate)
     {
-        if (b)
+        if (activate == true)
         {
+            //visually indicate that this turnhandlers robots are now active
+       
+            //start taking events
             RobotBehaviour.OnClick += new RobotBehaviour.ClickedOnRobot(ChooseRobot);
+
+            foreach (GameObject r in robots)
+            {
+                r.GetComponent<RobotBehaviour>().shouldSendEvent = true;
+            }
+            enabled = true;
         }
         else
         {
+            
             RobotBehaviour.OnClick -= new RobotBehaviour.ClickedOnRobot(ChooseRobot);
-
+            foreach (GameObject r in robots)
+            {
+                r.GetComponent<RobotBehaviour>().shouldSendEvent = false;
+            }
+            enabled = false;
         }
 
+    }
+    public IEnumerator ReplayLastTurn()
+    {
+        //save commando lists in robots where they are longer than 0
+        //and put them in that robots oldCommands<List>
+        foreach(GameObject r in robots)
+        {
+            if(r.GetComponent<RobotBehaviour>().Commands.Count > 0)
+            {
+                r.GetComponent<RobotBehaviour>().oldCommands = r.
+                    GetComponent<RobotBehaviour>().Commands;
+            }
+        }
+        //go through the last 8 moves and move each robot to their old position
+        for(int i = moves.Count-1; i > moves.Count - numberOfRobots-1; i--)
+        {
+
+            Move m = moves[i];
+            GameObject r = m.robot;
+            r.GetComponent<Rigidbody2D>().angularVelocity = m.angularVelocity;
+            r.GetComponent<Rigidbody2D>().velocity = m.velocity;
+            r.transform.position = m.position;
+            r.transform.rotation = m.rotation;
+            Debug.Log("count of mcomands: " + m.commands.Count);
+            r.GetComponent<RobotBehaviour>().Commands.AddRange(m.commands);
+        }
+
+        //wait the round time and fill the commandlist with the oldCommands
+        yield return new WaitForSeconds(roundTime);
+        foreach (GameObject r in robots)
+        {
+            if (r.GetComponent<RobotBehaviour>().oldCommands.Count > 0)
+            {
+                RobotBehaviour robot = r.GetComponent<RobotBehaviour>();
+                robot.commands = robot.oldCommands;
+                robot.oldCommands.Clear();
+
+            }
+        }
+
+        
     }
 }

@@ -22,6 +22,8 @@ public class GameBehaviour : MonoBehaviour {
         MainMenuInstance.transform.parent = gameObject.transform;
         MenuBehaviour.OnPlayButtonClick += new MenuBehaviour.PlayButtonClicked(EnterLocalPlay);
         PlayBehaviour.OnReturnMenuButtonClick += new PlayBehaviour.ReturnMenuButtonClicked(EnterMenuFromPlay);
+        PlayBehaviour.OnReplayButtonClick += new PlayBehaviour.ReplayButtonClicked(LocalPlayReplayLastTurn);
+
     }
     // Use this for initialization
     void Start () {
@@ -38,7 +40,7 @@ public class GameBehaviour : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+	    
 	}
     public void EnterLocalPlay()
     {
@@ -49,7 +51,7 @@ public class GameBehaviour : MonoBehaviour {
  
         MainMenuInstance.GetComponent<MenuBehaviour>().Activate(false);
         //LocalPlayInstance.GetComponent<PlayBehaviour>().enabled = true;
-        Debug.Log(LocalPlayInstance);
+
         LocalPlayInstance.GetComponent<PlayBehaviour>().Activate(true);
         
         
@@ -57,10 +59,15 @@ public class GameBehaviour : MonoBehaviour {
     }
     public void EnterMenuFromPlay()
     {
-        Debug.Log(LocalPlayInstance);
+       
         //let localplay handle itself
         LocalPlayInstance.GetComponent<PlayBehaviour>().Activate(false);
         //let mainmenu activate itself
         MainMenuInstance.GetComponent<MenuBehaviour>().Activate(true);
     }
+    void LocalPlayReplayLastTurn()
+    {
+        LocalPlayInstance.GetComponent<PlayBehaviour>().ReplayLastTurn();
+    }
+  
 }

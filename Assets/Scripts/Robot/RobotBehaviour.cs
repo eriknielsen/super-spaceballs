@@ -9,9 +9,11 @@ public class RobotBehaviour : MonoBehaviour {
     public PlayState playState;
     public delegate void ClickedOnRobot(GameObject robot);
     public static event ClickedOnRobot OnClick;
+    public bool shouldSendEvent = false;
     //the robot goes through each commando and checks each update if the latest commando is finished or not
     //if it is finished then the robot starts the next commando
     public List<Command> commands;
+    public List<Command> oldCommands;
     //when switching commands, call the FinishedCoroutine coroutine
     //robot's playstate's updatestate calls the current command's execute
     private Command currentCommand;
@@ -31,6 +33,7 @@ public class RobotBehaviour : MonoBehaviour {
     void Awake()
     {
         Commands = new List<Command>();
+        oldCommands = new List<Command>();
         pauseState = new PauseState(gameObject);
         playState = new PlayState(gameObject);
         currentState = pauseState;
@@ -49,10 +52,13 @@ public class RobotBehaviour : MonoBehaviour {
     /// </summary>
     public void DecideCommand()
     {
-        if(Commands.Count > 0)
+       
+        if (Commands.Count > 0)
         {
+            
             if (Commands[0].isFinished == false)
             {
+               
                 currentCommand = Commands[0];
                 //begin the lifetime timer on currentCommand
                 StartCoroutine(currentCommand.FinishedCoroutine());
@@ -68,6 +74,7 @@ public class RobotBehaviour : MonoBehaviour {
 
     public void ExecuteRobotCommand()
     {
+       
         if (currentCommand != null && currentCommand.isFinished)
         {
             //remove the currentcommand from the command list
@@ -77,12 +84,13 @@ public class RobotBehaviour : MonoBehaviour {
         }
         else if(currentCommand != null)
         {
+            
             currentCommand.Execute();
         }
     }
     void OnMouseDown()
     {
-        if (OnClick != null)
+        if (OnClick != null && shouldSendEvent)
         {
             OnClick(gameObject);
         }
