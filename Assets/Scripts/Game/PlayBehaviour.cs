@@ -5,13 +5,14 @@ using UnityEngine.UI;
 public class PlayBehaviour : MonoBehaviour {
     //class for local play
 
-    GameObject InGameUIInstance;
+    public GameObject InGameUIInstance;
     TurnHandlerBehaviour turnHandler1;
     TurnHandlerBehaviour turnHandler2;
     bool isTH1Done = false;
     bool isTH2Done = false;
     int currentTurnHandler;
 
+    public float roundTime;
     public GameObject InGameUIPrefab;
     public GameObject turnHandlerPrefab;
 
@@ -45,27 +46,18 @@ public class PlayBehaviour : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-
-        Debug.Log(currentTurnHandler);
         currentTurnhandlerText.text = "Current turnhandler is: " + currentTurnHandler;
 
         //listen  for buttonpresses like wanting to send your move etc
         if (Input.GetKeyDown(KeyCode.Return))
         {
-           
-
             if (currentTurnHandler == 1)
             {
-
-               
-                isTH1Done = true;
-                
+                isTH1Done = true;     
             }
             else if(currentTurnHandler == 2)
             {
-
                 isTH2Done = true;
-              
             }
             // are both players done?
             if (isTH1Done && isTH2Done)
@@ -78,17 +70,20 @@ public class PlayBehaviour : MonoBehaviour {
             {
                 ChooseNextCurrentTurnHandler();
                 ActivateCorrectTurnHandler(true);
-            }
-            
-            
+            }   
         }
     }
     ///if we replayed the last turn, then we dont want to do the newturn stuff
     IEnumerator UnpauseGame(bool asReplay)
     {
+        InGameUIInstance.SetActive(false);
         Time.timeScale = 1;
         ActivateCorrectTurnHandler(false);
-      
+        if (asReplay)
+        {
+            turnHandler1.ReplayLastTurn();
+            turnHandler2.ReplayLastTurn();
+        }
         
         turnHandler1.UnpauseGame();
         turnHandler2.UnpauseGame();
@@ -100,6 +95,10 @@ public class PlayBehaviour : MonoBehaviour {
         }
         else
         {
+            //if we just replayed the turn, we have to put
+            // the commands they had before the replay back
+            turnHandler1.RevertToOldCommands();
+            turnHandler2.RevertToOldCommands();
             ActivateCorrectTurnHandler(true);
         }            
         PauseGame();
@@ -108,6 +107,7 @@ public class PlayBehaviour : MonoBehaviour {
     }
     void PauseGame()
     {
+        InGameUIInstance.SetActive(true);
         Time.timeScale = 0;
         turnHandler1.PauseGame();
         turnHandler2.PauseGame();
@@ -227,9 +227,8 @@ public class PlayBehaviour : MonoBehaviour {
         Debug.Log("replay?");
         if(turnHandler1.Turns > 1)
         {
-            Debug.Log("replaying");
-            StartCoroutine(turnHandler1.ReplayLastTurn());
-            StartCoroutine(turnHandler2.ReplayLastTurn());
+            //unpause game calls the necessary replayturn functions if we
+            //send the argument as true
             StartCoroutine(UnpauseGame(true));
         }
         else

@@ -61,7 +61,7 @@ public class RobotBehaviour : MonoBehaviour {
                
                 currentCommand = Commands[0];
                 //begin the lifetime timer on currentCommand
-                StartCoroutine(currentCommand.FinishedCoroutine());
+               
             }
             
         }

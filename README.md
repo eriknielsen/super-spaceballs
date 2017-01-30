@@ -7,12 +7,10 @@ En match består av ett antal rundor. I varje runda så får spelaren göra ett 
 Ett drag består av flera handlingar/kommandon.
 ## Todo
 - En TurnHandler som alltid funkar lokalt med två spelare, i replay och i nätverk.
-
-
-#
-* Menu som aktiveras/avaktiveras av GameBehaviour.done
-* Man ska kunna gå från ett aktiverat PlayBehaviour(alltså att man spelar) till menyn och sedan tillbaka. done
-* PlayBehaviour ska aktiveras, turnhandlers instanseras av PB och spelet hålls igång av PB. done
+- ReplayLastMove() => spela upp det senaste draget. 
+- Menu som aktiveras/avaktiveras av GameBehaviour.done
+- Man ska kunna gå från ett aktiverat PlayBehaviour(alltså att man spelar) till menyn och sedan tillbaka. done
+- PlayBehaviour ska aktiveras, turnhandlers instanseras av PB och spelet hålls igång av PB. done
 
 
 

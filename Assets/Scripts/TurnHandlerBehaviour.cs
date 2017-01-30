@@ -48,17 +48,8 @@ public class TurnHandlerBehaviour : MonoBehaviour
         moves = new List<Move>();
         robots = new List<GameObject>();
 
-
         CreateRobots();
-        turns = 1;
-        
-
-        
-        
-    }
-    void Start()
-    {
-       
+        turns = 1;        
     }
     void CreateRobots()
     {
@@ -111,12 +102,11 @@ public class TurnHandlerBehaviour : MonoBehaviour
     {
         if (Turns > 0)
         {
-            //remove all shockwaves
+            
             //reset all robots to the previous' move's position
             int turnIndex = 0;
             for (int i = Turns - 1; i < Turns * robots.Count; i++)
-            {
-
+            {   
                 turnIndex = (Turns - 1) * robots.Count + i;
                 robots[i].transform.position = moves[turnIndex].position;
                 robots[i].GetComponent<Rigidbody2D>().velocity = moves[turnIndex].velocity;
@@ -186,7 +176,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         }
 
     }
-    public IEnumerator ReplayLastTurn()
+    public void ReplayLastTurn()
     {
         //save commando lists in robots where they are longer than 0
         //and put them in that robots oldCommands<List>
@@ -208,12 +198,14 @@ public class TurnHandlerBehaviour : MonoBehaviour
             r.GetComponent<Rigidbody2D>().velocity = m.velocity;
             r.transform.position = m.position;
             r.transform.rotation = m.rotation;
-            Debug.Log("count of mcomands: " + m.commands.Count);
+           
             r.GetComponent<RobotBehaviour>().Commands.AddRange(m.commands);
         }
 
-        //wait the round time and fill the commandlist with the oldCommands
-        yield return new WaitForSeconds(roundTime);
+        
+    }
+    public void RevertToOldCommands()
+    {
         foreach (GameObject r in robots)
         {
             if (r.GetComponent<RobotBehaviour>().oldCommands.Count > 0)
@@ -224,7 +216,5 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
             }
         }
-
-        
     }
 }
