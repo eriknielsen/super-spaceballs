@@ -20,47 +20,39 @@ public class ArsonisticSoundManager : MonoBehaviour {
     private float sFXVolume;
     private float currentClipVolume;
 
-    void Start() {
-        ResetVolume();
-	}
-
     public void ResetVolume() {
         globalVolume = defaultGlobalVolume;
         musicVolume = defaultMusicVolume;
         sFXVolume = defaultSFXVolume;
     }
 
-    public void PlaySFX(AudioSource sound, GameObject callingObject, bool follow) {
-        currentClipVolume = sFXVolume * globalVolume * sound.volume;
-        PlaySound(sound, callingObject.transform, follow, currentClipVolume, 1f);
+	public void PlaySFX(GameObject sound, bool follow, GameObject callingObject) {
+		currentClipVolume = sFXVolume * globalVolume * sound.GetComponent<AudioSource>().volume;
+		PlaySound(sound, follow, currentClipVolume, 1f, callingObject.transform);
     }
 
-	public void PlayMusic(AudioSource sound, GameObject callingObject, bool follow) {
-		currentClipVolume = musicVolume * globalVolume * sound.volume;
-		PlaySound(sound, callingObject.transform, follow, currentClipVolume, 1f);
+	public void PlayReptitiveSFX(GameObject sound, bool follow, GameObject callingObject) {
+        float randomPitch = Random.Range(lowPitchRange, highPitchRange);
+		currentClipVolume = sFXVolume * globalVolume * sound.GetComponent<AudioSource>().volume;
+		PlaySound(sound, follow, currentClipVolume, randomPitch, callingObject.transform);
+    }
+
+	public void PlayMusic(GameObject sound, bool follow, GameObject callingObject) {
+		currentClipVolume = musicVolume * globalVolume * sound.GetComponent<AudioSource>().volume;
+		PlaySound(sound, follow, currentClipVolume, 1f, callingObject.transform);
 	}
 
-	public void PlayReptitiveSFX(AudioSource sound, GameObject callingObject, bool follow) {
-        float randomPitch = Random.Range(lowPitchRange, highPitchRange);
-        currentClipVolume = sFXVolume * globalVolume * sound.volume;
-        //PlaySound(sound, callingObject.transform, follow, currentClipVolume);
+
+	private void PlaySound(GameObject sound, bool follow, float volume, float pitch, Transform emitter) {
+		GameObject go = (GameObject) Instantiate(sound, emitter.position, Quaternion.identity); //Instantiates the sound prefab at emitter position
+		if (follow)
+			go.transform.parent = emitter; //Sets calling game object as parent so that the audio source follows it
+		
+		go.GetComponent<AudioSource>().volume = volume;
+		go.GetComponent<AudioSource>().pitch = pitch;
+		go.GetComponent<AudioSource>().Play();
+		Destroy(go, go.GetComponent<AudioSource>().clip.length); //Destroys the new game object after the sound finishes playing
     }
-
-    public void PlaySound(AudioSource sound, Transform sourceTransform, bool follow, float volume, float pitch) {
-        GameObject go = new GameObject("Audio: " + sound.clip.name);    //Creates a new empty game object
-        go.transform.position = sourceTransform.position;               //Moves the new game object to location of the calling game object
-        if (follow)
-            go.transform.parent = sourceTransform;                      //Sets calling game object as parent so that the audio source follows it
-
-        AudioSource source = go.AddComponent<AudioSource>();            //Creates and adds an audio source to the new game object
-
-        //source.clip = clip;
-        source.volume = volume;
-        source.pitch = pitch;
-        source.Play();
-        //Destroy(go, clip.length);                                       //Destroys the new game object after the sound finishes playing
-    }
-
 
     //	private bool Invariant(){ //if (Invariant()) {
     //		if ((1 >= globalVolume && globalVolume >= 0) && (1 >= musicVolume && musicVolume >= 0) && (1 >= sFXVolume && sFXVolume >= 0)) {
