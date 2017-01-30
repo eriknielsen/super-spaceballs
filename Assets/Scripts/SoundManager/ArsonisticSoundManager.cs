@@ -43,7 +43,7 @@ public class ArsonisticSoundManager : MonoBehaviour {
 	public void PlayReptitiveSFX(AudioSource sound, GameObject callingObject, bool follow) {
         float randomPitch = Random.Range(lowPitchRange, highPitchRange);
         currentClipVolume = sFXVolume * globalVolume * sound.volume;
-        PlaySound(sound, callingObject.transform, follow, currentClipVolume);
+        //PlaySound(sound, callingObject.transform, follow, currentClipVolume);
     }
 
     public void PlaySound(AudioSource sound, Transform sourceTransform, bool follow, float volume, float pitch) {
