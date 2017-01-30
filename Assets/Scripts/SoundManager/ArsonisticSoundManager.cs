@@ -35,6 +35,11 @@ public class ArsonisticSoundManager : MonoBehaviour {
         PlaySound(sound, callingObject.transform, follow, currentClipVolume, 1f);
     }
 
+	public void PlayMusic(AudioSource sound, GameObject callingObject, bool follow) {
+		currentClipVolume = musicVolume * globalVolume * sound.volume;
+		PlaySound(sound, callingObject.transform, follow, currentClipVolume, 1f);
+	}
+
 	public void PlayReptitiveSFX(AudioSource sound, GameObject callingObject, bool follow) {
         float randomPitch = Random.Range(lowPitchRange, highPitchRange);
         currentClipVolume = sFXVolume * globalVolume * sound.volume;
@@ -48,11 +53,12 @@ public class ArsonisticSoundManager : MonoBehaviour {
             go.transform.parent = sourceTransform;                      //Sets calling game object as parent so that the audio source follows it
 
         AudioSource source = go.AddComponent<AudioSource>();            //Creates and adds an audio source to the new game object
-        source.clip = clip;
+
+        //source.clip = clip;
         source.volume = volume;
         source.pitch = pitch;
         source.Play();
-        Destroy(go, clip.length);                                       //Destroys the new game object after the sound finishes playing
+        //Destroy(go, clip.length);                                       //Destroys the new game object after the sound finishes playing
     }
 
 

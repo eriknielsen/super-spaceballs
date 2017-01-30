@@ -19,11 +19,11 @@ public class SoundManagerAPI : MonoBehaviour{
 		DontDestroyOnLoad(gameObject);
 	}
 
-    private SoundManager soundManager;
+    private ArsonisticSoundManager soundManager;
 
     void Start(){
         if (soundManager == null)
-            soundManager = GetComponent<SoundManager>();
+			soundManager = GetComponent<ArsonisticSoundManager>();
         soundManager.ResetVolume();
 	}
 
@@ -35,11 +35,4 @@ public class SoundManagerAPI : MonoBehaviour{
         soundManager.PlayMusic(sound);
     }
 
-    public void PlayLoopingSFX(AudioSource sound) {
-        soundManager.PlayLoopingSFX(sound);
-    }
-
-    public void PlayLoopingMusic(AudioSource sound) {
-        soundManager.PlayLoopingMusic(sound);
-    }
 }
