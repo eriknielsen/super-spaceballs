@@ -102,7 +102,7 @@ public class RobotBehaviour : MonoBehaviour {
         if(other.gameObject.tag == "Shockwave")
         {
             //apply some force
-            rb.AddForce(other.gameObject.GetComponent<ShockwaveBehaviour>().pushForce
+            rb.AddForce(other.gameObject.GetComponent<ShockwaveBehaviour>().currentPushForce
                 * other.gameObject.GetComponent<Rigidbody2D>().velocity.normalized);
             Debug.Log("hit by shockwave!");
         }

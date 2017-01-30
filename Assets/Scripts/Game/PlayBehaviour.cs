@@ -16,7 +16,7 @@ public class PlayBehaviour : MonoBehaviour {
     public GameObject InGameUIPrefab;
     public GameObject turnHandlerPrefab;
 
-    public Text currentTurnhandlerText;
+   
     public delegate void ReturnMenuButtonClicked();
     public static event ReturnMenuButtonClicked OnReturnMenuButtonClick;
 
@@ -46,7 +46,7 @@ public class PlayBehaviour : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        currentTurnhandlerText.text = "Current turnhandler is: " + currentTurnHandler;
+
 
         //listen  for buttonpresses like wanting to send your move etc
         if (Input.GetKeyDown(KeyCode.Return))

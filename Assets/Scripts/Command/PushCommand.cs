@@ -10,16 +10,19 @@ public class PushCommand : Command {
     {
         lifeDuration = lifetime;
         lifeTimer = lifeDuration;
-        chargeTime = lifetime;
+        chargeTime = 0;
         robot = r;
         this.turn = turn;
-        targetPosition = target;
+        Vector3 target3 = new Vector3(target.x, target.y, 0);
+        targetPosition = target3 - r.transform.position;
+       
     }
     public override void Execute()
     {
         if (lifeTimer >= 0)
         {
-            chargeTime += Time.deltaTime;
+            
+            chargeTime = chargeTime + Time.deltaTime;
             lifeTimer -= Time.deltaTime;
         }
         else
@@ -31,6 +34,7 @@ public class PushCommand : Command {
             //send out shockwave
             if(OnInstantiateShockWave!= null)
             {
+                
                 OnInstantiateShockWave(robot, targetPosition, chargeTime);
             }
         }

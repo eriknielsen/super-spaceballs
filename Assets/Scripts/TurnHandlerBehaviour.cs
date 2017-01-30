@@ -6,7 +6,7 @@ using System.Linq;
 public class TurnHandlerBehaviour : MonoBehaviour
 {
     [SerializeField]
-    private RobotBehaviour robotPrefab;
+    private GameObject robotPrefab;
     [SerializeField]
     GameObject shockWavePrefab;
     [SerializeField]
@@ -21,6 +21,9 @@ public class TurnHandlerBehaviour : MonoBehaviour
     List<GameObject> entities;
     private List<GameObject> robots;
     private int turns;
+
+    float robotWidth;
+    float robotHeight;
 
     BoxCollider2D bc2D;
 
@@ -46,6 +49,8 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
     void Awake()
     {
+        robotHeight = robotPrefab.GetComponent<SpriteRenderer>().bounds.max.y;
+        robotWidth = robotPrefab.GetComponent<SpriteRenderer>().bounds.max.x;
         bc2D = GetComponent<BoxCollider2D>();
         selectedCommand = AvailableCommands.PushCommand;
         moves = new List<Move>();
@@ -138,14 +143,14 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 Vector3 mousePosition = Input.mousePosition;
                 Vector3 pointPosition = Camera.main.ScreenToWorldPoint(mousePosition);
                 selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(new MoveCommand(selectedRobot, pointPosition, 2, Turns));
-                Debug.Log("Command Added!");
+                Debug.Log("MoveCommand Added!");
             }
             if(selectedCommand == AvailableCommands.PushCommand)
             {
                 Vector3 mousePosition = Input.mousePosition;
                 Vector3 pointPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-                selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(new PushCommand(selectedRobot, pointPosition, 2, Turns));
-                Debug.Log("Command Added!");
+                selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(new PushCommand(selectedRobot, pointPosition, 1, Turns));
+                Debug.Log("PushCommand Added!");
             }
         }
     }
@@ -159,6 +164,16 @@ public class TurnHandlerBehaviour : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             GiveCommandToSelectedRobot();
+        }
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            Debug.Log("movecommand chosen");
+            selectedCommand = AvailableCommands.MoveCommand;
+        }
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            Debug.Log("pushcommand chosen");
+            selectedCommand = AvailableCommands.PushCommand;
         }
     }
     public void Activate(bool activate)
@@ -236,13 +251,16 @@ public class TurnHandlerBehaviour : MonoBehaviour
         {
             if (shockWavePrefab != null)
             {
-                //also need to set for how strong it will be
-                GameObject sw = Instantiate(shockWavePrefab, robot.transform.position, new Quaternion()) as GameObject;
+                
+                Vector3 offsettedPosition = new Vector3(dir.normalized.x * robotWidth/3, dir.normalized.y * robotHeight/3) + robot.transform.position;
+
+                GameObject sw = Instantiate(shockWavePrefab, offsettedPosition, new Quaternion()) as GameObject;
                 entities.Add(sw);
                 ShockwaveBehaviour svbh = sw.GetComponent<ShockwaveBehaviour>();
-                svbh.initialPushForce = chargeTime * 2;
-                svbh.pushForce = svbh.initialPushForce;
-                sw.GetComponent<Rigidbody2D>().AddForce(svbh.initialPushForce * dir.normalized);
+                svbh.extraChargeForce = chargeTime * 2;
+                transform.rotation.SetLookRotation(dir.normalized);
+                svbh.direction = dir.normalized;
+                //change rotation
 
             }
             else

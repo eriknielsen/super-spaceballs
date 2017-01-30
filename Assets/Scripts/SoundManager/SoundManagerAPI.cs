@@ -28,11 +28,11 @@ public class SoundManagerAPI : MonoBehaviour{
 	}
 
 	public void PlaySFX(AudioSource sound){
-        soundManager.PlaySFX(sound);
+        //soundManager.PlaySFX(sound);
 	}
 
     public void PlayMusic(AudioSource sound) {
-        soundManager.PlayMusic(sound);
+        //soundManager.PlayMusic(sound);
     }
 
 }
