@@ -18,6 +18,7 @@ public class RobotBehaviour : MonoBehaviour {
     //robot's playstate's updatestate calls the current command's execute
     private Command currentCommand;
 
+    Rigidbody2D rb;
     public IRobotState CurrentState
     {
         get { return currentState; }
@@ -37,6 +38,7 @@ public class RobotBehaviour : MonoBehaviour {
         pauseState = new PauseState(gameObject);
         playState = new PlayState(gameObject);
         currentState = pauseState;
+        rb = GetComponent<Rigidbody2D>();
     }
     void Start()
     {
@@ -93,6 +95,16 @@ public class RobotBehaviour : MonoBehaviour {
         if (OnClick != null && shouldSendEvent)
         {
             OnClick(gameObject);
+        }
+    }
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.gameObject.tag == "Shockwave")
+        {
+            //apply some force
+            rb.AddForce(other.gameObject.GetComponent<ShockwaveBehaviour>().pushForce
+                * other.gameObject.GetComponent<Rigidbody2D>().velocity.normalized);
+            Debug.Log("hit by shockwave!");
         }
     }
 }
