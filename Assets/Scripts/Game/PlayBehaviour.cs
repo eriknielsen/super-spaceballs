@@ -29,7 +29,7 @@ public class PlayBehaviour : MonoBehaviour {
         InGameUIInstance = Instantiate(InGameUIPrefab);
         turnHandler1 = transform.FindChild("TurnHandlerLeft").GetComponent<TurnHandlerBehaviour>();
         turnHandler2 = transform.FindChild("TurnHandlerRight").GetComponent<TurnHandlerBehaviour>();
-        Time.timeScale = 0;
+        //Time.timeScale = 0;
       
     }
     // Use this for initialization
@@ -77,7 +77,7 @@ public class PlayBehaviour : MonoBehaviour {
     IEnumerator UnpauseGame(bool asReplay)
     {
         InGameUIInstance.SetActive(false);
-        Time.timeScale = 1;
+        //Time.timeScale = 1;
         ActivateCorrectTurnHandler(false);
         if (asReplay)
         {
@@ -108,7 +108,7 @@ public class PlayBehaviour : MonoBehaviour {
     void PauseGame()
     {
         InGameUIInstance.SetActive(true);
-        Time.timeScale = 0;
+        //Time.timeScale = 0;
         turnHandler1.PauseGame();
         turnHandler2.PauseGame();
     }

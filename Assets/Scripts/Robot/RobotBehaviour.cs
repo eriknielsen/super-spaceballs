@@ -18,6 +18,9 @@ public class RobotBehaviour : MonoBehaviour {
     //robot's playstate's updatestate calls the current command's execute
     private Command currentCommand;
 
+    public Vector2 prevVelocity;
+
+
     Rigidbody2D rb;
     public IRobotState CurrentState
     {
@@ -54,21 +57,14 @@ public class RobotBehaviour : MonoBehaviour {
     /// </summary>
     public void DecideCommand()
     {
-       
         if (Commands.Count > 0)
         {
-            
             if (Commands[0].isFinished == false)
             {
-               
                 currentCommand = Commands[0];
-                //begin the lifetime timer on currentCommand
-               
             }
-            
         }
     }
-    
     public void ClearCommands()
     {
         Commands.Clear();
@@ -104,7 +100,7 @@ public class RobotBehaviour : MonoBehaviour {
             //apply some force
             rb.AddForce(other.gameObject.GetComponent<ShockwaveBehaviour>().currentPushForce
                 * other.gameObject.GetComponent<Rigidbody2D>().velocity.normalized);
-            Debug.Log("hit by shockwave!");
+
         }
     }
 }

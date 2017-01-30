@@ -18,7 +18,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
     private AvailableCommands selectedCommand;
     private enum AvailableCommands { MoveCommand, PushCommand };
 
-    List<GameObject> entities;
+    List<Entity> entities;
     private List<GameObject> robots;
     private int turns;
 
@@ -55,7 +55,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         selectedCommand = AvailableCommands.PushCommand;
         moves = new List<Move>();
         robots = new List<GameObject>();
-        entities = new List<GameObject>();
+        entities = new List<Entity>();
 
         CreateRobots();
         turns = 1;
@@ -88,6 +88,30 @@ public class TurnHandlerBehaviour : MonoBehaviour
         {
             r.GetComponent<RobotBehaviour>().CurrentState.EnterPauseState();
         }
+
+
+        //remove IEntities who's gameobjects have been removed
+        //and pause the rest
+        List<Entity> newList = new List<Entity>();
+        for(int i = 0; i < entities.Count; i++)
+        {
+            if (entities[i] != null)
+                newList.Add(entities[i]);
+
+        }
+        entities = newList;
+        for(int i = 0;i < entities.Count; i++)
+        {
+           
+            if(entities[i] != null)
+            {
+                entities[i].EnterPause();
+            }
+            else
+            {
+                
+            }
+        }
     }
     public void UnpauseGame()
     {
@@ -100,9 +124,23 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 Debug.Log("Null at " + i);
             }
             i++;
+            //save the robots position,velocity, commands etc
             moves.Add(new Move(r, Turns, r.GetComponent<RobotBehaviour>().Commands));
+            
             r.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
             
+        }
+        //also unpause all entities
+        foreach (Entity e in entities)
+        {
+            if(e != null)
+            {
+                e.EnterPlay();
+            }
+            else {
+                Debug.Log("entity was null");
+            }
+                
         }
         turns++;
     }
@@ -255,10 +293,11 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 Vector3 offsettedPosition = new Vector3(dir.normalized.x * robotWidth/3, dir.normalized.y * robotHeight/3) + robot.transform.position;
 
                 GameObject sw = Instantiate(shockWavePrefab, offsettedPosition, new Quaternion()) as GameObject;
-                entities.Add(sw);
+                
                 ShockwaveBehaviour svbh = sw.GetComponent<ShockwaveBehaviour>();
+                entities.Add(svbh);
                 svbh.extraChargeForce = chargeTime * 2;
-                transform.rotation.SetLookRotation(dir.normalized);
+                
                 svbh.direction = dir.normalized;
                 //change rotation
 

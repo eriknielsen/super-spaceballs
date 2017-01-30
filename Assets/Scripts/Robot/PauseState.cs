@@ -25,6 +25,7 @@ public class PauseState : IRobotState
         robotScript.CurrentState = robotScript.playState;
    
         robotScript.DecideCommand();
+        robot.GetComponent<Rigidbody2D>().velocity = robotScript.prevVelocity;
           
     }
     public void UpdateState()
