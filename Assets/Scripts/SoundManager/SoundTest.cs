@@ -7,7 +7,8 @@ public class SoundTest : MonoBehaviour {
 	public GameObject testSound2;
 
 	void Start () {
-		SoundManagerAPI.instance.PlaySFX(testSound, true, this.gameObject);
+		//ArsonisticSoundManager.instance.ResetVolume();
+		ArsonisticSoundManager.instance.PlaySFX(testSound, true, this.gameObject);
 		//SoundManagerAPI.instance.PlayMusic(testSound2, true, this.gameObject);
 	}
 	
