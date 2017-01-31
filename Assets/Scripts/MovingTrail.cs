@@ -2,116 +2,112 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
-public class MovingTrail : MonoBehaviour
+public class MovingTrail
 {
+    TrailUpdater trailUpdater;
 
-    Sprite nodeSprite, trailMarkingSprite;
-
-    List<SubTrail> trails;
-    Vector2 startPosition, endPosition;
-    GameObject movingObject;
-    Vector2 movingObjectForce;
-
-    class SubTrail
+    public MovingTrail(MoveCommand moveCommand)
     {
+        GameObject g = new GameObject();
+        g.AddComponent<TrailUpdater>();
+        g.name = "TrailUpdater";
+        trailUpdater = g.GetComponent<TrailUpdater>();
+        trailUpdater.Initialize(moveCommand);
+    }
+
+    class TrailUpdater : MonoBehaviour
+    {
+        bool isFinished = false;
+        Sprite nodeSprite, trailMarkingSprite;
+        float nodeWidth = 1.0f, trailMarkingWidth = 0.5f;
+        Vector3 previousLocation;
+        float distanceBetweenMarkings = 1.0f;
         GameObject node;
         List<GameObject> trailMarkings;
         MoveCommand moveCommand;
+        float timeDuration;
 
-        Sprite nodeSprite, trailMarkingSprite;
-
-        public SubTrail(MoveCommand moveCommand, Sprite nodeSprite, Sprite trailMarkingSprite)
+        void Awake()
         {
-            node = new GameObject();
-            node.name = "Node";
+            nodeSprite = Resources.Load<Sprite>("Sprites/fotball2");
+            trailMarkingSprite = Resources.Load<Sprite>("Sprites/fotball2");
             trailMarkings = new List<GameObject>();
-            this.nodeSprite = nodeSprite;
-            this.trailMarkingSprite = trailMarkingSprite;
-            this.moveCommand = moveCommand;
-            if (nodeSprite == null || trailMarkingSprite == null)
-            {
-                Debug.LogWarning("Sprite for node or trailMarking is null.");
-            }
-            MakeTrail();
         }
 
-        void MakeTrail()
+       public void Initialize(MoveCommand moveCommand)
         {
-            Vector2 lastPosition = moveCommand.Robot.transform.position;
-            Vector2 lastSpeed = moveCommand.Robot.GetComponent<Rigidbody2D>().velocity;
-            float duration = moveCommand.LifeDuration;
-            float timeInterval = 0.1f;
-            Vector2 acceleration = moveCommand.ResultingForce / moveCommand.robot.GetComponent<Rigidbody2D>().mass;
-            for (float timeStamp = timeInterval; timeStamp < duration; timeStamp += timeInterval)
+            if (moveCommand.robot != null)
             {
-                Vector2 resultingPosition = GetResultingPosition(lastPosition, lastSpeed, acceleration, timeStamp);
-                lastPosition = resultingPosition;
-                lastSpeed = GetResultingSpeed(lastSpeed, acceleration, timeStamp);
-                if (timeStamp >= duration)
+                node = Instantiate(moveCommand.robot) as GameObject;
+                this.moveCommand = new MoveCommand(node, moveCommand);
+                node.GetComponent<RobotBehaviour>().Commands.Add(this.moveCommand);
+                node.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
+                node.name = "Node";
+                node.GetComponent<Rigidbody2D>().velocity = moveCommand.Robot.GetComponent<Rigidbody2D>().velocity;
+                timeDuration = moveCommand.LifeDuration;
+                StartCoroutine(MakeTrail());
+                node.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
+                previousLocation = node.transform.position;
+                nodeSprite = Resources.Load<Sprite>("Sprites/fotball2");
+                trailMarkingSprite = Resources.Load<Sprite>("Sprites/fotball2");
+                if (node.GetComponent<SpriteRenderer>() == null)
                 {
                     node.AddComponent<SpriteRenderer>();
-                    node.GetComponent<SpriteRenderer>().sprite = nodeSprite;
-                    node.transform.position = resultingPosition;
-                    if (nodeSprite != null)
-                    {
-                        float scaleFactor = 1 / nodeSprite.bounds.size.x;
-                        node.transform.localScale = new Vector3(scaleFactor, scaleFactor);
-                    }
-                    break;
                 }
+                node.GetComponent<SpriteRenderer>().sprite = nodeSprite;
+                node.GetComponent<SpriteRenderer>().color -= new Color(0, 0, 0, 0.5f);
 
-                trailMarkings.Add(new GameObject());
-                trailMarkings.Last().transform.position = resultingPosition;
-                trailMarkings.Last().AddComponent<SpriteRenderer>();
-                trailMarkings.Last().GetComponent<SpriteRenderer>().sprite = trailMarkingSprite;
-                trailMarkings.Last().transform.parent = node.transform;
-                trailMarkings.Last().name = "Trail Marking";
-                if (trailMarkingSprite != null)
-                {
-                    float scaleFactor = 1 / trailMarkingSprite.bounds.size.x;
-                    trailMarkings.Last().transform.localScale = new Vector3(scaleFactor, scaleFactor);
-                }
+                float sizeFactor = nodeWidth / nodeSprite.bounds.size.x;
+                node.transform.localScale = new Vector3(sizeFactor, sizeFactor);
+            }
+            else
+            {
+                UnityEngine.Debug.Log("The moving object reference passed to the MovingTrail-script is null, so no trail is created.");
             }
         }
 
-        Vector2 GetResultingPosition(Vector2 position, Vector2 speed, Vector2 acceleration, float time)
+        void Update()
         {
-            float xPosition = position.x + speed.x * time + (acceleration.x + Mathf.Pow(time, 2)) / 2;
-            float yPosition = position.y + speed.y * time + (acceleration.y + Mathf.Pow(time, 2)) / 2;
-            Vector2 resultingPosition = new Vector2(xPosition, yPosition);
-            return resultingPosition;
+            if (isFinished)
+            {
+                StopCoroutine(MakeTrail());
+            }
         }
 
-        Vector2 GetResultingSpeed(Vector2 speed, Vector2 acceleration, float time)
+        IEnumerator MakeTrail()
         {
-            Vector2 resultingSpeed = speed + acceleration * time;
-            return resultingSpeed;
+            if (node != null)
+            {
+                Stopwatch timer = new Stopwatch();
+                timer.Start();
+                float sizeFactorTrailMarking = trailMarkingWidth / trailMarkingSprite.bounds.size.x;
+                while (timer.Elapsed.TotalSeconds < timeDuration)
+                {
+                    float deltaDistance = Vector3.Distance(node.transform.position, previousLocation);
+                    if (deltaDistance > distanceBetweenMarkings)
+                    {
+                        GameObject trailMarking = new GameObject();
+                        trailMarking.name = "Trailmarking";
+                        trailMarking.AddComponent<SpriteRenderer>();
+                        trailMarking.GetComponent<SpriteRenderer>().sprite = trailMarkingSprite;
+                        trailMarkings.Add(trailMarking);
+                        previousLocation = node.transform.position;
+                        trailMarking.transform.position = previousLocation;
+                        sizeFactorTrailMarking = trailMarkingWidth / trailMarkingSprite.bounds.size.x;
+                        trailMarking.transform.localScale = new Vector3(sizeFactorTrailMarking, sizeFactorTrailMarking);
+                    }
+                    yield return new WaitForSeconds(0.0001f);
+                }
+                node.GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0);
+                node.GetComponent<RobotBehaviour>().CurrentState.EnterPauseState();
+                isFinished = true;
+            }
+            else
+            {
+                UnityEngine.Debug.Log("The node is soooo null");
+            }
         }
-    }
-
-    MovingTrail(GameObject movingObject, Vector2 startPos, Vector2 endPos)
-    {
-        this.movingObject = movingObject;
-        startPosition = startPos;
-        endPosition = endPos;
-    }
-
-    void Awake()
-    {
-        trails = new List<SubTrail>();
-        nodeSprite = Resources.Load<Sprite>("Sprites/fotball2");
-        trailMarkingSprite = Resources.Load<Sprite>("Sprites/fotball2");
-        GameObject g = new GameObject();
-        g.AddComponent<Rigidbody2D>();
-        g.AddComponent<Rigidbody2D>();
-        g.GetComponent<Rigidbody2D>().velocity = new Vector2(-10, 0);
-        MoveCommand command = new MoveCommand(g, g.transform.position + new Vector3(6, 2), 2, 1);
-        trails.Add(new SubTrail(command, nodeSprite, trailMarkingSprite));
-    }
-
-    public void ExtendPattern()
-    {
-       
     }
 }

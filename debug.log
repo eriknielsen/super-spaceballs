@@ -1,0 +1,3 @@
+[0131/140148:ERROR:file_io_win.cc(163)] CreateFile C:\Program Files (x86)\Junemike\Reports\Dump\settings.dat: Åtkomst nekad. (0x5)
+[0131/140148:ERROR:registration_protocol_win.cc(82)] TransactNamedPipe: Denna pipe har avslutats. (0x6D)
+[0131/140148:ERROR:file_io_win.cc(163)] CreateFile C:\Program Files (x86)\Junemike\Reports\Dump\settings.dat: Åtkomst nekad. (0x5)
