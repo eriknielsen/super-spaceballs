@@ -52,7 +52,7 @@ public class PlayBehaviour : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        Debug.Log(gameTimer.SecondsRemaining());
+
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
        
         //listen  for buttonpresses like wanting to send your move etc
