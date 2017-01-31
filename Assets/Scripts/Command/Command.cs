@@ -7,7 +7,9 @@ public abstract class Command {
     //execute is called by the robot
     public abstract void Execute();
     public bool isFinished = false;
-    public abstract IEnumerator FinishedCoroutine();
+    public float lifeDuration;
+    public float lifeTimer;
+  
     public Vector2 targetPosition;
     public int turn;
 }

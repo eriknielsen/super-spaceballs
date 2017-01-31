@@ -7,12 +7,10 @@ En match består av ett antal rundor. I varje runda så får spelaren göra ett 
 Ett drag består av flera handlingar/kommandon.
 ## Todo
 - En TurnHandler som alltid funkar lokalt med två spelare, i replay och i nätverk.
-
-
-#
-* Menu som aktiveras/avaktiveras av GameBehaviour.done
-* Man ska kunna gå från ett aktiverat PlayBehaviour(alltså att man spelar) till menyn och sedan tillbaka. done
-* PlayBehaviour ska aktiveras, turnhandlers instanseras av PB och spelet hålls igång av PB. done
+- ReplayLastMove() => spela upp det senaste draget. 
+- Menu som aktiveras/avaktiveras av GameBehaviour.done
+- Man ska kunna gå från ett aktiverat PlayBehaviour(alltså att man spelar) till menyn och sedan tillbaka. done
+- PlayBehaviour ska aktiveras, turnhandlers instanseras av PB och spelet hålls igång av PB. done
 
 
 
@@ -30,3 +28,9 @@ Ett drag består av flera handlingar/kommandon.
 * Utveckla i egna Unity-scener.
 * Skriv kod som förebygger null-referenser. Om det i ett visst kodstycke finns risk för en null-referens så ska åtgärder göras för att förhindra att den används. Detta kan göras genom t.ex. if-satser.
 * Ändra inte namn på tags utan att samtala med gruppen.
+# Git
+* Git status för att se om filer har lags till i comitten, om de har någon konflikt osv.
+* Git pull för att ta ner det senaste från repot.
+* Git add för att lägga till filer i en commit. Git add . lägger till alla ändrade filer. Git add filnamn lägger till en fil/mapp
+* Git commit -m "meddelande" där meddelande är namnet på comitten.
+* Git push för att pusha. Kräver login.

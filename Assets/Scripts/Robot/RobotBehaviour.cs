@@ -18,6 +18,10 @@ public class RobotBehaviour : MonoBehaviour {
     //robot's playstate's updatestate calls the current command's execute
     private Command currentCommand;
 
+    public Vector2 prevVelocity;
+
+
+    Rigidbody2D rb;
     public IRobotState CurrentState
     {
         get { return currentState; }
@@ -37,6 +41,7 @@ public class RobotBehaviour : MonoBehaviour {
         pauseState = new PauseState(gameObject);
         playState = new PlayState(gameObject);
         currentState = pauseState;
+        rb = GetComponent<Rigidbody2D>();
     }
     void Start()
     {
@@ -52,21 +57,14 @@ public class RobotBehaviour : MonoBehaviour {
     /// </summary>
     public void DecideCommand()
     {
-       
         if (Commands.Count > 0)
         {
-            
             if (Commands[0].isFinished == false)
             {
-               
                 currentCommand = Commands[0];
-                //begin the lifetime timer on currentCommand
-                StartCoroutine(currentCommand.FinishedCoroutine());
             }
-            
         }
     }
-    
     public void ClearCommands()
     {
         Commands.Clear();
@@ -93,6 +91,16 @@ public class RobotBehaviour : MonoBehaviour {
         if (OnClick != null && shouldSendEvent)
         {
             OnClick(gameObject);
+        }
+    }
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.gameObject.tag == "Shockwave")
+        {
+            //apply some force
+            rb.AddForce(other.gameObject.GetComponent<ShockwaveBehaviour>().currentPushForce
+                * other.gameObject.GetComponent<Rigidbody2D>().velocity.normalized);
+
         }
     }
 }

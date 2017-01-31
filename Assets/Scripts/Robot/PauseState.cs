@@ -21,10 +21,11 @@ public class PauseState : IRobotState
 
     public void EnterPlayState()
     {
-        Debug.Log("entering play: commandcount: " + robotScript.commands.Count);
+
         robotScript.CurrentState = robotScript.playState;
    
         robotScript.DecideCommand();
+        robot.GetComponent<Rigidbody2D>().velocity = robotScript.prevVelocity;
           
     }
     public void UpdateState()

@@ -27,16 +27,7 @@ public class GameBehaviour : MonoBehaviour {
     }
     // Use this for initialization
     void Start () {
-
-        //instansera soundmanager
-        //currentState = State.Menu;
-
-        //listen for clicking on the playbutton in menu
-        //MainMenuInstance.GetComponent<MenuBehaviour>().PressPlay();
-        
-        //listen for return to menu button in play
-        //PlayBehaviour.OnReturnMenuButtonClick += new PlayBehaviour.ReturnMenuButtonClicked(EnterMenuFromPlay);
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -46,9 +37,7 @@ public class GameBehaviour : MonoBehaviour {
     {
 
         //do stuff to make local play happen
-     
 
- 
         MainMenuInstance.GetComponent<MenuBehaviour>().Activate(false);
         //LocalPlayInstance.GetComponent<PlayBehaviour>().enabled = true;
 

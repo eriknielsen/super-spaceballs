@@ -23,6 +23,7 @@ public class Move {
         foreach(Command c in this.commands)
         {
             c.isFinished = false;
+            c.lifeTimer = c.lifeDuration;
         }
         this.rotation = robot.transform.rotation;
         this.angularVelocity = robot.GetComponent<Rigidbody2D>().angularVelocity;
