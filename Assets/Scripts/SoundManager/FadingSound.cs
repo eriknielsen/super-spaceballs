@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// Incompatible with volume-variable changes (through SoundManager) during fade.
+
 public class FadingSound : MonoBehaviour {
 
 	public float fadeTarget; //Multiple to fade volume by (0.8 fades volume by 20%)
@@ -19,16 +21,11 @@ public class FadingSound : MonoBehaviour {
 		StartCoroutine("FadeCoroutine");
 	}
 
-	void FixedUpdate () {
-		
-	}
-	
 	IEnumerator FadeCoroutine() {
 		float fadeTime = 0;
 		while (Time.time < startTime + fadeDelay + fadeDuration) {
 			if (Time.time > startTime + fadeDelay) {
 				fadeTime = (Time.time - (startTime + fadeDelay)) / fadeDuration;
-				Debug.Log (fadeTime);
 				sound.volume = FadeLERP(startVolume, fadeTarget, fadeTime);
 			}
 			yield return new WaitForSeconds(1 / updatesPerSecond);
