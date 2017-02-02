@@ -25,7 +25,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
     float robotWidth;
     float robotHeight;
 
-    BoxCollider2D bc2D;
+    private BoxCollider2D bc2D;
 
     //en lista med drag
     public List<Move> moves;
@@ -36,6 +36,14 @@ public class TurnHandlerBehaviour : MonoBehaviour
         get
         {
             return turns;
+        }
+    }
+
+    public int NumberOfRobots
+    {
+        get
+        {
+            return numberOfRobots;
         }
     }
 
@@ -52,16 +60,25 @@ public class TurnHandlerBehaviour : MonoBehaviour
         robotHeight = robotPrefab.GetComponent<SpriteRenderer>().bounds.max.y;
         robotWidth = robotPrefab.GetComponent<SpriteRenderer>().bounds.max.x;
         bc2D = GetComponent<BoxCollider2D>();
+        Debug.Log("bc2d reference: " + bc2D);
         selectedCommand = AvailableCommands.PushCommand;
         moves = new List<Move>();
         robots = new List<GameObject>();
         entities = new List<Entity>();
+        
+        //CreateRobots(numberOfRobots);
+        CreateRobots(numberOfRobots);
 
-        CreateRobots();
         turns = 1;
 
-     }
-    void CreateRobots()
+    }
+
+    void OnDestroy()
+    {
+        DestroyRobots();
+    }
+
+    void CreateRobots(int numberOfRobots)
     {
         if (robotPrefab != null)
         {
@@ -79,6 +96,18 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
         }
         bc2D.enabled = false;
+    }
+
+    void DestroyRobots()
+    {
+        if (robots != null)
+        {
+            for (int i = 0; i < robots.Count; i++)
+            {
+                Destroy(robots[i]);
+            }
+            robots.Clear();
+        }
     }
 
     public void PauseGame()
@@ -214,6 +243,17 @@ public class TurnHandlerBehaviour : MonoBehaviour
             selectedCommand = AvailableCommands.PushCommand;
         }
     }
+    
+    void OnEnable()
+    {
+        Debug.Log("Enabled!");
+    }
+
+    void OnDisable()
+    {
+        Debug.Log("Disabled!");
+    }
+
     public void Activate(bool activate)
     {
         if (activate == true)
@@ -234,6 +274,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         {
            
             RobotBehaviour.OnClick -= new RobotBehaviour.ClickedOnRobot(ChooseRobot);
+
             foreach (GameObject r in robots)
             {
                 r.GetComponent<RobotBehaviour>().shouldSendEvent = false;

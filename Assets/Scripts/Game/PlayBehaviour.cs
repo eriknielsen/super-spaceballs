@@ -2,12 +2,17 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class PlayBehaviour : MonoBehaviour {
+public class PlayBehaviour : MonoBehaviour
+{
     //class for local play
-
+    [SerializeField]
+    TurnHandlerBehaviour leftPrefab;
+    [SerializeField]
+    TurnHandlerBehaviour rightPrefab;
 
     TurnHandlerBehaviour turnHandler1;
     TurnHandlerBehaviour turnHandler2;
+
     bool isTH1Done = false;
     bool isTH2Done = false;
     int currentTurnHandler;
@@ -21,7 +26,7 @@ public class PlayBehaviour : MonoBehaviour {
     public GameObject InGameUIPrefab;
     public GameObject turnHandlerPrefab;
 
-   
+
     public delegate void ReturnMenuButtonClicked();
     public static event ReturnMenuButtonClicked OnReturnMenuButtonClick;
 
@@ -32,37 +37,89 @@ public class PlayBehaviour : MonoBehaviour {
     {
         gameTimer = new GameTimer(120);
         InGameUIInstance = Instantiate(InGameUIPrefab);
-        turnHandler1 = transform.FindChild("TurnHandlerLeft").GetComponent<TurnHandlerBehaviour>();
-        turnHandler2 = transform.FindChild("TurnHandlerRight").GetComponent<TurnHandlerBehaviour>();
+        //CreateTurnHandlers();
         gameTimeText = InGameUIInstance.transform.FindChild("GameTimeText").GetComponent<Text>();
-      
+        if (turnHandler1 == null && turnHandler2 == null)
+        {
+            Debug.Log("NOT NULL");
+        }
     }
+
+    public void CreateTurnHandlers()
+    {
+        if(leftPrefab != null)
+        {
+            if(turnHandler1 == null)
+            {
+                turnHandler1 = Instantiate(leftPrefab);
+                turnHandler1.transform.parent = transform;
+            }
+            else
+            {
+                Debug.LogWarning("'turnHandler1' already holds an instance of TurnHandlerBehaviour. Call 'DestroyTurnHandlers()' before calling this function.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("'leftPrefab' doesn't hold a reference, so no TurnHandler is created.");
+        }
+
+        if(rightPrefab != null)
+        {
+            if(turnHandler2 == null)
+            {
+                turnHandler2 = Instantiate(rightPrefab);
+                turnHandler2.transform.parent = transform;
+            }
+            else
+            {
+                Debug.LogWarning("'turnHandler2' already holds an instance of TurnHandlerBehaviour. Call 'DestroyTurnHandlers()' before calling this function.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("'rightPrefab' doesn't hold a reference, so no TurnHandler is created.");
+        }
+    }
+
+    void DestroyTurnHandlers()
+    {
+        if (turnHandler1 != null)
+        {
+            Destroy(turnHandler1.gameObject);
+        }
+        if(turnHandler2 != null)
+        {
+            Destroy(turnHandler2.gameObject);
+        }
+    }
+
     // Use this for initialization
-    void Start () {
-        transform.FindChild("TurnHandlerRight").gameObject.SetActive(true);
-        transform.FindChild("TurnHandlerLeft").gameObject.SetActive(true);
+    void Start()
+    {
         InGameUIInstance.SetActive(true);
 
         //decide who goes first
-        NewTurn();
+        //NewTurn();
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
 
 
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
 
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
-       
+
         //listen  for buttonpresses like wanting to send your move etc
         if (Input.GetKeyDown(KeyCode.Return))
         {
             if (currentTurnHandler == 1)
             {
-                isTH1Done = true;     
+                isTH1Done = true;
             }
-            else if(currentTurnHandler == 2)
+            else if (currentTurnHandler == 2)
             {
                 isTH2Done = true;
             }
@@ -76,8 +133,8 @@ public class PlayBehaviour : MonoBehaviour {
             else
             {
                 ChooseNextCurrentTurnHandler();
-                ActivateCorrectTurnHandler(true);
-            }   
+                ActivateTurnHandler(true);
+            }
         }
     }
     ///if we replayed the last turn, then we dont want to do the newturn stuff
@@ -86,18 +143,18 @@ public class PlayBehaviour : MonoBehaviour {
         InGameUIInstance.transform.GetChild(0).gameObject.SetActive(false);
         InGameUIInstance.transform.GetChild(1).gameObject.SetActive(false);
 
-        ActivateCorrectTurnHandler(false);
+        ActivateTurnHandler(false);
         if (asReplay)
         {
             turnHandler1.ReplayLastTurn();
             turnHandler2.ReplayLastTurn();
         }
-        
+
         turnHandler1.UnpauseGame();
         turnHandler2.UnpauseGame();
         StartCoroutine(gameTimer.CountDownSeconds(4));
         yield return new WaitForSeconds(4f);
-        if(asReplay == false)
+        if (asReplay == false)
         {
             currentTurnHandler = -1;
             NewTurn();
@@ -108,11 +165,11 @@ public class PlayBehaviour : MonoBehaviour {
             // the commands they had before the replay back
             turnHandler1.RevertToOldCommands();
             turnHandler2.RevertToOldCommands();
-            ActivateCorrectTurnHandler(true);
-        }            
+            ActivateTurnHandler(true);
+        }
         PauseGame();
-        
-        
+
+
     }
     void PauseGame()
     {
@@ -127,9 +184,18 @@ public class PlayBehaviour : MonoBehaviour {
     /// activate true means to activate current turnhandler
     /// activate false means to deactivate current turnhandler
     /// </summary>
-    void ActivateCorrectTurnHandler(bool activate)
+    void ActivateTurnHandler(bool activate)
     {
-        
+        if (!turnHandler1.gameObject.activeSelf)
+        {
+            turnHandler1.gameObject.SetActive(true);
+        }
+        if (!turnHandler2.gameObject.activeSelf)
+        {
+            turnHandler2.gameObject.SetActive(true);
+        }
+
+
         if (activate)
         {
             //gives control to the current turnhandler
@@ -139,7 +205,7 @@ public class PlayBehaviour : MonoBehaviour {
                 Debug.Log("activating1");
                 //make sure to deactivate the other one
                 turnHandler2.Activate(false);
-             
+
             }
             else if (currentTurnHandler == 2 && !isTH2Done)
             {
@@ -151,46 +217,41 @@ public class PlayBehaviour : MonoBehaviour {
         }
         else
         {
-            if(currentTurnHandler == 1)
-            {
-                turnHandler1.Activate(false);
-            }
-            else if(currentTurnHandler == 2)
-            {
-                turnHandler2.Activate(false);
-            }
+            turnHandler1.Activate(false);
+            turnHandler2.Activate(false);
         }
     }
+
     void NewTurn()
     {
-        if(turnHandler1.Turns % 2 == 0)
+        if (turnHandler1.Turns % 2 == 0)
         {
             currentTurnHandler = 1;
-            
+
         }
         else
         {
             currentTurnHandler = 2;
-            
+
         }
         isTH1Done = false;
         isTH2Done = false;
 
-        ActivateCorrectTurnHandler(true);
+        ActivateTurnHandler(true);
     }
     void ChooseNextCurrentTurnHandler()
     {
         //if current is one and finished AND other one isnt done, 
         //give control to the other one
-        if(currentTurnHandler == 1 && isTH1Done && isTH2Done == false)
+        if (currentTurnHandler == 1 && isTH1Done && isTH2Done == false)
         {
             currentTurnHandler = 2;
         }
-        else if(currentTurnHandler == 2 && isTH2Done && isTH1Done == false)
+        else if (currentTurnHandler == 2 && isTH2Done && isTH1Done == false)
         {
-            currentTurnHandler = 1;  
+            currentTurnHandler = 1;
         }
-        else if(isTH1Done && isTH2Done)
+        else if (isTH1Done && isTH2Done)
         {
             currentTurnHandler = -1;
         }
@@ -203,23 +264,24 @@ public class PlayBehaviour : MonoBehaviour {
     /// <param name="activate"></param>
     public void Activate(bool activate)
     {
-        if(activate == false)
+        if (activate == false)
         {
-            
             //DEACTIVATE CURRENT TURNHANDLER
-            ActivateCorrectTurnHandler(false);
-            PauseGame();
+            //ActivateTurnHandler(false);
+            //PauseGame();
+            DestroyTurnHandlers();
             InGameUIInstance.SetActive(false);
             enabled = false;
-
         }
         else
         {
             enabled = true;
-            ActivateCorrectTurnHandler(true);
+            //ActivateTurnHandler(true);
+            CreateTurnHandlers();
+            NewTurn();
             InGameUIInstance.SetActive(true);
         }
-        
+
     }
     /// <summary>
     /// sends event to gamebehaviour about pausing the game
@@ -229,13 +291,13 @@ public class PlayBehaviour : MonoBehaviour {
     {
         //game behaviour calls Activate(false) in here
         OnReturnMenuButtonClick();
-        
+
     }
 
     public void ReplayLastTurn()
     {
         Debug.Log("replay?");
-        if(turnHandler1.Turns > 1)
+        if (turnHandler1.Turns > 1)
         {
             //unpause game calls the necessary replayturn functions if we
             //send the argument as true
@@ -244,7 +306,7 @@ public class PlayBehaviour : MonoBehaviour {
         else
         {
             Debug.Log("there needs to be at least one turn");
-        } 
+        }
     }
     public void ReplayButtonClick()
     {

@@ -97,7 +97,7 @@ public class MoveCommand : Command
         robot.GetComponent<Rigidbody2D>().AddForce(resultingForce);
     }
 
-    public override IEnumerator FinishedCoroutine()
+    public IEnumerator FinishedCoroutine()
     {
         yield return new WaitForSeconds(lifeDuration);
         isFinished = true;

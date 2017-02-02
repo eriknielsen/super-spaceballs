@@ -46,9 +46,10 @@ public class GameBehaviour : MonoBehaviour {
         
         
     }
+
     public void EnterMenuFromPlay()
     {
-       
+
         //let localplay handle itself
         LocalPlayInstance.GetComponent<PlayBehaviour>().Activate(false);
         //let mainmenu activate itself
