@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-// Incompatible with volume-variable changes (through SoundManager) during fade.
-
 public class FadingSound : MonoBehaviour {
 
 	public float fadeTarget; //Multiple to fade volume by (0.8 fades volume by 20%)
