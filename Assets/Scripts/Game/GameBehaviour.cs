@@ -20,8 +20,9 @@ public class GameBehaviour : MonoBehaviour {
         LocalPlayInstance.transform.parent = gameObject.transform;
         MainMenuInstance = Instantiate(MenuPrefab);
         MainMenuInstance.transform.parent = gameObject.transform;
+        EnterMenu();
         MenuBehaviour.OnPlayButtonClick += new MenuBehaviour.PlayButtonClicked(EnterLocalPlay);
-        PlayBehaviour.OnReturnMenuButtonClick += new PlayBehaviour.ReturnMenuButtonClicked(EnterMenuFromPlay);
+        PlayBehaviour.OnReturnMenuButtonClick += new PlayBehaviour.ReturnMenuButtonClicked(EnterMenu);
         PlayBehaviour.OnReplayButtonClick += new PlayBehaviour.ReplayButtonClicked(LocalPlayReplayLastTurn);
 
     }
@@ -41,13 +42,11 @@ public class GameBehaviour : MonoBehaviour {
         MainMenuInstance.GetComponent<MenuBehaviour>().Activate(false);
         //LocalPlayInstance.GetComponent<PlayBehaviour>().enabled = true;
 
-        LocalPlayInstance.GetComponent<PlayBehaviour>().Activate(true);
-        
-        
+        LocalPlayInstance.GetComponent<PlayBehaviour>().Activate(true);        
         
     }
 
-    public void EnterMenuFromPlay()
+    public void EnterMenu()
     {
 
         //let localplay handle itself

@@ -18,7 +18,13 @@ public class RobotBehaviour : MonoBehaviour {
     //robot's playstate's updatestate calls the current command's execute
     private Command currentCommand;
 
+    private Animator animatorComponent;
+    private Rigidbody2D rigidBodyComponent;
+
     public Vector2 prevVelocity;
+
+    string idle = "Idle";
+    string[] movingDirectionAnimations;
 
 
     Rigidbody2D rb;
@@ -34,8 +40,46 @@ public class RobotBehaviour : MonoBehaviour {
         set { commands = value; }
     }
 
+    public void UpdateAnimation()
+    {
+        float maximumAngle = Mathf.PI * 2;
+        int nAnimations = movingDirectionAnimations.Length;
+        float interval = maximumAngle / nAnimations;
+        float directionAngle = Mathf.Atan2(rigidBodyComponent.velocity.y, rigidBodyComponent.velocity.x);
+        //Vector2 direction = rigidBodyComponent.velocity.normalized;
+
+        if (directionAngle < 0)
+        {
+            directionAngle += maximumAngle;
+        }
+
+        float smallestAngle = 0, biggestAngle = interval;
+        for (int i = 0; i < nAnimations; i++)
+        {
+            animatorComponent.SetBool(movingDirectionAnimations[i], false);
+            if (directionAngle > smallestAngle && directionAngle < biggestAngle)
+            {
+                animatorComponent.SetBool(movingDirectionAnimations[i], true);
+                for (int j = i + 1; j < nAnimations; j++)
+                {
+                    animatorComponent.SetBool(movingDirectionAnimations[j], false);
+                }
+                return;
+            }
+            smallestAngle += interval;
+            biggestAngle += interval;
+        }
+    }
+
     void Awake()
     {
+        if(GetComponent<Rigidbody2D>() == null)
+        {
+            gameObject.AddComponent<Rigidbody2D>();
+        }
+        rigidBodyComponent = GetComponent<Rigidbody2D>();
+        movingDirectionAnimations = new string[] { "Move Right", "Move Right Upper Diagonal", "Move Up" , "Move Left Upper Diagonal" , "Move Left" , "Move Left Lower Diagonal", "Move Down", "Move Right Lower Diagonal" };
+        animatorComponent = GetComponent<Animator>();
         Commands = new List<Command>();
         oldCommands = new List<Command>();
         pauseState = new PauseState(gameObject);
@@ -91,16 +135,6 @@ public class RobotBehaviour : MonoBehaviour {
         if (OnClick != null && shouldSendEvent)
         {
             OnClick(gameObject);
-        }
-    }
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if(other.gameObject.tag == "Shockwave")
-        {
-            //apply some force
-            rb.AddForce(other.gameObject.GetComponent<ShockwaveBehaviour>().currentPushForce
-                * other.gameObject.GetComponent<Rigidbody2D>().velocity.normalized);
-
         }
     }
 }

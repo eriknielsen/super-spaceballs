@@ -18,7 +18,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
     private AvailableCommands selectedCommand;
     private enum AvailableCommands { MoveCommand, PushCommand };
 
-    List<Entity> entities;
+    List<IEntity> entities;
     private List<GameObject> robots;
     private int turns;
 
@@ -61,12 +61,11 @@ public class TurnHandlerBehaviour : MonoBehaviour
         robotWidth = robotPrefab.GetComponent<SpriteRenderer>().bounds.max.x;
         bc2D = GetComponent<BoxCollider2D>();
         Debug.Log("bc2d reference: " + bc2D);
-        selectedCommand = AvailableCommands.PushCommand;
+        selectedCommand = AvailableCommands.MoveCommand;
         moves = new List<Move>();
         robots = new List<GameObject>();
-        entities = new List<Entity>();
+        entities = new List<IEntity>();
         
-        //CreateRobots(numberOfRobots);
         CreateRobots(numberOfRobots);
 
         turns = 1;
@@ -121,7 +120,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
         //remove IEntities who's gameobjects have been removed
         //and pause the rest
-        List<Entity> newList = new List<Entity>();
+        List<IEntity> newList = new List<IEntity>();
         for(int i = 0; i < entities.Count; i++)
         {
             if (entities[i] != null)
@@ -129,7 +128,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
         }
         entities = newList;
-        for(int i = 0;i < entities.Count; i++)
+        for(int i = 0; i < entities.Count; i++)
         {
            
             if(entities[i] != null)
@@ -160,7 +159,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
             
         }
         //also unpause all entities
-        foreach (Entity e in entities)
+        foreach (IEntity e in entities)
         {
             if(e != null)
             {
@@ -216,7 +215,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
             {
                 Vector3 mousePosition = Input.mousePosition;
                 Vector3 pointPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-                selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(new PushCommand(selectedRobot, pointPosition, 1, Turns));
+                selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(new PushCommand(selectedRobot, new Vector2(1, 0), 3));
                 Debug.Log("PushCommand Added!");
             }
         }
@@ -262,7 +261,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
        
             //start taking events
             RobotBehaviour.OnClick += new RobotBehaviour.ClickedOnRobot(ChooseRobot);
-            PushCommand.OnInstantiateShockWave += new PushCommand.InstantiateShockWave(InstantiateShockwave);
+            //PushCommand.OnInstantiateShockWave += new PushCommand.InstantiateShockWave(InstantiateShockwave);
 
             foreach (GameObject r in robots)
             {
@@ -323,36 +322,5 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
             }
         }
-    }
-    void InstantiateShockwave(GameObject robot, Vector2 dir, float chargeTime)
-    {
-        if (robots.IndexOf(robot) != -1)
-        {
-            if (shockWavePrefab != null)
-            {
-                
-                Vector3 offsettedPosition = new Vector3(dir.normalized.x * robotWidth/3, dir.normalized.y * robotHeight/3) + robot.transform.position;
-
-                GameObject sw = Instantiate(shockWavePrefab, offsettedPosition, new Quaternion()) as GameObject;
-                
-                ShockwaveBehaviour svbh = sw.GetComponent<ShockwaveBehaviour>();
-                entities.Add(svbh);
-                svbh.extraChargeForce = chargeTime * 2;
-                
-                svbh.direction = dir.normalized;
-                //change rotation
-
-            }
-            else
-            {
-                Debug.Log("shockwaveprefab was null");
-            }
-        }
-        else
-        {
-            //not intended for this instance
-        }
-       
-
     }
 }

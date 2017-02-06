@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class MenuBehaviour : MonoBehaviour {
    
     public GameObject menuUIPrefab;
-    public GameObject menuUIInstance;
+    GameObject menuUIInstance;
  
     public delegate void PlayButtonClicked();
     public static event PlayButtonClicked OnPlayButtonClick;

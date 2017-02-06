@@ -18,6 +18,7 @@ public class PlayBehaviour : MonoBehaviour
     int currentTurnHandler;
     Vector2 score;
     GameTimer gameTimer;
+    Collider2D[] collidersInGame;
 
     public Text gameTimeText;
     public GameObject InGameUIInstance;
@@ -25,7 +26,6 @@ public class PlayBehaviour : MonoBehaviour
     public float roundTime;
     public GameObject InGameUIPrefab;
     public GameObject turnHandlerPrefab;
-
 
     public delegate void ReturnMenuButtonClicked();
     public static event ReturnMenuButtonClicked OnReturnMenuButtonClick;
@@ -35,21 +35,18 @@ public class PlayBehaviour : MonoBehaviour
 
     void Awake()
     {
+        collidersInGame = FindObjectsOfType<Collider2D>();
         gameTimer = new GameTimer(120);
         InGameUIInstance = Instantiate(InGameUIPrefab);
         //CreateTurnHandlers();
         gameTimeText = InGameUIInstance.transform.FindChild("GameTimeText").GetComponent<Text>();
-        if (turnHandler1 == null && turnHandler2 == null)
-        {
-            Debug.Log("NOT NULL");
-        }
     }
 
     public void CreateTurnHandlers()
     {
-        if(leftPrefab != null)
+        if (leftPrefab != null)
         {
-            if(turnHandler1 == null)
+            if (turnHandler1 == null)
             {
                 turnHandler1 = Instantiate(leftPrefab);
                 turnHandler1.transform.parent = transform;
@@ -64,9 +61,9 @@ public class PlayBehaviour : MonoBehaviour
             Debug.LogWarning("'leftPrefab' doesn't hold a reference, so no TurnHandler is created.");
         }
 
-        if(rightPrefab != null)
+        if (rightPrefab != null)
         {
-            if(turnHandler2 == null)
+            if (turnHandler2 == null)
             {
                 turnHandler2 = Instantiate(rightPrefab);
                 turnHandler2.transform.parent = transform;
@@ -140,6 +137,7 @@ public class PlayBehaviour : MonoBehaviour
     ///if we replayed the last turn, then we dont want to do the newturn stuff
     IEnumerator UnpauseGame(bool asReplay)
     {
+        TurnOnColliders();
         InGameUIInstance.transform.GetChild(0).gameObject.SetActive(false);
         InGameUIInstance.transform.GetChild(1).gameObject.SetActive(false);
 
@@ -178,7 +176,33 @@ public class PlayBehaviour : MonoBehaviour
 
         turnHandler1.PauseGame();
         turnHandler2.PauseGame();
+        TurnOffColliders();
     }
+
+    void TurnOffColliders()
+    {
+        collidersInGame = FindObjectsOfType<Collider2D>();
+        string[] exceptions = new string[] { "Clickable Hitbox" };
+        for (int i = 0; i < collidersInGame.Length; i++)
+        {
+            for (int j = 0; j < exceptions.Length; j++)
+            {
+                if (collidersInGame[i].name != exceptions[j])
+                {
+                    collidersInGame[i].enabled = false;
+                }
+            }
+        }
+    }
+
+    void TurnOnColliders()
+    {
+        for(int i = 0; i < collidersInGame.Length; i++)
+        {
+            collidersInGame[i].enabled = true;
+        }
+    }
+
     /// <summary>
     /// gives or takes control from the current turnhandler
     /// activate true means to activate current turnhandler
@@ -186,6 +210,7 @@ public class PlayBehaviour : MonoBehaviour
     /// </summary>
     void ActivateTurnHandler(bool activate)
     {
+        //TurnOnColliders();
         if (!turnHandler1.gameObject.activeSelf)
         {
             turnHandler1.gameObject.SetActive(true);
@@ -266,9 +291,6 @@ public class PlayBehaviour : MonoBehaviour
     {
         if (activate == false)
         {
-            //DEACTIVATE CURRENT TURNHANDLER
-            //ActivateTurnHandler(false);
-            //PauseGame();
             DestroyTurnHandlers();
             InGameUIInstance.SetActive(false);
             enabled = false;
@@ -276,10 +298,10 @@ public class PlayBehaviour : MonoBehaviour
         else
         {
             enabled = true;
-            //ActivateTurnHandler(true);
             CreateTurnHandlers();
             NewTurn();
             InGameUIInstance.SetActive(true);
+            TurnOffColliders();
         }
 
     }

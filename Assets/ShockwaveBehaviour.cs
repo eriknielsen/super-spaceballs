@@ -2,47 +2,63 @@
 using System.Collections;
 using System;
 
-public class ShockwaveBehaviour : Entity {
+public class ShockwaveBehaviour : IEntity
+{
+    [SerializeField]
+    float lifeTime;
+    [SerializeField]
+    float pushForce;
 
-    [HideInInspector]
-    public float extraChargeForce;
-    //public Vector2 direction;
-    public float standardPushForce;
-    public float currentPushForce;
-    float lifeTimer;
-    [HideInInspector]
-    public Vector2 direction;
+    Vector2 velocity;
+    Vector2 pushVector;
+    Rigidbody2D rb2dCompontent;
 
-    Rigidbody2D rb;
-
-    Vector2 prevVelocity;
     bool shouldUpdate;
-    Vector2 zeroVector;
-	void Awake () {
-        zeroVector = Vector2.zero;
-        shouldUpdate = true;
-        rb = GetComponent<Rigidbody2D>();
-        currentPushForce = extraChargeForce + standardPushForce;
-        //pushForce = initialPushForce;
-        lifeTimer = 4f;
-	}
-    public void Start()
+
+    public static ShockwaveBehaviour InstantiateShockWave(ShockwaveBehaviour shockWave)
     {
-        
-        rb.AddForce(currentPushForce * direction);
-        
+        return Instantiate(shockWave);
     }
-	void FixedUpdate()
+
+    void OnValidate()
+    {
+        if(lifeTime < 0)
+        {
+            lifeTime = 0;
+        }
+        if (pushForce < 0)
+        {
+            pushForce = 0;
+        }
+    }
+
+    public void Initialize(Vector2 velocity)
+    {
+        this.velocity = velocity;
+        pushVector = velocity.normalized * pushForce;
+        enabled = true;
+    }
+
+    void Awake()
+    {
+        shouldUpdate = true;
+        if(GetComponent<Rigidbody2D>() == null)
+        {
+            gameObject.AddComponent<Rigidbody2D>();
+        }
+        rb2dCompontent = GetComponent<Rigidbody2D>();
+        enabled = false;
+    }
+    void FixedUpdate()
     {
         if (shouldUpdate)
         {
-            if (lifeTimer >= 0)
+            if (lifeTime >= 0)
             {
-                transform.rotation = Quaternion.LookRotation(rb.velocity);
-                lifeTimer -= Time.fixedDeltaTime;
-                currentPushForce -= Time.fixedDeltaTime;
-
-                transform.localScale += new Vector3(0.1f * Time.fixedDeltaTime, 0.1f * Time.fixedDeltaTime, 0f);
+                transform.rotation = Quaternion.LookRotation(rb2dCompontent.velocity);
+                lifeTime -= Time.fixedDeltaTime;
+                rb2dCompontent.velocity = velocity;
+                transform.localScale += new Vector3(0.1f * Time.fixedDeltaTime, 0.1f * Time.fixedDeltaTime);
             }
             else
             {
@@ -52,23 +68,29 @@ public class ShockwaveBehaviour : Entity {
     }
 
     public override void EnterPause()
-    { 
+    {
         shouldUpdate = false;
-        prevVelocity = rb.velocity;
-        rb.velocity = zeroVector;
+        rb2dCompontent.velocity = Vector2.zero;
     }
 
     public override void EnterPlay()
     {
-        if(rb != null)
+        if (rb2dCompontent != null)
         {
-            rb.velocity = prevVelocity;
             shouldUpdate = true;
         }
-        
+
     }
     public override bool IsFinished()
     {
         return gameObject == null;
+    }
+
+    void OnTriggerStay2D(Collider2D collidingObject)
+    {
+        if(collidingObject.GetComponent<Rigidbody2D>() != null)
+        {
+            collidingObject.GetComponent<Rigidbody2D>().AddForce(pushVector);
+        }
     }
 }
