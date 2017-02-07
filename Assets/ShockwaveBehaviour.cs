@@ -88,9 +88,16 @@ public class ShockwaveBehaviour : IEntity
 
     void OnTriggerStay2D(Collider2D collidingObject)
     {
-        if(collidingObject.GetComponent<Rigidbody2D>() != null)
+        GameObject parent = collidingObject.transform.parent.gameObject;
+        if(parent != null && parent.GetComponent<Rigidbody2D>())
         {
-            collidingObject.GetComponent<Rigidbody2D>().AddForce(pushVector);
+            parent.GetComponent<Rigidbody2D>().AddForce(pushVector);
+            parent.GetComponent<Rigidbody2D>().velocity = new Vector2(5, 0);
+            Debug.Log("LOL");
+        }
+        else
+        {
+            Debug.Log("NOT PARENT");
         }
     }
 }

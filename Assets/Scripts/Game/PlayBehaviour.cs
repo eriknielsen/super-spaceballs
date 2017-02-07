@@ -197,7 +197,8 @@ public class PlayBehaviour : MonoBehaviour
 
     void TurnOnColliders()
     {
-        for(int i = 0; i < collidersInGame.Length; i++)
+        collidersInGame = FindObjectsOfType<Collider2D>();
+        for (int i = 0; i < collidersInGame.Length; i++)
         {
             collidersInGame[i].enabled = true;
         }
