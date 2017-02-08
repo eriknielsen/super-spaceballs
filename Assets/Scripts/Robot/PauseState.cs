@@ -2,34 +2,30 @@
 using System.Collections;
 using System;
 
-public class PauseState : IRobotState
-{
+public class PauseState : IRobotState {
+	
     private GameObject robot;
     private RobotBehaviour robotScript;
    
 
-    public PauseState(GameObject r)
-    {
+    public PauseState(GameObject r){
         robot = r;
         robotScript = robot.GetComponent<RobotBehaviour>();
     }
 
-    public void EnterPauseState()
-    {
+    public void EnterPauseState(){
         Debug.Log("already in pause");
     }
 
-    public void EnterPlayState()
-    {
+    public void EnterPlayState(){
 
         robotScript.CurrentState = robotScript.playState;
    
         robotScript.DecideCommand();
         robot.GetComponent<Rigidbody2D>().velocity = robotScript.prevVelocity;
-          
     }
-    public void UpdateState()
-    {
+
+    public void UpdateState(){
 
     }
 }
