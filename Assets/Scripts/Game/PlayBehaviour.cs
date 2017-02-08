@@ -33,8 +33,28 @@ public class PlayBehaviour : MonoBehaviour
     public delegate void ReplayButtonClicked();
     public static event ReplayButtonClicked OnReplayButtonClick;
 
+    public static PlayBehaviour instance;
+
+    public static PlayBehaviour Instance
+    {
+        get { return instance; }
+    }
+
+    public static float RoundTime
+    {
+        get { return instance.roundTime; }
+    }
+
     void Awake()
     {
+        if(instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Debug.Log("There's already an instance of PlayBehaviour");
+        }
         collidersInGame = FindObjectsOfType<Collider2D>();
         gameTimer = new GameTimer(120);
         InGameUIInstance = Instantiate(InGameUIPrefab);
@@ -150,8 +170,8 @@ public class PlayBehaviour : MonoBehaviour
 
         turnHandler1.UnpauseGame();
         turnHandler2.UnpauseGame();
-        StartCoroutine(gameTimer.CountDownSeconds(4));
-        yield return new WaitForSeconds(4f);
+        StartCoroutine(gameTimer.CountDownSeconds((int) roundTime));
+        yield return new WaitForSeconds(roundTime);
         if (asReplay == false)
         {
             currentTurnHandler = -1;
