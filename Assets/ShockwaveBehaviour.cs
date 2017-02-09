@@ -14,6 +14,7 @@ public class ShockwaveBehaviour : IEntity
     Rigidbody2D rb2dCompontent;
 
     bool shouldUpdate;
+    GameObject shockwaveUser;
 
     public static ShockwaveBehaviour InstantiateShockWave(ShockwaveBehaviour shockWave)
     {
@@ -22,7 +23,7 @@ public class ShockwaveBehaviour : IEntity
 
     void OnValidate()
     {
-        if(lifeTime < 0)
+        if (lifeTime < 0)
         {
             lifeTime = 0;
         }
@@ -32,8 +33,9 @@ public class ShockwaveBehaviour : IEntity
         }
     }
 
-    public void Initialize(Vector2 velocity)
+    public void Initialize(Vector2 velocity, GameObject shockwaveUser)
     {
+        this.shockwaveUser = shockwaveUser;
         this.velocity = velocity;
         pushVector = velocity.normalized * pushForce;
         enabled = true;
@@ -42,7 +44,7 @@ public class ShockwaveBehaviour : IEntity
     void Awake()
     {
         shouldUpdate = true;
-        if(GetComponent<Rigidbody2D>() == null)
+        if (GetComponent<Rigidbody2D>() == null)
         {
             gameObject.AddComponent<Rigidbody2D>();
         }
@@ -88,16 +90,13 @@ public class ShockwaveBehaviour : IEntity
 
     void OnTriggerStay2D(Collider2D collidingObject)
     {
-        GameObject parent = collidingObject.transform.parent.gameObject;
-        if(parent != null && parent.GetComponent<Rigidbody2D>())
+        GameObject root = collidingObject.transform.root.gameObject;
+        
+        if (root != null && root.GetComponent<Rigidbody2D>() && root != shockwaveUser)
         {
-            parent.GetComponent<Rigidbody2D>().AddForce(pushVector);
-            parent.GetComponent<Rigidbody2D>().velocity = new Vector2(5, 0);
-            Debug.Log("LOL");
+
+            root.GetComponent<Rigidbody2D>().AddForce(pushVector);
         }
-        else
-        {
-            Debug.Log("NOT PARENT");
-        }
+
     }
 }

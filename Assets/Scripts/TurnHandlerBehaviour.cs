@@ -22,17 +22,15 @@ public class TurnHandlerBehaviour : MonoBehaviour
     private enum AvailableCommands { MoveCommand, PushCommand };
 
     List<IEntity> entities;
-    private List<GameObject> robots;
-    private int turns;
-
-    float robotWidth;
-    float robotHeight;
-
-    private BoxCollider2D bc2D;
+    List<GameObject> robots;
+    int turns;
+    bool mouseButtonIsPressed = false;
+    BoxCollider2D bc2D;
+    float timeInput;
+    float remainingInputTime;
 
     //en lista med drag
     public List<Move> moves;
-
 
     public int Turns
     {
@@ -60,10 +58,10 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
     void Awake()
     {
-        robotHeight = robotPrefab.GetComponent<SpriteRenderer>().bounds.max.y;
-        robotWidth = robotPrefab.GetComponent<SpriteRenderer>().bounds.max.x;
         bc2D = GetComponent<BoxCollider2D>();
-        Debug.Log("bc2d reference: " + bc2D);
+        Debug.Log("bc2d.bounds.min.x: " + bc2D.bounds.min.x);
+        Debug.Log("bc2d.bounds.max.x: " + bc2D.bounds.max.x);
+
         selectedCommand = AvailableCommands.MoveCommand;
         moves = new List<Move>();
         robots = new List<GameObject>();
@@ -71,6 +69,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
         CreateRobots(numberOfRobots);
 
+        
         turns = 1;
     }
 
@@ -143,6 +142,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
             }
         }
     }
+
     public void UnpauseGame()
     {
         //put all robots into play
@@ -203,32 +203,65 @@ public class TurnHandlerBehaviour : MonoBehaviour
         }
     }
 
-    void GiveCommandToSelectedRobot()
+    IEnumerator MeasureAndDisplayTimeInput()
     {
         if (cursorText == null)
         {
             cursorText = GameObject.Find("Cursor Text").GetComponent<Text>();
         }
 
+        while (mouseButtonIsPressed)
+        {
+            Vector3 cursorPosition = Input.mousePosition;
+            Vector3 cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
+            Vector3 cursorViewportPoint = Camera.main.WorldToViewportPoint(cursorPosition);
+            float secondsPerDistance = 0.5f;
+            Vector3 deltaPosition = cursorScreenPosition - selectedRobot.transform.position;
+            float distanceFromMouse = Mathf.Sqrt(Mathf.Pow(deltaPosition.x, 2) + Mathf.Pow(deltaPosition.y, 2));
+            timeInput = secondsPerDistance * distanceFromMouse;
+            cursorText.text = timeInput.ToString();
+            cursorText.transform.position = cursorPosition;
+            yield return new WaitForSeconds(0.0001f);
+        }
+        cursorText.text = "";
+        yield return null;
+    }
+
+    float AngleBetweenPoints(Vector2 point1, Vector2 point2)
+    {
+        Vector2 delta = point1 - point2;
+        float angle = Mathf.Atan2(delta.y, delta.x);
+        if (angle < 0)
+        {
+            angle = 2 * Mathf.PI + angle;
+        }
+        return angle;
+    }
+
+    void GiveCommandToSelectedRobot()
+    {
         if (selectedRobot != null && !mouseButtonIsPressed)
         {
-            Vector3 mousePosition = Input.mousePosition;
-            Vector3 pointPosition = Camera.main.ScreenToWorldPoint(mousePosition);
+            Vector3 cursorPosition = Input.mousePosition;
+            Vector3 cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
             if (selectedCommand == AvailableCommands.MoveCommand)
             {
-                float secondsPerDistance = 0.5f;
-                //float distanceFromMouse = 
-                float timeInput = secondsPerDistance * PlayBehaviour.RoundTime;
+
                 //cursorText.text = timeInput.ToString();
-                selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(new MoveCommand(selectedRobot, pointPosition, 2, Turns));
+                selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(new MoveCommand(selectedRobot, cursorScreenPosition, 2, Turns));
                 Debug.Log("MoveCommand Added!");
             }
             if (selectedCommand == AvailableCommands.PushCommand)
             {
-                selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(new PushCommand(selectedRobot, new Vector2(1, 0), 3));
+                float speed = 8.0f;
+                float lifeTime = 1;
+                float angle = AngleBetweenPoints(cursorScreenPosition, selectedRobot.transform.position);
+                Vector2 velocity = new Vector2(speed * Mathf.Cos(angle), speed * Mathf.Sin(angle));
+                selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(new PushCommand(selectedRobot, velocity, lifeTime));
                 Debug.Log("PushCommand Added!");
             }
             mouseButtonIsPressed = true;
+            StartCoroutine(MeasureAndDisplayTimeInput());
         }
     }
     void Update()
@@ -236,7 +269,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
         ReactToUserInput();
     }
 
-    bool mouseButtonIsPressed = false;
     void ReactToUserInput()
     {
         if (Input.GetMouseButton(1))

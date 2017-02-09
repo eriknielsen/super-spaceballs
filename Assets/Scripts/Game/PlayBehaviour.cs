@@ -47,7 +47,7 @@ public class PlayBehaviour : MonoBehaviour
 
     void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
         }
@@ -105,7 +105,7 @@ public class PlayBehaviour : MonoBehaviour
         {
             Destroy(turnHandler1.gameObject);
         }
-        if(turnHandler2 != null)
+        if (turnHandler2 != null)
         {
             Destroy(turnHandler2.gameObject);
         }
@@ -170,7 +170,7 @@ public class PlayBehaviour : MonoBehaviour
 
         turnHandler1.UnpauseGame();
         turnHandler2.UnpauseGame();
-        StartCoroutine(gameTimer.CountDownSeconds((int) roundTime));
+        StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
         yield return new WaitForSeconds(roundTime);
         if (asReplay == false)
         {
@@ -202,15 +202,12 @@ public class PlayBehaviour : MonoBehaviour
     void TurnOffColliders()
     {
         collidersInGame = FindObjectsOfType<Collider2D>();
-        string[] exceptions = new string[] { "Clickable Hitbox" };
+        string exception = "Clickable Hitbox";
         for (int i = 0; i < collidersInGame.Length; i++)
         {
-            for (int j = 0; j < exceptions.Length; j++)
+            if (collidersInGame[i].tag != exception)
             {
-                if (collidersInGame[i].name != exceptions[j])
-                {
-                    collidersInGame[i].enabled = false;
-                }
+                collidersInGame[i].enabled = false;
             }
         }
     }

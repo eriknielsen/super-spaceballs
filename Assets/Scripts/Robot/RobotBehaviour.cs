@@ -40,7 +40,7 @@ public class RobotBehaviour : MonoBehaviour {
         set { commands = value; }
     }
 
-    public void UpdateAnimation()
+    public void UpdateAnimationAndCollider()
     {
         float maximumAngle = Mathf.PI * 2;
         int nAnimations = movingDirectionAnimations.Length;
@@ -130,6 +130,7 @@ public class RobotBehaviour : MonoBehaviour {
             currentCommand.Execute();
         }
     }
+
     void OnMouseDown()
     {
         if (OnClick != null && shouldSendEvent)

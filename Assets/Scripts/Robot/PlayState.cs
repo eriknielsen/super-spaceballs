@@ -29,6 +29,6 @@ public class PlayState : IRobotState {
     public void UpdateState()
     {
         robotScript.ExecuteRobotCommand();
-        robotScript.UpdateAnimation();
+        robotScript.UpdateAnimationAndCollider();
     }
 }

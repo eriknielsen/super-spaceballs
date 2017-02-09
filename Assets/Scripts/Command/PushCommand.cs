@@ -12,13 +12,13 @@ public class PushCommand : Command {
     float chargeTime;
     Vector2 velocity;
 
-    public PushCommand(GameObject r, Vector2 velocity, float lifetime)
+    public PushCommand(GameObject robot, Vector2 velocity, float lifetime)
     {
         this.velocity = velocity;
         lifeDuration = lifetime;
         lifeTimer = lifeDuration;
         chargeTime = 0;
-        robot = r;
+        base.robot = robot;
 
         shockwavePrefab = Resources.Load("Prefabs/ShockWave") as GameObject;     
     }
@@ -36,7 +36,7 @@ public class PushCommand : Command {
         if (isFinished)
         {
             ShockwaveBehaviour shockWave = ShockwaveBehaviour.InstantiateShockWave(shockwavePrefab.GetComponent<ShockwaveBehaviour>());
-            shockWave.Initialize(velocity);
+            shockWave.Initialize(velocity, robot);
             shockWave.transform.position = robot.transform.position;     
         }
     }
