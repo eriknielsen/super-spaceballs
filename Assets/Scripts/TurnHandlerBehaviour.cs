@@ -27,7 +27,8 @@ public class TurnHandlerBehaviour : MonoBehaviour
     bool mouseButtonIsPressed = false;
     BoxCollider2D bc2D;
     float timeInput;
-    float remainingInputTime;
+  
+    public float intendedShockwaveLifetime;
 
     //en lista med drag
     public List<Move> moves;
@@ -59,8 +60,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
     void Awake()
     {
         bc2D = GetComponent<BoxCollider2D>();
-        Debug.Log("bc2d.bounds.min.x: " + bc2D.bounds.min.x);
-        Debug.Log("bc2d.bounds.max.x: " + bc2D.bounds.max.x);
 
         selectedCommand = AvailableCommands.MoveCommand;
         moves = new List<Move>();
@@ -87,6 +86,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 float x = Random.Range(bc2D.bounds.min.x, bc2D.bounds.max.x);
                 float y = Random.Range(bc2D.bounds.min.y, bc2D.bounds.max.y);
                 GameObject r = Instantiate(robotPrefab.gameObject, new Vector2(x, y), new Quaternion()) as GameObject;
+                r.GetComponent<RobotBehaviour>().freeTime = roundTime;
                 if (robots == null)
                 {
                     Debug.Log("Null as fuuuuck");
@@ -115,7 +115,9 @@ public class TurnHandlerBehaviour : MonoBehaviour
         //put all robots into pausestate
         foreach (GameObject r in robots)
         {
-            r.GetComponent<RobotBehaviour>().CurrentState.EnterPauseState();
+            RobotBehaviour rb = r.GetComponent<RobotBehaviour>();
+            rb.CurrentState.EnterPauseState();
+            rb.freeTime = roundTime;
         }
 
 
@@ -199,6 +201,8 @@ public class TurnHandlerBehaviour : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             selectedRobot = r;
+
+            StartCoroutine(MeasureAndDisplayTimeInput());
             Debug.Log("Robot selected!");
         }
     }
@@ -209,18 +213,50 @@ public class TurnHandlerBehaviour : MonoBehaviour
         {
             cursorText = GameObject.Find("Cursor Text").GetComponent<Text>();
         }
-
-        while (mouseButtonIsPressed)
+        float secondsPerDistance = 0.5f;
+        RobotBehaviour selectRB = selectedRobot.GetComponent<RobotBehaviour>();
+        Vector3 cursorPosition;
+        Vector3 cursorScreenPosition;
+        Vector3 deltaPosition;
+        float distanceFromMouse;
+        float remainingTimeForRobot;
+        float previewInputTime;
+        while (selectedRobot != null)
         {
-            Vector3 cursorPosition = Input.mousePosition;
-            Vector3 cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
-            Vector3 cursorViewportPoint = Camera.main.WorldToViewportPoint(cursorPosition);
-            float secondsPerDistance = 0.5f;
-            Vector3 deltaPosition = cursorScreenPosition - selectedRobot.transform.position;
-            float distanceFromMouse = Mathf.Sqrt(Mathf.Pow(deltaPosition.x, 2) + Mathf.Pow(deltaPosition.y, 2));
-            timeInput = secondsPerDistance * distanceFromMouse;
-            cursorText.text = timeInput.ToString();
-            cursorText.transform.position = cursorPosition;
+            cursorPosition = Input.mousePosition;
+            cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
+            //Vector3 cursorViewportPoint = Camera.main.WorldToViewportPoint(cursorPosition);
+            //if there is at least one command in the robots command list, change the calculations from that command's position
+            if(selectRB.commands.Count > 0)
+            {
+                deltaPosition = cursorScreenPosition - (Vector3)selectRB.commands[selectRB.commands.Count-1].targetPosition;
+            }
+            //if the robot still doenst have any previous commands, use its position
+            else
+            {
+                deltaPosition = cursorScreenPosition - selectedRobot.transform.position;
+            }
+           
+            distanceFromMouse = Mathf.Sqrt(Mathf.Pow(deltaPosition.x, 2) + Mathf.Pow(deltaPosition.y, 2));
+            
+            previewInputTime = secondsPerDistance * distanceFromMouse;
+            remainingTimeForRobot = selectRB.freeTime - previewInputTime;
+            
+            if (selectedCommand == AvailableCommands.PushCommand && previewInputTime <= selectRB.freeTime - intendedShockwaveLifetime)
+            {
+                timeInput = previewInputTime;
+                cursorText.text = timeInput.ToString();
+                cursorText.transform.position = cursorPosition;
+                
+            }
+            else if (previewInputTime <= selectRB.freeTime)
+            {
+                timeInput = previewInputTime;
+                cursorText.text = timeInput.ToString();
+                cursorText.transform.position = cursorPosition;
+            }
+            
+            
             yield return new WaitForSeconds(0.0001f);
         }
         cursorText.text = "";
@@ -242,26 +278,33 @@ public class TurnHandlerBehaviour : MonoBehaviour
     {
         if (selectedRobot != null && !mouseButtonIsPressed)
         {
-            Vector3 cursorPosition = Input.mousePosition;
-            Vector3 cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
-            if (selectedCommand == AvailableCommands.MoveCommand)
+            //take the time for the command from the timetext
+            float duration = timeInput;
+            RobotBehaviour rb = selectedRobot.GetComponent<RobotBehaviour>();
+            if(timeInput <= rb.freeTime)
             {
+                Vector3 cursorPosition = Input.mousePosition;
+                Vector3 cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
+                if (selectedCommand == AvailableCommands.MoveCommand)
+                {
 
-                //cursorText.text = timeInput.ToString();
-                selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(new MoveCommand(selectedRobot, cursorScreenPosition, 2, Turns));
-                Debug.Log("MoveCommand Added!");
+                    rb.Commands.Add(new MoveCommand(selectedRobot, cursorScreenPosition, duration, Turns));
+                    Debug.Log("MoveCommand Added!");
+                }
+                if (selectedCommand == AvailableCommands.PushCommand)
+                {
+                    float speed = 8.0f;
+
+                    float angle = AngleBetweenPoints(cursorScreenPosition, selectedRobot.transform.position);
+                    Vector2 velocity = new Vector2(speed * Mathf.Cos(angle), speed * Mathf.Sin(angle));
+                    rb.Commands.Add(new PushCommand(selectedRobot, velocity, duration));
+                    Debug.Log("PushCommand Added!");
+                }
+                rb.freeTime -= duration;
+                timeInput = 0;
             }
-            if (selectedCommand == AvailableCommands.PushCommand)
-            {
-                float speed = 8.0f;
-                float lifeTime = 1;
-                float angle = AngleBetweenPoints(cursorScreenPosition, selectedRobot.transform.position);
-                Vector2 velocity = new Vector2(speed * Mathf.Cos(angle), speed * Mathf.Sin(angle));
-                selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(new PushCommand(selectedRobot, velocity, lifeTime));
-                Debug.Log("PushCommand Added!");
-            }
-            mouseButtonIsPressed = true;
-            StartCoroutine(MeasureAndDisplayTimeInput());
+           
+            
         }
     }
     void Update()
@@ -290,8 +333,12 @@ public class TurnHandlerBehaviour : MonoBehaviour
         {
             mouseButtonIsPressed = false;
         }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            selectedRobot = null;
+            timeInput = 0;
+        }
     }
-
     void OnEnable()
     {
         Debug.Log("Enabled!");
@@ -301,7 +348,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
     {
         Debug.Log("Disabled!");
     }
-
     public void Activate(bool activate)
     {
         if (activate == true)
@@ -320,7 +366,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
         }
         else
         {
-
             RobotBehaviour.OnClick -= new RobotBehaviour.ClickedOnRobot(ChooseRobot);
 
             foreach (GameObject r in robots)
@@ -329,7 +374,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
             }
             enabled = false;
         }
-
     }
     public void ReplayLastTurn()
     {

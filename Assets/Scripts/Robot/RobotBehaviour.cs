@@ -10,6 +10,9 @@ public class RobotBehaviour : MonoBehaviour {
     public delegate void ClickedOnRobot(GameObject robot);
     public static event ClickedOnRobot OnClick;
     public bool shouldSendEvent = false;
+    //the remaining time for this round
+    public float freeTime;
+
     //the robot goes through each commando and checks each update if the latest commando is finished or not
     //if it is finished then the robot starts the next commando
     public List<Command> commands;
