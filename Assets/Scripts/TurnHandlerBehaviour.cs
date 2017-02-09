@@ -242,7 +242,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
             previewInputTime = secondsPerDistance * distanceFromMouse;
             remainingTimeForRobot = selectRB.freeTime - previewInputTime;
             
-            if (selectedCommand == AvailableCommands.PushCommand && previewInputTime <= selectRB.freeTime - intendedShockwaveLifetime)
+            if (selectedCommand == AvailableCommands.PushCommand && previewInputTime <= selectRB.freeTime - ShockwaveBehaviour.lifetime)
             {
                 timeInput = previewInputTime;
                 cursorText.text = timeInput.ToString();

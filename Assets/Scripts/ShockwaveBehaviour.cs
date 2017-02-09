@@ -12,6 +12,7 @@ public class ShockwaveBehaviour : IEntity
     Vector2 velocity;
     Vector2 pushVector;
     Rigidbody2D rb2dCompontent;
+    float remainingLifeTime;
 
     bool shouldUpdate;
     GameObject shockwaveUser;
@@ -25,7 +26,7 @@ public class ShockwaveBehaviour : IEntity
     {
         if (lifeTime < 0)
         {
-            lifeTime = 0;
+            remainingLifeTime = 0;
         }
         if (pushForce < 0)
         {
@@ -43,6 +44,7 @@ public class ShockwaveBehaviour : IEntity
 
     void Awake()
     {
+        remainingLifeTime = lifeTime;
         shouldUpdate = true;
         if (GetComponent<Rigidbody2D>() == null)
         {
@@ -55,10 +57,10 @@ public class ShockwaveBehaviour : IEntity
     {
         if (shouldUpdate)
         {
-            if (lifeTime >= 0)
+            if (remainingLifeTime >= 0)
             {
                 transform.rotation = Quaternion.LookRotation(rb2dCompontent.velocity);
-                lifeTime -= Time.fixedDeltaTime;
+                remainingLifeTime -= Time.fixedDeltaTime;
                 rb2dCompontent.velocity = velocity;
                 transform.localScale += new Vector3(0.1f * Time.fixedDeltaTime, 0.1f * Time.fixedDeltaTime);
             }
