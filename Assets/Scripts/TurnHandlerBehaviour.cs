@@ -207,12 +207,12 @@ public class TurnHandlerBehaviour : MonoBehaviour
         {
             selectedRobot = r;
 
-            StartCoroutine(MeasureAndDisplayTimeInput());
+            StartCoroutine(SetAndDisplayTimeInput());
             Debug.Log("Robot selected!");
         }
     }
 
-    IEnumerator MeasureAndDisplayTimeInput()
+    IEnumerator SetAndDisplayTimeInput()
     {
         if (cursorText == null)
         {

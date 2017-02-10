@@ -27,8 +27,6 @@ public class RobotBehaviour : MonoBehaviour {
     public Vector2 prevVelocity;
 
     string idle = "Idle";
-    string[] movingDirectionAnimations;
-
 
     Rigidbody2D rb;
     public IRobotState CurrentState
@@ -45,40 +43,10 @@ public class RobotBehaviour : MonoBehaviour {
 
     public void UpdateAnimationAndCollider()
     {
-        //float maximumAngle = Mathf.PI * 2;
-        //int nAnimations = movingDirectionAnimations.Length;
-        //float interval = maximumAngle / nAnimations;
-        //float directionAngle = Mathf.Atan2(rigidBodyComponent.velocity.y, rigidBodyComponent.velocity.x);
-        ////Vector2 direction = rigidBodyComponent.velocity.normalized;
-
-        //if (directionAngle < 0)
-        //{
-        //    directionAngle += maximumAngle;
-        //}
-
-        //float smallestAngle = 0, biggestAngle = interval;
-        //for (int i = 0; i < nAnimations; i++)
-        //{
-        //    animatorComponent.SetBool(movingDirectionAnimations[i], false);
-        //    if (directionAngle > smallestAngle && directionAngle < biggestAngle)
-        //    {
-        //        animatorComponent.SetBool(movingDirectionAnimations[i], true);
-        //        for (int j = i + 1; j < nAnimations; j++)
-        //        {
-        //            animatorComponent.SetBool(movingDirectionAnimations[j], false);
-        //        }
-        //        return;
-        //    }
-        //    smallestAngle += interval;
-        //    biggestAngle += interval;
-        //}
-
-        float maximumAngle = Mathf.PI * 2;
-        int nAnimations = movingDirectionAnimations.Length;
         float directionAngle = Mathf.Atan2(rigidBodyComponent.velocity.y, rigidBodyComponent.velocity.x);
 
         directionAngle = directionAngle * Mathf.Rad2Deg;
-        if(directionAngle < 360.0f)
+        if(directionAngle < 0.0f)
         {
             directionAngle += 360.0f;
         }
@@ -93,7 +61,6 @@ public class RobotBehaviour : MonoBehaviour {
             gameObject.AddComponent<Rigidbody2D>();
         }
         rigidBodyComponent = GetComponent<Rigidbody2D>();
-        movingDirectionAnimations = new string[] { "Move Right", "Move Right Upper Diagonal", "Move Up" , "Move Left Upper Diagonal" , "Move Left" , "Move Left Lower Diagonal", "Move Down", "Move Right Lower Diagonal" };
         animatorComponent = GetComponent<Animator>();
         Commands = new List<Command>();
         oldCommands = new List<Command>();
