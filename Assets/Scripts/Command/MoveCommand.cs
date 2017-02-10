@@ -94,7 +94,16 @@ public class MoveCommand : Command
     public override void Execute()
     {
         //robot.transform.rotation = Quaternion.Lerp(robot.transform.rotation, Quaternion.Euler(0, 0, angle * Mathf.Rad2Deg), Time.deltaTime);
-        robot.GetComponent<Rigidbody2D>().AddForce(resultingForce);
+        if(lifeTimer > 0)
+        {
+            lifeTimer -= Time.deltaTime;
+            robot.GetComponent<Rigidbody2D>().AddForce(resultingForce);
+        }
+        else
+        {
+            isFinished = true;
+        }
+        
     }
 
     public IEnumerator FinishedCoroutine()

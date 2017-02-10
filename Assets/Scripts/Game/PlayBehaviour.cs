@@ -92,7 +92,6 @@ public class PlayBehaviour : MonoBehaviour
             {
                 turnHandler2 = Instantiate(rightPrefab);
                 turnHandler2.transform.parent = transform;
-                turnHandler2.GetComponent<TurnHandlerBehaviour>().roundTime = roundTime;
             }
             else
             {

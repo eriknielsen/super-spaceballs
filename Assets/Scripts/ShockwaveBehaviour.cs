@@ -38,19 +38,19 @@ public class ShockwaveBehaviour : IEntity
         }
     }
 
-    public void Initialize(Vector2 velocity, GameObject shockwaveUser)
+    public void Initialize(Vector2 velocity, float chargeTime, GameObject shockwaveUser)
     {
         
         this.shockwaveUser = shockwaveUser;
         this.velocity = velocity;
-        pushVector = velocity.normalized * pushForce;
+        pushVector = velocity.normalized * (pushForce * chargeTime);
         enabled = true;
     }
 
     void Awake()
     {
 
-        remainingLifeTime = lifeTime;
+        remainingLifeTime = intendedLifetime;
         shouldUpdate = true;
         if (GetComponent<Rigidbody2D>() == null)
         {
@@ -99,10 +99,12 @@ public class ShockwaveBehaviour : IEntity
     void OnTriggerStay2D(Collider2D collidingObject)
     {
         GameObject root = collidingObject.transform.root.gameObject;
-        
-        if (root != null && root.GetComponent<Rigidbody2D>() && root != shockwaveUser)
-        {
+        Debug.Log(root);
+        Debug.Log(root.GetComponent<Rigidbody2D>());
 
+        if (root != null && root.GetComponent<Rigidbody2D>() /*&& root != shockwaveUser*/)
+        {
+            Debug.Log("hej2");
             root.GetComponent<Rigidbody2D>().AddForce(pushVector);
         }
 

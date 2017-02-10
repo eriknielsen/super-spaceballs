@@ -72,10 +72,12 @@ public class TurnHandlerBehaviour : MonoBehaviour
     void Start()
     {
         
-        Debug.Log(roundTime);
+
     }
     void OnDestroy()
     {
+        RobotBehaviour.OnClick -= new RobotBehaviour.ClickedOnRobot(ChooseRobot);
+
         DestroyRobots();
     }
 
@@ -98,6 +100,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
         }
         bc2D.enabled = false;
+        Component.Destroy(bc2D);
     }
 
     void DestroyRobots()
@@ -267,16 +270,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         yield return null;
     }
 
-    float AngleBetweenPoints(Vector2 point1, Vector2 point2)
-    {
-        Vector2 delta = point1 - point2;
-        float angle = Mathf.Atan2(delta.y, delta.x);
-        if (angle < 0)
-        {
-            angle = 2 * Mathf.PI + angle;
-        }
-        return angle;
-    }
+   
 
     void GiveCommandToSelectedRobot()
     {
@@ -297,11 +291,8 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 }
                 if (selectedCommand == AvailableCommands.PushCommand && timeInput <= rb.freeTime - shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime)
                 {
-                    float speed = 8.0f;
-
-                    float angle = AngleBetweenPoints(cursorScreenPosition, selectedRobot.transform.position);
-                    Vector2 velocity = new Vector2(speed * Mathf.Cos(angle), speed * Mathf.Sin(angle));
-                    rb.Commands.Add(new PushCommand(selectedRobot, velocity, duration));
+                    
+                    rb.Commands.Add(new PushCommand(selectedRobot, cursorScreenPosition, duration));
                     Debug.Log("PushCommand Added!");
                 }
                 else
@@ -427,4 +418,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
             }
         }
     }
+
+   
 }
