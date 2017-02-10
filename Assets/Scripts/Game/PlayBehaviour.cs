@@ -23,7 +23,9 @@ public class PlayBehaviour : MonoBehaviour
     public Text gameTimeText;
     public GameObject InGameUIInstance;
 
+    public float intendedShockwaveLiftime;
     public float roundTime;
+
     public GameObject InGameUIPrefab;
     public GameObject turnHandlerPrefab;
 
@@ -64,12 +66,15 @@ public class PlayBehaviour : MonoBehaviour
 
     public void CreateTurnHandlers()
     {
+        leftPrefab.roundTime = roundTime;
+        rightPrefab.roundTime = roundTime;
         if (leftPrefab != null)
         {
             if (turnHandler1 == null)
             {
                 turnHandler1 = Instantiate(leftPrefab);
                 turnHandler1.transform.parent = transform;
+               
             }
             else
             {
@@ -87,6 +92,7 @@ public class PlayBehaviour : MonoBehaviour
             {
                 turnHandler2 = Instantiate(rightPrefab);
                 turnHandler2.transform.parent = transform;
+                turnHandler2.GetComponent<TurnHandlerBehaviour>().roundTime = roundTime;
             }
             else
             {

@@ -12,8 +12,8 @@ public class TurnHandlerBehaviour : MonoBehaviour
     GameObject shockWavePrefab;
     [SerializeField]
     private int numberOfRobots;
-    [SerializeField]
-    float roundTime;
+    [HideInInspector]
+    public float roundTime;
 
     private Text cursorText;
 
@@ -27,8 +27,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
     bool mouseButtonIsPressed = false;
     BoxCollider2D bc2D;
     float timeInput;
-  
-    public float intendedShockwaveLifetime;
 
     //en lista med drag
     public List<Move> moves;
@@ -66,12 +64,16 @@ public class TurnHandlerBehaviour : MonoBehaviour
         robots = new List<GameObject>();
         entities = new List<IEntity>();
 
+
         CreateRobots(numberOfRobots);
 
-        
         turns = 1;
     }
-
+    void Start()
+    {
+        
+        Debug.Log(roundTime);
+    }
     void OnDestroy()
     {
         DestroyRobots();
@@ -213,7 +215,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         {
             cursorText = GameObject.Find("Cursor Text").GetComponent<Text>();
         }
-        float secondsPerDistance = 0.5f;
+        float secondsPerDistance = 0.3f;
         RobotBehaviour selectRB = selectedRobot.GetComponent<RobotBehaviour>();
         Vector3 cursorPosition;
         Vector3 cursorScreenPosition;
@@ -221,6 +223,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         float distanceFromMouse;
         float remainingTimeForRobot;
         float previewInputTime;
+        float shockwaveLife = shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime;
         while (selectedRobot != null)
         {
             cursorPosition = Input.mousePosition;
@@ -242,14 +245,15 @@ public class TurnHandlerBehaviour : MonoBehaviour
             previewInputTime = secondsPerDistance * distanceFromMouse;
             remainingTimeForRobot = selectRB.freeTime - previewInputTime;
             
-            if (selectedCommand == AvailableCommands.PushCommand && previewInputTime <= selectRB.freeTime - ShockwaveBehaviour.lifetime)
+            if (selectedCommand == AvailableCommands.PushCommand && previewInputTime <= selectRB.freeTime - shockwaveLife)
             {
+                
                 timeInput = previewInputTime;
                 cursorText.text = timeInput.ToString();
                 cursorText.transform.position = cursorPosition;
                 
             }
-            else if (previewInputTime <= selectRB.freeTime)
+            else if (selectedCommand != AvailableCommands.PushCommand && previewInputTime <= selectRB.freeTime)
             {
                 timeInput = previewInputTime;
                 cursorText.text = timeInput.ToString();
@@ -281,7 +285,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
             //take the time for the command from the timetext
             float duration = timeInput;
             RobotBehaviour rb = selectedRobot.GetComponent<RobotBehaviour>();
-            if(timeInput <= rb.freeTime)
+            if(timeInput > 0 && timeInput <= rb.freeTime)
             {
                 Vector3 cursorPosition = Input.mousePosition;
                 Vector3 cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
@@ -291,7 +295,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
                     rb.Commands.Add(new MoveCommand(selectedRobot, cursorScreenPosition, duration, Turns));
                     Debug.Log("MoveCommand Added!");
                 }
-                if (selectedCommand == AvailableCommands.PushCommand)
+                if (selectedCommand == AvailableCommands.PushCommand && timeInput <= rb.freeTime - shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime)
                 {
                     float speed = 8.0f;
 
@@ -299,6 +303,10 @@ public class TurnHandlerBehaviour : MonoBehaviour
                     Vector2 velocity = new Vector2(speed * Mathf.Cos(angle), speed * Mathf.Sin(angle));
                     rb.Commands.Add(new PushCommand(selectedRobot, velocity, duration));
                     Debug.Log("PushCommand Added!");
+                }
+                else
+                {
+                    Debug.Log("cant add push command with such a charge time");
                 }
                 rb.freeTime -= duration;
                 timeInput = 0;
@@ -310,6 +318,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
     void Update()
     {
         ReactToUserInput();
+
     }
 
     void ReactToUserInput()
@@ -366,6 +375,8 @@ public class TurnHandlerBehaviour : MonoBehaviour
         }
         else
         {
+            selectedRobot = null;
+            timeInput = 0;
             RobotBehaviour.OnClick -= new RobotBehaviour.ClickedOnRobot(ChooseRobot);
 
             foreach (GameObject r in robots)

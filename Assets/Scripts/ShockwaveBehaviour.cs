@@ -4,8 +4,10 @@ using System;
 
 public class ShockwaveBehaviour : IEntity
 {
+    
     [SerializeField]
     float lifeTime;
+    public float intendedLifetime;
     [SerializeField]
     float pushForce;
 
@@ -16,7 +18,7 @@ public class ShockwaveBehaviour : IEntity
 
     bool shouldUpdate;
     GameObject shockwaveUser;
-
+    
     public static ShockwaveBehaviour InstantiateShockWave(ShockwaveBehaviour shockWave)
     {
         return Instantiate(shockWave);
@@ -26,6 +28,8 @@ public class ShockwaveBehaviour : IEntity
     {
         if (lifeTime < 0)
         {
+            intendedLifetime = lifeTime;
+
             remainingLifeTime = 0;
         }
         if (pushForce < 0)
@@ -36,6 +40,7 @@ public class ShockwaveBehaviour : IEntity
 
     public void Initialize(Vector2 velocity, GameObject shockwaveUser)
     {
+        
         this.shockwaveUser = shockwaveUser;
         this.velocity = velocity;
         pushVector = velocity.normalized * pushForce;
@@ -44,6 +49,7 @@ public class ShockwaveBehaviour : IEntity
 
     void Awake()
     {
+
         remainingLifeTime = lifeTime;
         shouldUpdate = true;
         if (GetComponent<Rigidbody2D>() == null)
