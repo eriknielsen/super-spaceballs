@@ -205,10 +205,20 @@ public class TurnHandlerBehaviour : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            selectedRobot = r;
+            if(selectedRobot != r)
+            {
+                StopCoroutine(MeasureAndDisplayTimeInput());
+                selectedRobot = r;
 
-            StartCoroutine(MeasureAndDisplayTimeInput());
-            Debug.Log("Robot selected!");
+                StartCoroutine(MeasureAndDisplayTimeInput());
+                Debug.Log("Robot selected!");
+            }
+            else
+            {
+                Debug.Log("Robot already selected!");
+            }
+              
+            
         }
     }
 
@@ -220,6 +230,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         }
         float secondsPerDistance = 0.3f;
         RobotBehaviour selectRB = selectedRobot.GetComponent<RobotBehaviour>();
+        Debug.Log(selectRB.freeTime);
         Vector3 cursorPosition;
         Vector3 cursorScreenPosition;
         Vector3 deltaPosition;
@@ -229,9 +240,10 @@ public class TurnHandlerBehaviour : MonoBehaviour
         float shockwaveLife = shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime;
         while (selectedRobot != null)
         {
+            
             cursorPosition = Input.mousePosition;
             cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
-            //Vector3 cursorViewportPoint = Camera.main.WorldToViewportPoint(cursorPosition);
+           
             //if there is at least one command in the robots command list, change the calculations from that command's position
             if(selectRB.commands.Count > 0)
             {
@@ -250,11 +262,9 @@ public class TurnHandlerBehaviour : MonoBehaviour
             
             if (selectedCommand == AvailableCommands.PushCommand && previewInputTime <= selectRB.freeTime - shockwaveLife)
             {
-                
                 timeInput = previewInputTime;
                 cursorText.text = timeInput.ToString();
                 cursorText.transform.position = cursorPosition;
-                
             }
             else if (selectedCommand != AvailableCommands.PushCommand && previewInputTime <= selectRB.freeTime)
             {
@@ -267,7 +277,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
             yield return new WaitForSeconds(0.0001f);
         }
         cursorText.text = "";
-        yield return null;
+        
     }
 
    
@@ -297,7 +307,9 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 }
                 else
                 {
+                    //timeInput = 0;
                     Debug.Log("cant add push command with such a charge time");
+                    return;
                 }
                 rb.freeTime -= duration;
                 timeInput = 0;
@@ -341,12 +353,12 @@ public class TurnHandlerBehaviour : MonoBehaviour
     }
     void OnEnable()
     {
-        Debug.Log("Enabled!");
+
     }
 
     void OnDisable()
     {
-        Debug.Log("Disabled!");
+        
     }
     public void Activate(bool activate)
     {
