@@ -45,33 +45,45 @@ public class RobotBehaviour : MonoBehaviour {
 
     public void UpdateAnimationAndCollider()
     {
+        //float maximumAngle = Mathf.PI * 2;
+        //int nAnimations = movingDirectionAnimations.Length;
+        //float interval = maximumAngle / nAnimations;
+        //float directionAngle = Mathf.Atan2(rigidBodyComponent.velocity.y, rigidBodyComponent.velocity.x);
+        ////Vector2 direction = rigidBodyComponent.velocity.normalized;
+
+        //if (directionAngle < 0)
+        //{
+        //    directionAngle += maximumAngle;
+        //}
+
+        //float smallestAngle = 0, biggestAngle = interval;
+        //for (int i = 0; i < nAnimations; i++)
+        //{
+        //    animatorComponent.SetBool(movingDirectionAnimations[i], false);
+        //    if (directionAngle > smallestAngle && directionAngle < biggestAngle)
+        //    {
+        //        animatorComponent.SetBool(movingDirectionAnimations[i], true);
+        //        for (int j = i + 1; j < nAnimations; j++)
+        //        {
+        //            animatorComponent.SetBool(movingDirectionAnimations[j], false);
+        //        }
+        //        return;
+        //    }
+        //    smallestAngle += interval;
+        //    biggestAngle += interval;
+        //}
+
         float maximumAngle = Mathf.PI * 2;
         int nAnimations = movingDirectionAnimations.Length;
-        float interval = maximumAngle / nAnimations;
         float directionAngle = Mathf.Atan2(rigidBodyComponent.velocity.y, rigidBodyComponent.velocity.x);
-        //Vector2 direction = rigidBodyComponent.velocity.normalized;
 
-        if (directionAngle < 0)
+        directionAngle = directionAngle * Mathf.Rad2Deg;
+        if(directionAngle < 360.0f)
         {
-            directionAngle += maximumAngle;
+            directionAngle += 360.0f;
         }
-
-        float smallestAngle = 0, biggestAngle = interval;
-        for (int i = 0; i < nAnimations; i++)
-        {
-            animatorComponent.SetBool(movingDirectionAnimations[i], false);
-            if (directionAngle > smallestAngle && directionAngle < biggestAngle)
-            {
-                animatorComponent.SetBool(movingDirectionAnimations[i], true);
-                for (int j = i + 1; j < nAnimations; j++)
-                {
-                    animatorComponent.SetBool(movingDirectionAnimations[j], false);
-                }
-                return;
-            }
-            smallestAngle += interval;
-            biggestAngle += interval;
-        }
+        string animationVariable = "Direction Angle";
+        animatorComponent.SetFloat(animationVariable, directionAngle);
     }
 
     void Awake()
