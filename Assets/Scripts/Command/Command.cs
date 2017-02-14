@@ -13,3 +13,24 @@ public abstract class Command {
     public Vector2 targetPosition;
     public int turn;
 }
+
+
+
+[System.Serializable]
+public class SerializableCommand {
+
+    public enum CommandType { Move,Push};
+    public CommandType type;
+    public int robotIndex;
+    public Position targetPosition;
+    public float lifeDuration;
+    public int turn;
+    public SerializableCommand(int index, Vector2 targetPos, float duration, CommandType t, int turn)
+    {
+        robotIndex = index;
+        targetPosition = new Position(targetPos);
+        lifeDuration = duration;
+        this.turn = turn;
+        type = t;
+    }
+}

@@ -35,6 +35,7 @@ public class RobotBehaviour : MonoBehaviour {
         set { currentState = value; }
     }
 
+    
     public List<Command> Commands
     {
         get { return commands; }

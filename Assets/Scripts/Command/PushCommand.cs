@@ -13,8 +13,9 @@ public class PushCommand : Command {
     Vector2 velocity;
     float speed = 8f;
 
-    public PushCommand(GameObject robot, Vector2 target, float lifetime)
+    public PushCommand(GameObject robot, Vector2 target, float lifetime, int turn)
     {
+        this.turn = turn;
         float angle = AngleBetweenPoints(target, robot.transform.position);
 
         Vector2 velocity = new Vector2(speed * Mathf.Cos(angle), speed * Mathf.Sin(angle));

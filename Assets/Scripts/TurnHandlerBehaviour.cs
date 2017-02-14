@@ -28,6 +28,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
     BoxCollider2D bc2D;
     float timeInput;
 
+    bool activated = false;
     //en lista med drag
     public List<Move> moves;
 
@@ -38,7 +39,11 @@ public class TurnHandlerBehaviour : MonoBehaviour
             return turns;
         }
     }
-
+    public List<GameObject> Robots
+    {
+        get { return robots; }
+        
+    }
     public int NumberOfRobots
     {
         get
@@ -207,30 +212,24 @@ public class TurnHandlerBehaviour : MonoBehaviour
         {
             if(selectedRobot != r)
             {
-                StopCoroutine(MeasureAndDisplayTimeInput());
                 selectedRobot = r;
 
-<<<<<<< HEAD
-            StartCoroutine(SetAndDisplayTimeInput());
-            Debug.Log("Robot selected!");
-=======
-                StartCoroutine(MeasureAndDisplayTimeInput());
+                StartCoroutine(SetAndDisplayTimeInput());
                 Debug.Log("Robot selected!");
             }
             else
             {
                 Debug.Log("Robot already selected!");
             }
-              
-            
->>>>>>> origin/master
         }
     }
 
     IEnumerator SetAndDisplayTimeInput()
     {
+        
         if (cursorText == null)
         {
+            //om den inte hittar, instansera istället!
             cursorText = GameObject.Find("Cursor Text").GetComponent<Text>();
         }
         float secondsPerDistance = 0.3f;
@@ -283,6 +282,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         }
         cursorText.text = "";
         
+        yield return new WaitForSeconds(0.0001f);
     }
 
    
@@ -307,7 +307,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 if (selectedCommand == AvailableCommands.PushCommand && timeInput <= rb.freeTime - shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime)
                 {
                     
-                    rb.Commands.Add(new PushCommand(selectedRobot, cursorScreenPosition, duration));
+                    rb.Commands.Add(new PushCommand(selectedRobot, cursorScreenPosition, duration,0));
                     Debug.Log("PushCommand Added!");
                 }
                 else
@@ -325,8 +325,11 @@ public class TurnHandlerBehaviour : MonoBehaviour
     }
     void Update()
     {
-        ReactToUserInput();
-
+        if (activated)
+        {
+            ReactToUserInput();
+        }
+        
     }
 
     void ReactToUserInput()
@@ -367,6 +370,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
     }
     public void Activate(bool activate)
     {
+        activated = activate;
         if (activate == true)
         {
             //visually indicate that this turnhandlers robots are now active
@@ -435,6 +439,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
             }
         }
     }
+  
 
-   
 }
