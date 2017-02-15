@@ -304,14 +304,11 @@ public class TurnHandlerBehaviour : MonoBehaviour
             yield return new WaitForSeconds(0.0001f);
         }
         cursorText.text = "";
-<<<<<<< HEAD
-=======
         
         yield return new WaitForSeconds(0.0001f);
     }
->>>>>>> origin/master
 
-    }
+    
 
     void GiveCommandToSelectedRobot()
     {
@@ -342,13 +339,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 }
                 if (selectedCommand == AvailableCommands.PushCommand && timeInput <= rb.freeTime - shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime)
                 {
-<<<<<<< HEAD
-
-                    rb.Commands.Add(new PushCommand(selectedRobot, cursorScreenPosition, timeInput));
-=======
-                    
-                    rb.Commands.Add(new PushCommand(selectedRobot, cursorScreenPosition, duration,0));
->>>>>>> origin/master
+                    rb.Commands.Add(new PushCommand(selectedRobot, cursorScreenPosition, timeInput, 0));
                     Debug.Log("PushCommand Added!");
                 }
                 else
@@ -366,15 +357,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
     }
     void Update()
     {
-<<<<<<< HEAD
         ReactToUserInput();
-=======
-        if (activated)
-        {
-            ReactToUserInput();
-        }
-        
->>>>>>> origin/master
     }
 
     void ReactToUserInput()
@@ -481,10 +464,5 @@ public class TurnHandlerBehaviour : MonoBehaviour
             }
         }
     }
-  
-
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/master
 }
+
