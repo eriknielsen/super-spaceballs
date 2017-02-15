@@ -6,9 +6,9 @@ public class PlayBehaviour : MonoBehaviour
 {
     //class for local play
     [SerializeField]
-    TurnHandlerBehaviour leftPrefab;
+    GameObject leftPrefab;
     [SerializeField]
-    TurnHandlerBehaviour rightPrefab;
+    GameObject rightPrefab;
 
     TurnHandlerBehaviour turnHandler1;
     TurnHandlerBehaviour turnHandler2;
@@ -27,7 +27,7 @@ public class PlayBehaviour : MonoBehaviour
     public float roundTime;
 
     public GameObject InGameUIPrefab;
-    public GameObject turnHandlerPrefab;
+   
 
     public delegate void ReturnMenuButtonClicked();
     public static event ReturnMenuButtonClicked OnReturnMenuButtonClick;
@@ -60,19 +60,18 @@ public class PlayBehaviour : MonoBehaviour
         collidersInGame = FindObjectsOfType<Collider2D>();
         gameTimer = new GameTimer(120);
         InGameUIInstance = Instantiate(InGameUIPrefab);
-        //CreateTurnHandlers();
         gameTimeText = InGameUIInstance.transform.FindChild("GameTimeText").GetComponent<Text>();
     }
 
     public void CreateTurnHandlers()
     {
-        leftPrefab.roundTime = roundTime;
-        rightPrefab.roundTime = roundTime;
+        leftPrefab.GetComponent<TurnHandlerBehaviour>().roundTime = roundTime;
+        rightPrefab.GetComponent<TurnHandlerBehaviour>().roundTime = roundTime;
         if (leftPrefab != null)
         {
             if (turnHandler1 == null)
             {
-                turnHandler1 = Instantiate(leftPrefab);
+                turnHandler1 = Instantiate(leftPrefab).GetComponent<TurnHandlerBehaviour>();
                 turnHandler1.transform.parent = transform;
                
             }
@@ -90,7 +89,7 @@ public class PlayBehaviour : MonoBehaviour
         {
             if (turnHandler2 == null)
             {
-                turnHandler2 = Instantiate(rightPrefab);
+                turnHandler2 = Instantiate(rightPrefab).GetComponent<TurnHandlerBehaviour>();
                 turnHandler2.transform.parent = transform;
             }
             else

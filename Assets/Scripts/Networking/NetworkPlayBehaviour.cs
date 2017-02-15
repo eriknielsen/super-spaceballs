@@ -6,7 +6,8 @@ using UnityEngine;
 using UnityEngine.Networking;
 public class NetworkPlayBehaviour : NetworkBehaviour {
 
-    public GameObject turnhandlerPrefab;
+    public GameObject rightTurnhandlerPrefab;
+    public GameObject leftTurnhandlerPrefab;
     //only ever activate the player turnhandler
     TurnHandlerBehaviour playerTurnhandler;
     //recive commands from the server/client and give to this turnhandler
@@ -21,12 +22,22 @@ public class NetworkPlayBehaviour : NetworkBehaviour {
     // Use this for initialization
     void Start()
     {
-        playerTurnhandler = Instantiate(turnhandlerPrefab).GetComponent<TurnHandlerBehaviour>();
-        otherTurnhandler = Instantiate(turnhandlerPrefab).GetComponent<TurnHandlerBehaviour>();
+        if (customIsServer)
+        {
+            playerTurnhandler = Instantiate(rightTurnhandlerPrefab).GetComponent<TurnHandlerBehaviour>();
+            otherTurnhandler = Instantiate(leftTurnhandlerPrefab).GetComponent<TurnHandlerBehaviour>();
+        }
+        else
+        {
+            playerTurnhandler = Instantiate(leftTurnhandlerPrefab).GetComponent<TurnHandlerBehaviour>();
+            otherTurnhandler = Instantiate(rightTurnhandlerPrefab).GetComponent<TurnHandlerBehaviour>();
+
+        }
+
 
         //activate the playeturnhandler only
         playerTurnhandler.Activate(true);
-        Debug.Log(customIsServer);
+       
     }
 
 
@@ -146,6 +157,9 @@ public class NetworkPlayBehaviour : NetworkBehaviour {
 
         remoteIsReady = true;
     }
+    //####
+    // Utility functions
+    //####
     Dictionary<int, List<Command>> GetCommandDict(List<GameObject> robotList)
     {
         Dictionary<int, List<Command>> dict = new Dictionary<int, List<Command>>();

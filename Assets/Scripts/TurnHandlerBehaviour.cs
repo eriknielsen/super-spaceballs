@@ -6,8 +6,7 @@ using UnityEngine.UI;
 
 public class TurnHandlerBehaviour : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject robotPrefab;
+  
     [SerializeField]
     GameObject shockWavePrefab;
     [SerializeField]
@@ -82,6 +81,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
     void CreateRobots(int numberOfRobots)
     {
+        /*
         if (robotPrefab != null)
         {
             for (int i = 0; i < numberOfRobots; i++)
@@ -101,6 +101,15 @@ public class TurnHandlerBehaviour : MonoBehaviour
         }
         bc2D.enabled = false;
         Component.Destroy(bc2D);
+        */
+        int count = 0;
+        while(transform.childCount > count)
+        {
+            Debug.Log("hej");
+            robots.Add(transform.GetChild(count).gameObject);
+            robots[count].GetComponent<RobotBehaviour>().freeTime = roundTime;
+            count++;
+        }
     }
 
     void DestroyRobots()
@@ -295,16 +304,16 @@ public class TurnHandlerBehaviour : MonoBehaviour
             }
             else if (selectedCommand != AvailableCommands.PushCommand && previewInputTime <= selectRB.freeTime)
             {
+                Debug.Log("hejsan");
                 timeInput = previewInputTime;
                 cursorText.text = timeInput.ToString();
                 cursorText.transform.position = cursorPosition;
             }
 
-
+            Debug.Log(remainingTimeForRobot);
             yield return new WaitForSeconds(0.0001f);
         }
         cursorText.text = "";
-        
         yield return new WaitForSeconds(0.0001f);
     }
 

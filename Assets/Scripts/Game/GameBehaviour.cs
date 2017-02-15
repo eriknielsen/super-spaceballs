@@ -26,14 +26,7 @@ public class GameBehaviour : MonoBehaviour {
         PlayBehaviour.OnReplayButtonClick += new PlayBehaviour.ReplayButtonClicked(LocalPlayReplayLastTurn);
 
     }
-    // Use this for initialization
-    void Start () {
-    }
-	
-	// Update is called once per frame
-	void Update () {
-	    
-	}
+
     public void EnterLocalPlay()
     {
 
