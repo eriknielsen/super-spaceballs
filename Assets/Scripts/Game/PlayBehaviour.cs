@@ -162,7 +162,7 @@ public class PlayBehaviour : MonoBehaviour
     ///if we replayed the last turn, then we dont want to do the newturn stuff
     IEnumerator UnpauseGame(bool asReplay)
     {
-        TurnOnColliders();
+        //TurnOnColliders();
         InGameUIInstance.transform.GetChild(0).gameObject.SetActive(false);
         InGameUIInstance.transform.GetChild(1).gameObject.SetActive(false);
 
@@ -201,7 +201,7 @@ public class PlayBehaviour : MonoBehaviour
 
         turnHandler1.PauseGame();
         turnHandler2.PauseGame();
-        TurnOffColliders();
+        //TurnOffColliders();
     }
 
     void TurnOffColliders()
@@ -324,7 +324,7 @@ public class PlayBehaviour : MonoBehaviour
             CreateTurnHandlers();
             NewTurn();
             InGameUIInstance.SetActive(true);
-            TurnOffColliders();
+            //TurnOffColliders();
         }
 
     }

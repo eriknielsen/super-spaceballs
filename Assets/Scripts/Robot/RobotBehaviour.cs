@@ -43,15 +43,18 @@ public class RobotBehaviour : MonoBehaviour {
 
     public void UpdateAnimationAndCollider()
     {
-        float directionAngle = Mathf.Atan2(rigidBodyComponent.velocity.y, rigidBodyComponent.velocity.x);
-
-        directionAngle = directionAngle * Mathf.Rad2Deg;
-        if(directionAngle < 0.0f)
+        if (animatorComponent.runtimeAnimatorController != null)
         {
-            directionAngle += 360.0f;
+            float directionAngle = Mathf.Atan2(rigidBodyComponent.velocity.y, rigidBodyComponent.velocity.x);
+
+            directionAngle = directionAngle * Mathf.Rad2Deg;
+            if (directionAngle < 0.0f)
+            {
+                directionAngle += 360.0f;
+            }
+            string animationVariable = "Direction Angle";
+            animatorComponent.SetFloat(animationVariable, directionAngle);
         }
-        string animationVariable = "Direction Angle";
-        animatorComponent.SetFloat(animationVariable, directionAngle);
     }
 
     void Awake()
@@ -60,6 +63,7 @@ public class RobotBehaviour : MonoBehaviour {
         {
             gameObject.AddComponent<Rigidbody2D>();
         }
+        prevVelocity = gameObject.GetComponent<Rigidbody2D>().velocity;
         rigidBodyComponent = GetComponent<Rigidbody2D>();
         animatorComponent = GetComponent<Animator>();
         Commands = new List<Command>();
@@ -98,7 +102,6 @@ public class RobotBehaviour : MonoBehaviour {
 
     public void ExecuteRobotCommand()
     {
-       
         if (currentCommand != null && currentCommand.isFinished)
         {
             //remove the currentcommand from the command list
@@ -107,8 +110,7 @@ public class RobotBehaviour : MonoBehaviour {
             DecideCommand();
         }
         else if(currentCommand != null)
-        {
-            
+        { 
             currentCommand.Execute();
         }
     }

@@ -8,7 +8,6 @@ public class MoveCommand : Command
     
     Vector2 resultingForce;
     float angle;
-    float intialForceTimeLeft;
     Vector2 startPosition;
     Vector2 startSpeed;
 
@@ -61,6 +60,7 @@ public class MoveCommand : Command
         robot = r;
         lifeDuration = moveCommand.lifeDuration;
         resultingForce = moveCommand.ResultingForce;
+        lifeTimer = moveCommand.LifeDuration;
     }
     
     public MoveCommand(GameObject r, Vector2 target, float lifetime, int turn)
@@ -71,7 +71,6 @@ public class MoveCommand : Command
         lifeDuration = lifetime;
         lifeTimer = lifetime;
         this.turn = turn;
-        intialForceTimeLeft = lifetime;
         startPosition = r.transform.position;
         startSpeed = r.GetComponent<Rigidbody2D>().velocity;
 

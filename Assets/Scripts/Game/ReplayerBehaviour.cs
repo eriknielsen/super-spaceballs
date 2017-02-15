@@ -2,31 +2,34 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class ReplayerBehaviour : MonoBehaviour {
-    
+public class ReplayerBehaviour : MonoBehaviour
+{
+
     //####
     //private vars
     List<Move> movesToReplay;
     //#####
     //public vars
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
 
         GameObject.Find("TurnHandler").SetActive(false);
-       
+
 
         //GameObject.Find("TurnHandler").SetActive(false);
-        
-        
+
+
 
 
     }
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
     /// <summary>
     /// should take a serialized file and load the moves into movesToReplay
     /// </summary>
@@ -38,7 +41,8 @@ public class ReplayerBehaviour : MonoBehaviour {
     /// should take the moves from TurnHandler(or whichever class has them)
     /// and load them into movesToReplay
     /// </summary>
-    void LoadMovesFromGame() {
+    void LoadMovesFromGame()
+    {
         movesToReplay.AddRange(GameObject.Find("TurnHandler").
             GetComponent<TurnHandlerBehaviour>().moves);
 
