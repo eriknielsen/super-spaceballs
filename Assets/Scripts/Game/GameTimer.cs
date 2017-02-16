@@ -2,29 +2,26 @@
 using System.Collections;
 
 public class GameTimer {
-    public int remainingTime;
-    int matchTime;
-    public GameTimer(int totalMatchTime)
-    {
+	private int matchTime;
+
+	public int remainingTime;
+    public GameTimer(int totalMatchTime) {
         matchTime = totalMatchTime;
         remainingTime = matchTime;
     }
-    public IEnumerator CountDownSeconds(int seconds)
-    {
-        while(seconds > 0)
-        {
+
+    public IEnumerator CountDownSeconds(int seconds) {
+        while(seconds > 0) {
             yield return new WaitForSeconds(1f);
             seconds--;
             remainingTime--;
         }
     }
 
-    public int MinutesRemaining()
-    {
+    public int MinutesRemaining() {
         return remainingTime / 60;
     }
-    public int SecondsRemaining()
-    {
+    public int SecondsRemaining() {
         return remainingTime % 60;
     }
 }

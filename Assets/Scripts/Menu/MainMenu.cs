@@ -8,12 +8,11 @@ public class MainMenu : MonoBehaviour {
 	public GameObject mainButtons;
 
 	public void LocalPlay(){
-		SceneManager.LoadSceneAsync("GameField", LoadSceneMode.Single);
+		SceneManager.LoadSceneAsync("LocalPlay", LoadSceneMode.Single);
 	}
 
 	public void OnlinePlay(){
-		//Debug.Log(SceneManager.GetActiveScene().buildIndex)
-		SceneManager.LoadSceneAsync("onlineplay", LoadSceneMode.Single);
+		SceneManager.LoadSceneAsync("OnlinePlay", LoadSceneMode.Single);
 	}
 
 	public void ToggleOptionsMenu(){
