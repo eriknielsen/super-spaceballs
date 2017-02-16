@@ -11,13 +11,13 @@ public class GameBehaviour : MonoBehaviour {
     GameObject MainMenuInstance;
     public enum State { Menu, LocalPlay, NetworkPlay };
 
-    public GameObject LocalPlayPrefab;
+    
     public GameObject MenuPrefab;
 
     void Awake()
     {
-        LocalPlayInstance = Instantiate(LocalPlayPrefab);
-        LocalPlayInstance.transform.parent = gameObject.transform;
+        DontDestroyOnLoad(gameObject);
+    
         MainMenuInstance = Instantiate(MenuPrefab);
         MainMenuInstance.transform.parent = gameObject.transform;
         EnterMenu();
@@ -29,7 +29,6 @@ public class GameBehaviour : MonoBehaviour {
 
     public void EnterLocalPlay()
     {
-
         //do stuff to make local play happen
 
         MainMenuInstance.GetComponent<MenuBehaviour>().Activate(false);

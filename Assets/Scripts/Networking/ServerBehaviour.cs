@@ -30,14 +30,12 @@ public class ServerBehaviour : NetworkManager {
     NetworkConnection remoteConnection;
 
     int matchDomain = 0;
-    //if isServer then the networkplaybehaviour gets this set
+    //if isServer true then the networkplaybehaviour gets this set
     bool isServer;
 
     void Start()
     {
         NetworkManager.singleton.StartMatchMaker();
-
-
     }
     //call this method to request a match to be created on the server
     public void CreateInternetMatch(string matchName)
@@ -178,7 +176,6 @@ public class ServerBehaviour : NetworkManager {
 
         BinaryFormatter bf = new BinaryFormatter();
         System.IO.MemoryStream ms = new System.IO.MemoryStream();
-
 
         bf.Serialize(ms, commands);
         result = ms.ToArray();

@@ -21,12 +21,12 @@ public class PlayBehaviour : MonoBehaviour
     Collider2D[] collidersInGame;
 
     public Text gameTimeText;
-    public GameObject InGameUIInstance;
+
 
     public float intendedShockwaveLiftime;
     public float roundTime;
 
-    public GameObject InGameUIPrefab;
+
    
 
     public delegate void ReturnMenuButtonClicked();
@@ -59,8 +59,8 @@ public class PlayBehaviour : MonoBehaviour
         }
         collidersInGame = FindObjectsOfType<Collider2D>();
         gameTimer = new GameTimer(120);
-        InGameUIInstance = Instantiate(InGameUIPrefab);
-        gameTimeText = InGameUIInstance.transform.FindChild("GameTimeText").GetComponent<Text>();
+
+        
     }
 
     public void CreateTurnHandlers()
@@ -118,14 +118,15 @@ public class PlayBehaviour : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        InGameUIInstance.SetActive(true);
 
-        //decide who goes first
-        //NewTurn();
+        gameTimeText = GameObject.Find("GameTimeText").GetComponent<Text>();
+  
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
 
 
-
+        //INIT GAME
+        CreateTurnHandlers();
+        NewTurn();
     }
 
     // Update is called once per frame
@@ -162,9 +163,6 @@ public class PlayBehaviour : MonoBehaviour
     ///if we replayed the last turn, then we dont want to do the newturn stuff
     IEnumerator UnpauseGame(bool asReplay)
     {
-        //TurnOnColliders();
-        InGameUIInstance.transform.GetChild(0).gameObject.SetActive(false);
-        InGameUIInstance.transform.GetChild(1).gameObject.SetActive(false);
 
         ActivateTurnHandler(false);
         if (asReplay)
@@ -196,9 +194,7 @@ public class PlayBehaviour : MonoBehaviour
     }
     void PauseGame()
     {
-        InGameUIInstance.transform.GetChild(0).gameObject.SetActive(true);
-        InGameUIInstance.transform.GetChild(1).gameObject.SetActive(true);
-
+    
         turnHandler1.PauseGame();
         turnHandler2.PauseGame();
         //TurnOffColliders();
@@ -210,7 +206,8 @@ public class PlayBehaviour : MonoBehaviour
         string exception = "Clickable Hitbox";
         for (int i = 0; i < collidersInGame.Length; i++)
         {
-            if (collidersInGame[i].tag != exception)
+            Debug.Log(collidersInGame[i].tag);
+            if (collidersInGame[i].tag != exception && collidersInGame[i].tag != "UI")
             {
                 collidersInGame[i].enabled = false;
             }
@@ -275,12 +272,10 @@ public class PlayBehaviour : MonoBehaviour
         if (turnHandler1.Turns % 2 == 0)
         {
             currentTurnHandler = 1;
-
         }
         else
         {
             currentTurnHandler = 2;
-
         }
         isTH1Done = false;
         isTH2Done = false;
@@ -315,7 +310,7 @@ public class PlayBehaviour : MonoBehaviour
         if (activate == false)
         {
             DestroyTurnHandlers();
-            InGameUIInstance.SetActive(false);
+     
             enabled = false;
         }
         else
@@ -323,9 +318,8 @@ public class PlayBehaviour : MonoBehaviour
             enabled = true;
             CreateTurnHandlers();
             NewTurn();
-            InGameUIInstance.SetActive(true);
+         
         }
-
     }
     /// <summary>
     /// sends event to gamebehaviour about pausing the game
