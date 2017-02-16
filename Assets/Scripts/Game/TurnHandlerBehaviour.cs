@@ -148,7 +148,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 
     IEnumerator SetAndDisplayTimeInput() {
         if (cursorText == null) {
-            cursorText = GameObject.Find("Cursor Text").GetComponent<Text>();
+            cursorText = GameObject.Find("CursorText").GetComponent<Text>();
         }
         float secondsPerDistance = 0.3f;
         RobotBehaviour selectRB = selectedRobot.GetComponent<RobotBehaviour>();
@@ -183,7 +183,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
                 cursorText.transform.position = cursorPosition;
             }
             else if (selectedCommand != AvailableCommands.PushCommand && previewInputTime <= selectRB.freeTime) {
-                Debug.Log("hejsan");
+                
                 timeInput = previewInputTime;
                 cursorText.text = timeInput.ToString();
                 cursorText.transform.position = cursorPosition;
@@ -223,7 +223,8 @@ public class TurnHandlerBehaviour : MonoBehaviour {
                 }
                 else {
                     //timeInput = 0;
-                    Debug.Log("cant add push command with such a charge time");
+                    
+                    Debug.Log("cant add push command with such a charge time, it is: " + timeInput);
                     return;
                 }
                 rb.freeTime -= timeInput;

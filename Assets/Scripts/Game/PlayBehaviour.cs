@@ -5,12 +5,10 @@ using UnityEngine.UI;
 public class PlayBehaviour : MonoBehaviour
 {
     //class for local play
-    [SerializeField]
-    GameObject leftPrefab;
-    [SerializeField]
-    GameObject rightPrefab;
 
+    [SerializeField]
     TurnHandlerBehaviour turnHandler1;
+    [SerializeField]
     TurnHandlerBehaviour turnHandler2;
 
     bool isTH1Done = false;
@@ -61,7 +59,7 @@ public class PlayBehaviour : MonoBehaviour
         
         
     }
-
+    /*
     public void CreateTurnHandlers()
     {
         leftPrefab.GetComponent<TurnHandlerBehaviour>().roundTime = roundTime;
@@ -101,7 +99,7 @@ public class PlayBehaviour : MonoBehaviour
             Debug.LogWarning("'rightPrefab' doesn't hold a reference, so no TurnHandler is created.");
         }
     }
-
+    */
     void DestroyTurnHandlers()
     {
         if (turnHandler1 != null)
@@ -118,7 +116,7 @@ public class PlayBehaviour : MonoBehaviour
     void Start()
     {
         leftGoal = GameObject.Find("LeftGoal").GetComponent<Goal>();
-        rightGoal = GameObject.Find("Rightgoal").GetComponent<Goal>();
+        rightGoal = GameObject.Find("RightGoal").GetComponent<Goal>();
         //event callbacks for scoring
         if(leftGoal != null || rightGoal != null)
         {
@@ -130,13 +128,13 @@ public class PlayBehaviour : MonoBehaviour
             Debug.Log("couldint find goals :(");
         }
 
-        gameTimeText = GameObject.Find("GameTimeText").GetComponent<Text>();
+        //gameTimeText = GameObject.Find("GameTimeText").GetComponent<Text>();
   
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
 
 
         //INIT GAME
-        CreateTurnHandlers();
+        //CreateTurnHandlers();
         NewTurn();
     }
 
@@ -327,7 +325,7 @@ public class PlayBehaviour : MonoBehaviour
         else
         {
             enabled = true;
-            CreateTurnHandlers();
+            //CreateTurnHandlers();
             NewTurn();
          
         }
