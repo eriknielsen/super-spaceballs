@@ -125,6 +125,7 @@ public class PlayBehaviour : MonoBehaviour
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
 
 
+
     }
 
     // Update is called once per frame
@@ -323,7 +324,6 @@ public class PlayBehaviour : MonoBehaviour
             CreateTurnHandlers();
             NewTurn();
             InGameUIInstance.SetActive(true);
-            //TurnOffColliders();
         }
 
     }

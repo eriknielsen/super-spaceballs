@@ -13,7 +13,7 @@ public class MainMenu : MonoBehaviour {
 
 	public void OnlinePlay(){
 		//Debug.Log(SceneManager.GetActiveScene().buildIndex)
-		SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
+		SceneManager.LoadSceneAsync("onlineplay", LoadSceneMode.Single);
 	}
 
 	public void ToggleOptionsMenu(){

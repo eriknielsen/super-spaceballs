@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine.UI;
 using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine.SceneManagement;
 
 public class ServerBehaviour : NetworkManager {
     [Serializable]
@@ -147,6 +148,17 @@ public class ServerBehaviour : NetworkManager {
             }
         }
     }
+    public override void OnClientDisconnect(NetworkConnection conn)
+    {
+        base.OnClientDisconnect(conn);
+        SceneManager.LoadSceneAsync("MainMenu");
+    }
+    public override void OnServerDisconnect(NetworkConnection conn)
+    {
+        base.OnServerDisconnect(conn);
+        SceneManager.LoadSceneAsync("MainMenu");
+    }
+
     //functions called by the networkplaybehaviour
     public void SendCommands(SerializableCommandList commands)
     {

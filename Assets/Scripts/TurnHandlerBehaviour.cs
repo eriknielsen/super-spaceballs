@@ -81,31 +81,10 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
     void CreateRobots(int numberOfRobots)
     {
-        /*
-        if (robotPrefab != null)
-        {
-            for (int i = 0; i < numberOfRobots; i++)
-            {
-                float x = Random.Range(bc2D.bounds.min.x, bc2D.bounds.max.x);
-                float y = Random.Range(bc2D.bounds.min.y, bc2D.bounds.max.y);
-                float z = -1.0f;
-                GameObject r = Instantiate(robotPrefab.gameObject, new Vector3(x, y, z), new Quaternion()) as GameObject;
-                r.GetComponent<RobotBehaviour>().freeTime = roundTime;
-                if (robots == null)
-                {
-                    Debug.Log("Null as fuuuuck");
-                }
-                robots.Add(r);
-            }
 
-        }
-        bc2D.enabled = false;
-        Component.Destroy(bc2D);
-        */
         int count = 0;
         while(transform.childCount > count)
         {
-            Debug.Log("hej");
             robots.Add(transform.GetChild(count).gameObject);
             robots[count].GetComponent<RobotBehaviour>().freeTime = roundTime;
             count++;
