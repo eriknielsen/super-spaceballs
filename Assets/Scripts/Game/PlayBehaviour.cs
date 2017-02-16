@@ -16,7 +16,7 @@ public class PlayBehaviour : MonoBehaviour
     bool isTH1Done = false;
     bool isTH2Done = false;
     int currentTurnHandler;
-    Vector2 score;
+   
     GameTimer gameTimer;
     Collider2D[] collidersInGame;
 
@@ -26,8 +26,10 @@ public class PlayBehaviour : MonoBehaviour
     public float intendedShockwaveLiftime;
     public float roundTime;
 
+    public Goal leftGoal;
+    public Goal rightGoal;
 
-   
+    Score score;
 
     public delegate void ReturnMenuButtonClicked();
     public static event ReturnMenuButtonClicked OnReturnMenuButtonClick;
@@ -59,7 +61,7 @@ public class PlayBehaviour : MonoBehaviour
         }
         collidersInGame = FindObjectsOfType<Collider2D>();
         gameTimer = new GameTimer(120);
-
+        
         
     }
 
@@ -118,6 +120,18 @@ public class PlayBehaviour : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        leftGoal = GameObject.Find("LeftGoal").GetComponent<Goal>();
+        rightGoal = GameObject.Find("Rightgoal").GetComponent<Goal>();
+        //event callbacks for scoring
+        if(leftGoal != null || rightGoal != null)
+        {
+            leftGoal.OnGoalScored += new Goal.GoalScored(() => leftGoal.score++);
+            rightGoal.OnGoalScored += new Goal.GoalScored(() => rightGoal.score++);
+        }
+        else
+        {
+            Debug.Log("couldint find goals :(");
+        }
 
         gameTimeText = GameObject.Find("GameTimeText").GetComponent<Text>();
   
