@@ -22,14 +22,11 @@ public class PlayBehaviour : MonoBehaviour
 
     public Text gameTimeText;
 
-
     public float intendedShockwaveLiftime;
     public float roundTime;
 
     public Goal leftGoal;
     public Goal rightGoal;
-
-    Score score;
 
     public delegate void ReturnMenuButtonClicked();
     public static event ReturnMenuButtonClicked OnReturnMenuButtonClick;

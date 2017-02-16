@@ -24,7 +24,6 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 	private bool mouseButtonIsPressed = false;
 	private GameObject selectedRobot;
 	private int selectedRobotIndex;
-	private List<IEntity> entities;
 	private List<GameObject> robots;
 	private List<GameObject> robotsMovingTrailHolder;
 	private AvailableCommands selectedCommand;
@@ -35,7 +34,6 @@ public class TurnHandlerBehaviour : MonoBehaviour {
         selectedCommand = AvailableCommands.MoveCommand;
         moves = new List<Move>();
         robots = new List<GameObject>();
-        entities = new List<IEntity>();
         CreateRobots(numberOfRobots);
         robotsMovingTrailHolder = new List<GameObject>();
         for (int i = 0; i < robots.Count; i++) {
@@ -77,21 +75,6 @@ public class TurnHandlerBehaviour : MonoBehaviour {
             rb.freeTime = roundTime;
         }
 
-		//remove IEntities who's gameobjects have been removed and pause the rest
-        List<IEntity> newList = new List<IEntity>();
-        for (int i = 0; i < entities.Count; i++) {
-            if (entities[i] != null)
-                newList.Add(entities[i]);
-        }
-        entities = newList;
-        for (int i = 0; i < entities.Count; i++) {
-
-            if (entities[i] != null) {
-                entities[i].EnterPause();
-            }
-            else {}
-        }
-
         for (int i = 0; i < robots.Count; i++) {
             robotsMovingTrailHolder.Add(new GameObject());
             robotsMovingTrailHolder[i].name = "Robot moving trail";
@@ -111,16 +94,6 @@ public class TurnHandlerBehaviour : MonoBehaviour {
             moves.Add(new Move(r, Turns, r.GetComponent<RobotBehaviour>().Commands));
 
             r.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
-        }
-        //also unpause all entities
-        foreach (IEntity e in entities) {
-            if (e != null) {
-                e.EnterPlay();
-            }
-            else {
-                Debug.Log("entity was null");
-            }
-
         }
         turns++;
 
@@ -174,7 +147,6 @@ public class TurnHandlerBehaviour : MonoBehaviour {
     }
 
     IEnumerator SetAndDisplayTimeInput() {
-        
         if (cursorText == null) {
             cursorText = GameObject.Find("Cursor Text").GetComponent<Text>();
         }
