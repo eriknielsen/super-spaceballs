@@ -12,12 +12,22 @@ public class VolumeManager : MonoBehaviour {
 
 	public float decibelRange = 40f;
 
+	void Awake(){
+		if (PlayerPrefs.GetInt("StartedBefore") == 0) { //Checks if this is the first time the game has been started
+			SetMasterVolume(100f);
+			SetMusicVolume(100f);
+			SetSFXVolume(100f);
+			PlayerPrefs.SetInt("StartedBefore", 1);
+		}
+	}
+
 	public void SetMasterVolume(float masterVol){
 		if (masterVol == 0){
 			masterMixer.SetFloat("masterVolume", -80f);
 		} else
 			masterMixer.SetFloat("masterVolume", VolumeRangeAdjustment(masterVol));
 		masterVolumeText.text = ("" + masterVol);
+		PlayerPrefs.SetFloat("MasterVolume", masterVol);
 	}
 
 	public void SetMusicVolume(float musicVol){
@@ -26,6 +36,7 @@ public class VolumeManager : MonoBehaviour {
 		} else
 			masterMixer.SetFloat("musicVolume", VolumeRangeAdjustment(musicVol));
 		musicVolumeText.text = ("" + musicVol);
+		PlayerPrefs.SetFloat("MusicVolume", musicVol);
 	}
 
 	public void SetSFXVolume(float sFXVol){
@@ -34,6 +45,7 @@ public class VolumeManager : MonoBehaviour {
 		} else
 			masterMixer.SetFloat("sFXVolume", VolumeRangeAdjustment(sFXVol));
 		sFXVolumeText.text = ("" + sFXVol);
+		PlayerPrefs.SetFloat("SFXVolume", sFXVol);
 	}
 
 	public float VolumeRangeAdjustment(float inputVol){
