@@ -3,21 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
+using System;
 
 class TrailUpdater : MonoBehaviour
 {
     bool isInitialized = false;
-    bool isFinished = false;
+    public bool isFinished = false;
     Sprite nodeSprite, trailMarkingSprite;
     float nodeWidth = 1.0f, trailMarkingWidth = 0.5f;
     Vector3 previousLocation;
     float distanceBetweenMarkings = 1.0f;
-    GameObject node;
+    public GameObject node;
     List<GameObject> trailMarkings;
-    MoveCommand moveCommand;
+    Command command;
     float timeDuration;
     float elapsedTime = 0;
-
     void Awake()
     {
         nodeSprite = Resources.Load<Sprite>("Sprites/fotball2");
@@ -25,32 +25,48 @@ class TrailUpdater : MonoBehaviour
         trailMarkings = new List<GameObject>();
     }
 
-    public void Initialize(MoveCommand moveCommand, float lifeTime, Vector2 currentVelocity)
+    public void Initialize(Command command, float lifeTime, Vector2 currentVelocity)
     {
-        if (moveCommand.robot != null)
+        if (command != null && command.robot != null)
         {
-            node = Instantiate(moveCommand.robot, transform) as GameObject;
+            node = Instantiate(command.robot, transform) as GameObject;
             foreach (Transform c in node.transform)
             {
-                c.gameObject.layer = LayerMask.NameToLayer("No Collision With Robot");
+                if (c.gameObject.layer != LayerMask.NameToLayer("Passive Hitbox"))
+                {
+                    c.gameObject.layer = LayerMask.NameToLayer("No Collision With Robot");
+                }
+            }
+            Type t = command.GetType();
+            if (command.GetType() == typeof(MoveCommand))
+            {
+                this.command = new MoveCommand(node, command as MoveCommand);
+                UnityEngine.Debug.Log("MOVE COMMAND");
+            }
+            else
+            {
+                UnityEngine.Debug.Log("OTHER COMMAND");
+
             }
 
-            this.moveCommand = new MoveCommand(node, moveCommand);
-            node.GetComponent<RobotBehaviour>().Commands.Add(this.moveCommand);
+            node.GetComponent<RobotBehaviour>().Commands.Add(this.command);
             node.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
             node.name = "Node";
             node.GetComponent<Rigidbody2D>().velocity = currentVelocity;
             timeDuration = lifeTime;
             node.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
             previousLocation = node.transform.position;
-            nodeSprite = Resources.Load<Sprite>("Sprites/fotball2");
             trailMarkingSprite = Resources.Load<Sprite>("Sprites/fotball2");
             if (node.GetComponent<SpriteRenderer>() == null)
             {
                 node.AddComponent<SpriteRenderer>();
             }
             node.GetComponent<SpriteRenderer>().sprite = nodeSprite;
-            node.GetComponent<SpriteRenderer>().color -= new Color(0, 0, 0, 0.5f);
+            float red, green, blue;
+            red = node.GetComponent<SpriteRenderer>().color.r;
+            green = node.GetComponent<SpriteRenderer>().color.g;
+            blue = node.GetComponent<SpriteRenderer>().color.b;
+            node.GetComponent<SpriteRenderer>().color = new Color(red, green, blue, 0.5f);
 
             Time.timeScale = 100;
             isInitialized = true;
@@ -94,7 +110,6 @@ class TrailUpdater : MonoBehaviour
                 }
                 else
                 {
-                    node.GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0);
                     node.GetComponent<RobotBehaviour>().CurrentState.EnterPauseState();
                     isFinished = true;
                     Time.timeScale = 1.0f;
@@ -113,17 +128,27 @@ public class MovingTrail
 {
     TrailUpdater trailUpdater;
 
-    public MovingTrail(MoveCommand moveCommand, float timeDuration, Vector2 currentVelocity)
+    public MovingTrail(Command command, float timeDuration, Vector2 currentVelocity)
     {
         GameObject g = new GameObject();
         g.AddComponent<TrailUpdater>();
         g.name = "MovingTrail";
         trailUpdater = g.GetComponent<TrailUpdater>();
-        trailUpdater.Initialize(moveCommand, timeDuration, currentVelocity);
+        trailUpdater.Initialize(command, timeDuration, currentVelocity);
     }
 
     public GameObject TrailGameObject
     {
-        get { return trailUpdater.gameObject;  }
+        get { return trailUpdater.gameObject; }
+    }
+
+    public GameObject Node
+    {
+        get { return trailUpdater.node; }
+    }
+
+    public bool IsFinished
+    {
+        get { return trailUpdater.isFinished; }
     }
 }

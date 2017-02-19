@@ -3,24 +3,31 @@ using System.Collections;
 
 public class MoveCommand : Command
 {
-    float force;
+    float forceMagnitude, initialForceMagnitude;
+    float initialForceTime;
     
-    
-    Vector2 resultingForce;
+    Vector2 force;
+    Vector2 initialForce;
     float angle;
     Vector2 startPosition;
     Vector2 startSpeed;
 
-    public Vector2 ResultingForce
+    public Vector2 Force
     {
         get
         {
-            return resultingForce;
+            return force;
         }
         set
         {
-            resultingForce = value;
+            force = value;
         }
+    }
+
+    public Vector2 InitialForce
+    {
+        get { return initialForce; }
+        set { initialForce = value; }
     }
 
     public float LifeDuration
@@ -59,13 +66,16 @@ public class MoveCommand : Command
     {
         robot = r;
         lifeDuration = moveCommand.lifeDuration;
-        resultingForce = moveCommand.ResultingForce;
+        force = moveCommand.Force;
+        initialForce = moveCommand.InitialForce;
         lifeTimer = moveCommand.LifeDuration;
     }
     
     public MoveCommand(GameObject r, Vector2 target, float lifetime, int turn)
     {
-        force = 3f;
+        forceMagnitude = 3f;
+        initialForceMagnitude = forceMagnitude * 2;
+        initialForceTime = lifetime - lifetime / 4;
         targetPosition = target;
         robot = r;
         lifeDuration = lifetime;
@@ -74,10 +84,11 @@ public class MoveCommand : Command
         startPosition = r.transform.position;
         startSpeed = r.GetComponent<Rigidbody2D>().velocity;
 
-        resultingForce = CaluculateForce();
+        force = CaluculateForce(forceMagnitude);
+        initialForce = CaluculateForce(initialForceMagnitude);
     }
 
-    Vector2 CaluculateForce()
+    Vector2 CaluculateForce(float forceMagnitude)
     {
         Vector2 positionDifference = targetPosition - startPosition;
         angle = Mathf.Atan2(positionDifference.y, positionDifference.x);
@@ -85,8 +96,8 @@ public class MoveCommand : Command
         {
             angle = 2 * Mathf.PI + angle;
         }
-        float yForce = Mathf.Sin(angle) * force;
-        float xForce = Mathf.Cos(angle) * force;
+        float yForce = Mathf.Sin(angle) * forceMagnitude;
+        float xForce = Mathf.Cos(angle) * forceMagnitude;
         return new Vector2(xForce, yForce);
     }
 
@@ -95,8 +106,15 @@ public class MoveCommand : Command
         //robot.transform.rotation = Quaternion.Lerp(robot.transform.rotation, Quaternion.Euler(0, 0, angle * Mathf.Rad2Deg), Time.deltaTime);
         if(lifeTimer > 0)
         {
+            if(lifeTimer > initialForceTime)
+            {
+                robot.GetComponent<Rigidbody2D>().AddForce(InitialForce);
+            }
+            else
+            {
+                robot.GetComponent<Rigidbody2D>().AddForce(force); ;
+            }
             lifeTimer -= Time.deltaTime;
-            robot.GetComponent<Rigidbody2D>().AddForce(resultingForce);
         }
         else
         {

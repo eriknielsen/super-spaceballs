@@ -73,6 +73,7 @@ public class RobotBehaviour : MonoBehaviour {
         playState = new PlayState(gameObject);
         currentState = pauseState;
         rb = GetComponent<Rigidbody2D>();
+        commands = new List<Command>();
     }
     void Start()
     {
@@ -90,7 +91,7 @@ public class RobotBehaviour : MonoBehaviour {
     {
         if (Commands.Count > 0)
         {
-            if (Commands[0].isFinished == false)
+            if (Commands != null && Commands[0].isFinished == false)
             {
                 currentCommand = Commands[0];
             }

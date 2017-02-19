@@ -14,8 +14,6 @@ public abstract class Command {
     public int turn;
 }
 
-
-
 [System.Serializable]
 public class SerializableCommand {
 

@@ -102,7 +102,7 @@ public class ShockwaveBehaviour : IEntity
         Debug.Log(root);
         Debug.Log(root.GetComponent<Rigidbody2D>());
 
-        if (root != null && root.GetComponent<Rigidbody2D>() /*&& root != shockwaveUser*/)
+        if (root != null && root.GetComponent<Rigidbody2D>() && root != shockwaveUser)
         {
             Debug.Log("hej2");
             root.GetComponent<Rigidbody2D>().AddForce(pushVector);
