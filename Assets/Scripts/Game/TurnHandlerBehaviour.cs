@@ -20,7 +20,6 @@ public class TurnHandlerBehaviour : MonoBehaviour {
     private AvailableCommands selectedCommand;
     private enum AvailableCommands { MoveCommand, PushCommand };
 
-    List<IEntity> entities;
     List<GameObject> robots;
     int turns;
     bool mouseButtonIsPressed = false;
@@ -189,7 +188,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
         if (cursorText == null)
         {
             //om den inte hittar, instansera istället!
-            cursorText = GameObject.Find("Cursor Text").GetComponent<Text>();
+            cursorText = GameObject.Find("CursorText").GetComponent<Text>();
         }
         float secondsPerDistance = 0.3f;
         RobotBehaviour selectRB = selectedRobot.GetComponent<RobotBehaviour>();
@@ -225,10 +224,16 @@ public class TurnHandlerBehaviour : MonoBehaviour {
             {
                 timeInput = previewInputTime;
                 cursorText.text = timeInput.ToString();
+                cursorText.transform.position = cursorPosition;
+            }
+            else
+            {
+                Vector3 normalizedCursorScreenPos = cursorScreenPosition.normalized;
+                Vector3 maxPosition = robotsPreview[selectedRobotIndex].Last().transform.position + new Vector3(normalizedCursorScreenPos.x * maxDeltaDistance, normalizedCursorScreenPos.y * maxDeltaDistance);
+                maxPosition = Camera.main.WorldToScreenPoint(maxPosition);
+                cursorText.text = timeInput.ToString();
                 cursorText.transform.position = maxPosition;
             }
-
-            Debug.Log(remainingTimeForRobot);
             yield return new WaitForSeconds(0.0001f);
         }
         cursorText.text = "";
