@@ -38,14 +38,13 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     }
 
     void Awake(){
-        if (instance == null){
-            instance = this;
-        }
-        else {
-            Debug.Log("There's already an instance of PlayBehaviour");
-        }
-        collidersInGame = FindObjectsOfType<Collider2D>();
-        gameTimer = new GameTimer(120);
+		if (instance == null)
+			instance = this;
+		else if (instance != this) { //Makes sure there's only one instance of the script
+			Debug.Log("There's already an instance of PlayBehaviour");
+			Destroy(gameObject); //Goes nuclear
+		}
+		Physics.queriesHitTriggers = true;
     }
 
 //    public void CreateTurnHandlers(){
@@ -99,7 +98,6 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
         else {
             Debug.Log("couldint find goals :(");
         }
-
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
 
         NewTurn();
@@ -107,10 +105,9 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
 
     // Update is called once per frame
     void Update(){
-
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
 
-        //listen  for buttonpresses like wanting to send your move etc
+        //listen for buttonpresses like wanting to send your move etc
         if (Input.GetKeyDown(KeyCode.Return)){
             if (currentTurnHandler == 1){
                 isTH1Done = true;
@@ -188,13 +185,8 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     /// </summary>
     void ActivateTurnHandler(bool activate){
         //TurnOnColliders();
-        if (!turnHandler1.gameObject.activeSelf){
-            turnHandler1.gameObject.SetActive(true);
-        }
-        if (!turnHandler2.gameObject.activeSelf){
-            turnHandler2.gameObject.SetActive(true);
-        }
-
+		turnHandler1.gameObject.SetActive(true);
+		turnHandler2.gameObject.SetActive(true);
 
         if (activate){
             //gives control to the current turnhandler
