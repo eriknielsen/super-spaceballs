@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine.UI;
 using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine.SceneManagement;
 
 public class ServerBehaviour : NetworkManager {
     [Serializable]
@@ -24,24 +25,24 @@ public class ServerBehaviour : NetworkManager {
     public GameObject networkedPlayPrefab;
 
     public Text statusText;
-
+    MatchInfo currentMatchInfo;
     NetworkClient localClient;
     NetworkConnection remoteConnection;
-    //if isServer then the networkplaybehaviour gets this set
+
+    int matchDomain = 0;
+    //if isServer true then the networkplaybehaviour gets this set
     bool isServer;
 
     void Start()
     {
         NetworkManager.singleton.StartMatchMaker();
-
-
     }
     //call this method to request a match to be created on the server
     public void CreateInternetMatch(string matchName)
     {
         Debug.Log("creating match");
         matchName = "";
-        NetworkManager.singleton.matchMaker.CreateMatch(matchName, 4, true, "", "", "", 0, 0, OnInternetMatchCreate);
+        NetworkManager.singleton.matchMaker.CreateMatch(matchName, 4, true, "", "", "", 0, matchDomain, OnInternetMatchCreate);
     }
 
     //this method is called when your request for creating a match is returned
@@ -52,10 +53,13 @@ public class ServerBehaviour : NetworkManager {
             Debug.Log("Create match succeeded");
             statusText.text = "Create match succeeded";
             MatchInfo hostInfo = matchInfo;
+            currentMatchInfo = matchInfo;
+            
             NetworkServer.Listen(hostInfo, 9000);
 
             localClient = NetworkManager.singleton.StartHost(hostInfo);
             isServer = true;
+            
         }
         else
         {
@@ -67,7 +71,7 @@ public class ServerBehaviour : NetworkManager {
     //call this method to find a match through the matchmaker
     public void FindInternetMatch(string matchName)
     {
-        NetworkManager.singleton.matchMaker.ListMatches(0, 10, matchName, true, 0, 0, OnInternetMatchList);
+        NetworkManager.singleton.matchMaker.ListMatches(0, 10, matchName, true, 0, matchDomain, OnInternetMatchList);
     }
 
     //this method is called when a list of matches is returned
@@ -81,7 +85,7 @@ public class ServerBehaviour : NetworkManager {
                 statusText.text = "A list of matches was returned, trying to join one";
 
                 if (matches[matches.Count - 1].currentSize < 2)
-                    NetworkManager.singleton.matchMaker.JoinMatch(matches[matches.Count - 1].networkId, "", "", "", 0, 0, OnJoinInternetMatch);
+                    NetworkManager.singleton.matchMaker.JoinMatch(matches[matches.Count - 1].networkId, "", "", "", 0, matchDomain, OnJoinInternetMatch);
             }
             else
             {
@@ -147,6 +151,19 @@ public class ServerBehaviour : NetworkManager {
             }
         }
     }
+    public override void OnClientDisconnect(NetworkConnection conn)
+    {
+        base.OnClientDisconnect(conn);
+        NetworkManager.singleton.matchMaker.DropConnection(currentMatchInfo.networkId, currentMatchInfo.nodeId, matchDomain, null);
+        SceneManager.LoadSceneAsync("MainMenu");
+    }
+    public override void OnServerDisconnect(NetworkConnection conn)
+    {
+        base.OnServerDisconnect(conn);
+        NetworkManager.singleton.matchMaker.DropConnection(currentMatchInfo.networkId,currentMatchInfo.nodeId, matchDomain, null);
+        SceneManager.LoadSceneAsync("MainMenu");
+    }
+    
     //functions called by the networkplaybehaviour
     public void SendCommands(SerializableCommandList commands)
     {
@@ -159,7 +176,6 @@ public class ServerBehaviour : NetworkManager {
 
         BinaryFormatter bf = new BinaryFormatter();
         System.IO.MemoryStream ms = new System.IO.MemoryStream();
-
 
         bf.Serialize(ms, commands);
         result = ms.ToArray();

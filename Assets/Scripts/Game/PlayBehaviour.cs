@@ -5,29 +5,26 @@ using UnityEngine.UI;
 public class PlayBehaviour : MonoBehaviour
 {
     //class for local play
-    [SerializeField]
-    TurnHandlerBehaviour leftPrefab;
-    [SerializeField]
-    TurnHandlerBehaviour rightPrefab;
 
+    [SerializeField]
     TurnHandlerBehaviour turnHandler1;
+    [SerializeField]
     TurnHandlerBehaviour turnHandler2;
 
     bool isTH1Done = false;
     bool isTH2Done = false;
     int currentTurnHandler;
-    Vector2 score;
+   
     GameTimer gameTimer;
     Collider2D[] collidersInGame;
 
     public Text gameTimeText;
-    public GameObject InGameUIInstance;
 
     public float intendedShockwaveLiftime;
     public float roundTime;
 
-    public GameObject InGameUIPrefab;
-    public GameObject turnHandlerPrefab;
+    public Goal leftGoal;
+    public Goal rightGoal;
 
     public delegate void ReturnMenuButtonClicked();
     public static event ReturnMenuButtonClicked OnReturnMenuButtonClick;
@@ -59,20 +56,19 @@ public class PlayBehaviour : MonoBehaviour
         }
         collidersInGame = FindObjectsOfType<Collider2D>();
         gameTimer = new GameTimer(120);
-        InGameUIInstance = Instantiate(InGameUIPrefab);
-        //CreateTurnHandlers();
-        gameTimeText = InGameUIInstance.transform.FindChild("GameTimeText").GetComponent<Text>();
+        
+        
     }
-
+    /*
     public void CreateTurnHandlers()
     {
-        leftPrefab.roundTime = roundTime;
-        rightPrefab.roundTime = roundTime;
+        leftPrefab.GetComponent<TurnHandlerBehaviour>().roundTime = roundTime;
+        rightPrefab.GetComponent<TurnHandlerBehaviour>().roundTime = roundTime;
         if (leftPrefab != null)
         {
             if (turnHandler1 == null)
             {
-                turnHandler1 = Instantiate(leftPrefab);
+                turnHandler1 = Instantiate(leftPrefab).GetComponent<TurnHandlerBehaviour>();
                 turnHandler1.transform.parent = transform;
                
             }
@@ -90,7 +86,7 @@ public class PlayBehaviour : MonoBehaviour
         {
             if (turnHandler2 == null)
             {
-                turnHandler2 = Instantiate(rightPrefab);
+                turnHandler2 = Instantiate(rightPrefab).GetComponent<TurnHandlerBehaviour>();
                 turnHandler2.transform.parent = transform;
             }
             else
@@ -103,7 +99,7 @@ public class PlayBehaviour : MonoBehaviour
             Debug.LogWarning("'rightPrefab' doesn't hold a reference, so no TurnHandler is created.");
         }
     }
-
+    */
     void DestroyTurnHandlers()
     {
         if (turnHandler1 != null)
@@ -119,13 +115,27 @@ public class PlayBehaviour : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        InGameUIInstance.SetActive(true);
+        leftGoal = GameObject.Find("LeftGoal").GetComponent<Goal>();
+        rightGoal = GameObject.Find("RightGoal").GetComponent<Goal>();
+        //event callbacks for scoring
+        if(leftGoal != null || rightGoal != null)
+        {
+            leftGoal.OnGoalScored += new Goal.GoalScored(() => leftGoal.score++);
+            rightGoal.OnGoalScored += new Goal.GoalScored(() => rightGoal.score++);
+        }
+        else
+        {
+            Debug.Log("couldint find goals :(");
+        }
 
-        //decide who goes first
-        //NewTurn();
+        //gameTimeText = GameObject.Find("GameTimeText").GetComponent<Text>();
+  
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
 
 
+        //INIT GAME
+        //CreateTurnHandlers();
+        NewTurn();
     }
 
     // Update is called once per frame
@@ -162,9 +172,6 @@ public class PlayBehaviour : MonoBehaviour
     ///if we replayed the last turn, then we dont want to do the newturn stuff
     IEnumerator UnpauseGame(bool asReplay)
     {
-        //TurnOnColliders();
-        InGameUIInstance.transform.GetChild(0).gameObject.SetActive(false);
-        InGameUIInstance.transform.GetChild(1).gameObject.SetActive(false);
 
         ActivateTurnHandler(false);
         if (asReplay)
@@ -196,9 +203,7 @@ public class PlayBehaviour : MonoBehaviour
     }
     void PauseGame()
     {
-        InGameUIInstance.transform.GetChild(0).gameObject.SetActive(true);
-        InGameUIInstance.transform.GetChild(1).gameObject.SetActive(true);
-
+    
         turnHandler1.PauseGame();
         turnHandler2.PauseGame();
         //TurnOffColliders();
@@ -210,7 +215,8 @@ public class PlayBehaviour : MonoBehaviour
         string exception = "Clickable Hitbox";
         for (int i = 0; i < collidersInGame.Length; i++)
         {
-            if (collidersInGame[i].tag != exception)
+            Debug.Log(collidersInGame[i].tag);
+            if (collidersInGame[i].tag != exception && collidersInGame[i].tag != "UI")
             {
                 collidersInGame[i].enabled = false;
             }
@@ -275,12 +281,10 @@ public class PlayBehaviour : MonoBehaviour
         if (turnHandler1.Turns % 2 == 0)
         {
             currentTurnHandler = 1;
-
         }
         else
         {
             currentTurnHandler = 2;
-
         }
         isTH1Done = false;
         isTH2Done = false;
@@ -315,18 +319,16 @@ public class PlayBehaviour : MonoBehaviour
         if (activate == false)
         {
             DestroyTurnHandlers();
-            InGameUIInstance.SetActive(false);
+     
             enabled = false;
         }
         else
         {
             enabled = true;
-            CreateTurnHandlers();
+            //CreateTurnHandlers();
             NewTurn();
-            InGameUIInstance.SetActive(true);
-            //TurnOffColliders();
+         
         }
-
     }
     /// <summary>
     /// sends event to gamebehaviour about pausing the game
