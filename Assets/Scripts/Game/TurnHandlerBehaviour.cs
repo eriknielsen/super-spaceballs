@@ -20,7 +20,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
     private AvailableCommands selectedCommand;
     private enum AvailableCommands { MoveCommand, PushCommand };
 
-    List<IEntity> entities;
+   
     List<GameObject> robots;
     int turns;
     bool mouseButtonIsPressed = false;
@@ -225,7 +225,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
             {
                 timeInput = previewInputTime;
                 cursorText.text = timeInput.ToString();
-                cursorText.transform.position = maxPosition;
+                //cursorText.transform.position = maxPosition;
             }
 
             Debug.Log(remainingTimeForRobot);
