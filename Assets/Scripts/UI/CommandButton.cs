@@ -2,20 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InWorldCommandButton : MonoBehaviour {
+public class CommandButton : MonoBehaviour {
 
 	[SerializeField]
-	private string commandName;
+	private Command.AvailableCommands selectedCommand;
 
 	void OnMouseDown(){
-		switch (commandName){
-		case "Move":
-			//Do move command
-			break;
-		case "Push":
-			//Do push command
-			break;
-		}
+//		TurnHandlerBehaviour.SetSelectedCommand(selectedCommand); //NEEDS PUBLIC ACCESS
 	}
 
 	//For animation
