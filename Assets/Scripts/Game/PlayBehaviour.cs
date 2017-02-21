@@ -18,6 +18,7 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
 
     public Text gameTimeText;
 
+    public float gameTime;
     public float intendedShockwaveLiftime;
     public float roundTime;
 
@@ -98,6 +99,7 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
         else {
             Debug.Log("couldint find goals :(");
         }
+        gameTimer = new GameTimer(120);
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
 
         NewTurn();
@@ -158,24 +160,6 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
         turnHandler1.PauseGame();
         turnHandler2.PauseGame();
         //TurnOffColliders();
-    }
-
-    void TurnOffColliders(){
-        collidersInGame = FindObjectsOfType<Collider2D>();
-        string exception = "Clickable Hitbox";
-        for (int i = 0; i < collidersInGame.Length; i++){
-            Debug.Log(collidersInGame[i].tag);
-            if (collidersInGame[i].tag != exception && collidersInGame[i].tag != "UI"){
-                collidersInGame[i].enabled = false;
-            }
-        }
-    }
-
-    void TurnOnColliders(){
-        collidersInGame = FindObjectsOfType<Collider2D>();
-        for (int i = 0; i < collidersInGame.Length; i++){
-            collidersInGame[i].enabled = true;
-        }
     }
 
     /// <summary>

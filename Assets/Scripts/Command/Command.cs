@@ -13,6 +13,11 @@ public abstract class Command {
   
     public Vector2 targetPosition;
     public int turn;
+
+    public GameObject Robot
+    {
+        get { return robot; }
+    }
 }
 
 [System.Serializable]
