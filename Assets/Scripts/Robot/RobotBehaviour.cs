@@ -32,6 +32,7 @@ public class RobotBehaviour : MonoBehaviour {
     [SerializeField]
     GameObject moveSound;
 
+    Animator anim;
     
 
     Rigidbody2D rb;
@@ -137,6 +138,8 @@ public class RobotBehaviour : MonoBehaviour {
         {
             //play a soud here!
             AudioManager.instance.PlayAudioWithRandomPitch(collideRobotSound, false, gameObject);
+            anim.SetTrigger("Push");
+            anim.ResetTrigger("Push");
         }
     }
 }
