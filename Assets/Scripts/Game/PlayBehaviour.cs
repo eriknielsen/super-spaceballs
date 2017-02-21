@@ -48,46 +48,6 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
 		Physics.queriesHitTriggers = true;
     }
 
-//    public void CreateTurnHandlers(){
-//        leftPrefab.GetComponent<TurnHandlerBehaviour>().roundTime = roundTime;
-//        rightPrefab.GetComponent<TurnHandlerBehaviour>().roundTime = roundTime;
-//        if (leftPrefab != null){
-//            if (turnHandler1 == null){
-//                turnHandler1 = Instantiate(leftPrefab).GetComponent<TurnHandlerBehaviour>();
-//                turnHandler1.transform.parent = transform;
-//               
-//            }
-//            else {
-//                Debug.LogWarning("'turnHandler1' already holds an instance of TurnHandlerBehaviour. Call 'DestroyTurnHandlers()' before calling this function.");
-//            }
-//        }
-//        else {
-//            Debug.LogWarning("'leftPrefab' doesn't hold a reference, so no TurnHandler is created.");
-//        }
-//
-//        if (rightPrefab != null){
-//            if (turnHandler2 == null){
-//                turnHandler2 = Instantiate(rightPrefab).GetComponent<TurnHandlerBehaviour>();
-//                turnHandler2.transform.parent = transform;
-//            }
-//            else {
-//                Debug.LogWarning("'turnHandler2' already holds an instance of TurnHandlerBehaviour. Call 'DestroyTurnHandlers()' before calling this function.");
-//            }
-//        }
-//        else {
-//            Debug.LogWarning("'rightPrefab' doesn't hold a reference, so no TurnHandler is created.");
-//        }
-//    }
-//
-//    void DestroyTurnHandlers(){
-//        if (turnHandler1 != null){
-//            Destroy(turnHandler1.gameObject);
-//        }
-//        if (turnHandler2 != null){
-//            Destroy(turnHandler2.gameObject);
-//        }
-//    }
-
     void Start(){
         leftGoal = GameObject.Find("LeftGoal").GetComponent<Goal>();
         rightGoal = GameObject.Find("RightGoal").GetComponent<Goal>();
