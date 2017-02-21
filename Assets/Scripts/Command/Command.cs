@@ -14,10 +14,7 @@ public abstract class Command {
     public Vector2 targetPosition;
     public int turn;
 
-    public GameObject Robot
-    {
-        get { return robot; }
-    }
+    public GameObject Robot { get { return robot; } }
 }
 
 [System.Serializable]
@@ -29,8 +26,7 @@ public class SerializableCommand {
     public Position targetPosition;
     public float lifeDuration;
     public int turn;
-    public SerializableCommand(int index, Vector2 targetPos, float duration, CommandType t, int turn)
-    {
+    public SerializableCommand(int index, Vector2 targetPos, float duration, CommandType t, int turn){
         robotIndex = index;
         targetPosition = new Position(targetPos);
         lifeDuration = duration;
