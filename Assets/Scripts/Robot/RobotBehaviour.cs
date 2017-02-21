@@ -53,7 +53,7 @@ public class RobotBehaviour : MonoBehaviour {
             {
                 directionAngle += 360.0f;
             }
-            string animationVariable = "Direction Angle";
+            string animationVariable = "DirectionAngle";
             animatorComponent.SetFloat(animationVariable, directionAngle);
         }
     }

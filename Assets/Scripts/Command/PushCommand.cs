@@ -13,7 +13,6 @@ public class PushCommand : Command {
     Vector2 velocity;
     float speed = 8f;
 
-<<<<<<< HEAD
     public Vector2 Velocity
     {
         get { return velocity; }
@@ -29,9 +28,6 @@ public class PushCommand : Command {
 
     public PushCommand(GameObject robot, Vector2 target, float lifetime, int turn)
     {
-=======
-    public PushCommand(GameObject robot, Vector2 target, float lifetime, int turn){
->>>>>>> origin/master
         this.turn = turn;
         float angle = AngleBetweenPoints(target, robot.transform.position);
 
@@ -47,7 +43,7 @@ public class PushCommand : Command {
         shockwavePrefab = Resources.Load("Prefabs/ShockWave") as GameObject;     
     }
 
-<<<<<<< HEAD
+
     public PushCommand(GameObject shockwaveUser, PushCommand original)
     {
         velocity = original.Velocity;
@@ -59,10 +55,6 @@ public class PushCommand : Command {
     {
         if (lifeTimer >= 0)
         {    
-=======
-    public override void Execute(){
-        if (lifeTimer >= 0){    
->>>>>>> origin/master
             chargeTime = chargeTime + Time.deltaTime;
             lifeTimer -= Time.deltaTime;
         }
