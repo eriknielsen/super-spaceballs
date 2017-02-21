@@ -2,8 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class RobotBehaviour : MonoBehaviour
-{
+public class RobotBehaviour : MonoBehaviour {
 
     private IRobotState currentState;
     public PauseState pauseState;
@@ -36,7 +35,7 @@ public class RobotBehaviour : MonoBehaviour
         set { currentState = value; }
     }
 
-
+    
     public List<Command> Commands
     {
         get { return commands; }
@@ -61,7 +60,7 @@ public class RobotBehaviour : MonoBehaviour
 
     void Awake()
     {
-        if (GetComponent<Rigidbody2D>() == null)
+        if(GetComponent<Rigidbody2D>() == null)
         {
             gameObject.AddComponent<Rigidbody2D>();
         }
@@ -78,7 +77,7 @@ public class RobotBehaviour : MonoBehaviour
     }
     void Start()
     {
-
+       
     }
     void FixedUpdate()
     {
@@ -92,7 +91,10 @@ public class RobotBehaviour : MonoBehaviour
     {
         if (Commands.Count > 0)
         {
-            currentCommand = Commands[0];
+            if (Commands != null && Commands[0].isFinished == false)
+            {
+                currentCommand = Commands[0];
+            }
         }
     }
     public void ClearCommands()
@@ -109,8 +111,8 @@ public class RobotBehaviour : MonoBehaviour
             currentCommand = null;
             DecideCommand();
         }
-        else if (currentCommand != null)
-        {
+        else if(currentCommand != null)
+        { 
             currentCommand.Execute();
         }
     }

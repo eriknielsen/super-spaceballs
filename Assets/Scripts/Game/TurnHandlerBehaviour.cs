@@ -21,6 +21,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
     private AvailableCommands selectedCommand;
     private enum AvailableCommands { MoveCommand, PushCommand };
 
+    List<IEntity> entities;
     List<GameObject> robots;
     int turns;
     bool mouseButtonIsPressed = false;
@@ -205,7 +206,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         if (cursorText == null)
         {
             //om den inte hittar, instansera istället!
-            cursorText = GameObject.Find("CursorText").GetComponent<Text>();
+            cursorText = GameObject.Find("Cursor Text").GetComponent<Text>();
         }
         float secondsPerDistance = 0.3f;
         RobotBehaviour selectRB = selectedRobot.GetComponent<RobotBehaviour>();
