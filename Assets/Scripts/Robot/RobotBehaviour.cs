@@ -14,6 +14,8 @@ public class RobotBehaviour : MonoBehaviour
     //the remaining time for this round
     public float freeTime;
 
+    public Vector2 prevVelocity;
+
     //the robot goes through each commando and checks each update if the latest commando is finished or not
     //if it is finished then the robot starts the next commando
     public List<Command> commands;
@@ -25,9 +27,13 @@ public class RobotBehaviour : MonoBehaviour
     private Animator animatorComponent;
     private Rigidbody2D rigidBodyComponent;
 
-    public Vector2 prevVelocity;
+    //AUDIOSOURCES
+    [SerializeField]
+    GameObject collideRobotSound;
+    [SerializeField]
+    GameObject moveSound;
 
-    string idle = "Idle";
+    
 
     Rigidbody2D rb;
     public IRobotState CurrentState
@@ -120,6 +126,15 @@ public class RobotBehaviour : MonoBehaviour
         if (OnClick != null && shouldSendEvent)
         {
             OnClick(gameObject);
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "Robot")
+        {
+            //play a soud here!
+            AudioManager.instance.PlayAudioWithRandomPitch(collideRobotSound, false, gameObject);
         }
     }
 }

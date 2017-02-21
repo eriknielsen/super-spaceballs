@@ -10,8 +10,9 @@ public class ShockwaveBehaviour : MonoBehaviour {
 	private float pushForce;
     [SerializeField]
 	private float lifeTime;
-
-	private Vector2 velocity;
+    [SerializeField]
+    GameObject awakeSound;
+    private Vector2 velocity;
 	private Vector2 pushVector;
 	private Rigidbody2D rb2dCompontent;
 	private float remainingLifeTime;
@@ -50,8 +51,17 @@ public class ShockwaveBehaviour : MonoBehaviour {
         }
         rb2dCompontent = GetComponent<Rigidbody2D>();
         enabled = false;
-    }
 
+    }
+    void Start()
+    {
+        //spela upp ljudet!
+
+        
+        AudioManager.instance.PlayAudio(awakeSound,false,gameObject);
+
+
+    }
     void FixedUpdate() {
         if (shouldUpdate) {
             if (remainingLifeTime >= 0) {
