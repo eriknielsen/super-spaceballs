@@ -5,7 +5,11 @@ using System.Linq;
 using UnityEngine.UI;
 
 public class TurnHandlerBehaviour : MonoBehaviour {
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> 1658221deaccf7ae2171a4fa253235ac38914f5b
 	[HideInInspector]
 	public float roundTime;
 	public List<Move> moves;
@@ -16,7 +20,11 @@ public class TurnHandlerBehaviour : MonoBehaviour {
     private Text cursorText;
 
     private GameObject selectedRobot;
+<<<<<<< HEAD
     private int selectedRobotIndex;
+=======
+    private int selectedRobotIndex;    
+>>>>>>> 1658221deaccf7ae2171a4fa253235ac38914f5b
 
 	private int turns;
 	public int Turns { get { return turns; } }
@@ -140,7 +148,11 @@ public class TurnHandlerBehaviour : MonoBehaviour {
     }
 
     IEnumerator SetAndVisualizeTimeInput(){
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 1658221deaccf7ae2171a4fa253235ac38914f5b
         if (cursorText == null){
             //om den inte hittar, instansera istället!
             cursorText = GameObject.Find("CursorText").GetComponent<Text>();
@@ -164,7 +176,11 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 
             previewInputTime = secondsPerDistance * deltaDistance;
             remainingTimeForRobot = selectRB.freeTime - previewInputTime;
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> 1658221deaccf7ae2171a4fa253235ac38914f5b
             if (selectedCommand == Command.AvailableCommands.Push){
                 maxInputTime = selectRB.freeTime - shockwaveLife;
             }

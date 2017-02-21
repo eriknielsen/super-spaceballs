@@ -3,6 +3,7 @@ using System.Collections;
 
 public abstract class Command {
 
+	public enum AvailableCommands { Move, Push };
     public GameObject robot;
     //execute is called by the robot
     public abstract void Execute();
