@@ -13,6 +13,7 @@ public class PushCommand : Command {
     Vector2 velocity;
     float speed = 8f;
 
+<<<<<<< HEAD
     public Vector2 Velocity
     {
         get { return velocity; }
@@ -28,6 +29,9 @@ public class PushCommand : Command {
 
     public PushCommand(GameObject robot, Vector2 target, float lifetime, int turn)
     {
+=======
+    public PushCommand(GameObject robot, Vector2 target, float lifetime, int turn){
+>>>>>>> origin/master
         this.turn = turn;
         float angle = AngleBetweenPoints(target, robot.transform.position);
 
@@ -43,6 +47,7 @@ public class PushCommand : Command {
         shockwavePrefab = Resources.Load("Prefabs/ShockWave") as GameObject;     
     }
 
+<<<<<<< HEAD
     public PushCommand(GameObject shockwaveUser, PushCommand original)
     {
         velocity = original.Velocity;
@@ -54,27 +59,27 @@ public class PushCommand : Command {
     {
         if (lifeTimer >= 0)
         {    
+=======
+    public override void Execute(){
+        if (lifeTimer >= 0){    
+>>>>>>> origin/master
             chargeTime = chargeTime + Time.deltaTime;
             lifeTimer -= Time.deltaTime;
         }
-        else
-        {
+        else {
             isFinished = true;
         }
-        if (isFinished)
-        {
+        if (isFinished){
             ShockwaveBehaviour shockWave = ShockwaveBehaviour.InstantiateShockWave(shockwavePrefab.GetComponent<ShockwaveBehaviour>());
             shockWave.Initialize(velocity, chargeTime, robot);
             shockWave.transform.position = robot.transform.position;     
         }
-
     }
-    float AngleBetweenPoints(Vector2 point1, Vector2 point2)
-    {
+
+    float AngleBetweenPoints(Vector2 point1, Vector2 point2){
         Vector2 delta = point1 - point2;
         float angle = Mathf.Atan2(delta.y, delta.x);
-        if (angle < 0)
-        {
+        if (angle < 0){
             angle = 2 * Mathf.PI + angle;
         }
         return angle;
