@@ -56,7 +56,7 @@ class TrailUpdater : MonoBehaviour
             timeDuration = lifeTime;
             node.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
             previousLocation = node.transform.position;
-            trailMarkingSprite = Resources.Load<Sprite>("Sprites/fotball2");
+            trailMarkingSprite = Resources.Load<Sprite>("Sprites/Prototype stuff (remove or rework)/fotball2");
             if (node.GetComponent<SpriteRenderer>() == null)
             {
                 node.AddComponent<SpriteRenderer>();

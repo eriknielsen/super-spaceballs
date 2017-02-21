@@ -17,9 +17,6 @@ public class Goal : MonoBehaviour {
             Debug.Log("score! this goal's team has points: " + score);
             OnGoalScored();
 			other.gameObject.GetComponent<Ball>().ResetPosition();
-			//ModifyScore(1);
 		}
 	}
-
-	
 }
