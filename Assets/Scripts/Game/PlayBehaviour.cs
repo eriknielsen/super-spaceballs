@@ -21,6 +21,7 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     public float gameTime;
     public float intendedShockwaveLiftime;
     public float roundTime;
+	public static float RoundTime { get { return instance.roundTime; } }
 
     public Goal leftGoal;
     public Goal rightGoal;
@@ -32,11 +33,7 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     public static event ReplayButtonClicked OnReplayButtonClick;
 
     public static PlayBehaviour instance;
-
     public static PlayBehaviour Instance { get { return instance; } }
-
-    public static float RoundTime { get { return instance.roundTime; }
-    }
 
     void Awake(){
 		if (instance == null)

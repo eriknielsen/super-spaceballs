@@ -8,19 +8,27 @@ using System.Diagnostics;
 public class TurnHandlerBehaviour : MonoBehaviour
 {
 
+<<<<<<< HEAD
+=======
+public class TurnHandlerBehaviour : MonoBehaviour {
+  
+	public List<Move> moves;
+>>>>>>> origin/master
     [SerializeField]
     GameObject shockWavePrefab;
-    [SerializeField]
-    private int numberOfRobots;
     [HideInInspector]
     public float roundTime;
 
     private Text cursorText;
-
-    private GameObject selectedRobot;
+	private GameObject selectedRobot;
     private int selectedRobotIndex;
-    private AvailableCommands selectedCommand;
-    private enum AvailableCommands { MoveCommand, PushCommand };
+    private Command.AvailableCommands selectedCommand;
+	private bool activated = false;
+	private bool mouseButtonIsPressed = false;
+	private float timeInput;
+	private List<GameObject> robotsMovingPreviews;
+	private List<List<GameObject>> robotsPreview;
+	private MovingTrail latestTrail;
 
     List<GameObject> robots;
     int turns;
@@ -74,52 +82,44 @@ public class TurnHandlerBehaviour : MonoBehaviour
             robotMovingTrails[i].Add(new MovingTrail(new MoveCommand(robots[i], robots[i].transform.position, 0f, turns), 0f, Vector2.zero));
             robotMovingTrails[i].Last().TrailGameObject.transform.parent = robotsMovingPreviews[i].transform;
         }
-
         turns = 1;
     }
-
-    void OnDestroy()
-    {
-        RobotBehaviour.OnClick -= new RobotBehaviour.ClickedOnRobot(SelectRobot);
-        DestroyRobots();
-    }
-
-    void FindRobots(int numberOfRobots)
-    {
-        int count = 0;
-        while (transform.childCount > count)
-        {
-            robots.Add(transform.GetChild(count).gameObject);
-            robots[count].GetComponent<RobotBehaviour>().freeTime = roundTime;
-            count++;
+	void FindRobots(){
+		for (int i = 0; transform.childCount > i; i++){
+            robots.Add(transform.GetChild(i).gameObject);
+            robots[i].GetComponent<RobotBehaviour>().freeTime = roundTime;
         }
     }
 
-    void DestroyRobots()
-    {
-        if (robots != null)
-        {
-            for (int i = 0; i < robots.Count; i++)
-            {
-                Destroy(robots[i]);
-            }
-            robots.Clear();
-        }
-    }
+	void Update(){
+		if (Input.GetMouseButton(1)){	//React to user input (OLD; REMOVE WHEN BUTTONS ARE DONE)
+			GiveCommandToSelectedRobot();
+			mouseButtonIsPressed = true;
+		}
+		if (Input.GetKeyDown(KeyCode.Z)){
+			Debug.Log("movecommand chosen");
+			selectedCommand = Command.AvailableCommands.Move;
+		}
+		if (Input.GetKeyDown(KeyCode.X)){
+			Debug.Log("pushcommand chosen");
+			selectedCommand = Command.AvailableCommands.Push;
+		}
+		if (Input.GetMouseButtonUp(1)){
+			mouseButtonIsPressed = false;
+		}
+		if (Input.GetKeyDown(KeyCode.Escape)){
+			selectedRobot = null;
+			timeInput = 0;
+		}
+	}
 
-    public void PauseGame()
-    {
-        gameIsPaused = true;
-        //put all robots into pausestate
-        foreach (GameObject r in robots)
-        {
+    public void PauseGame(){
+		foreach (GameObject r in robots){ //put all robots into pausestate
             RobotBehaviour rb = r.GetComponent<RobotBehaviour>();
             rb.CurrentState.EnterPauseState();
             rb.freeTime = roundTime;
         }
-
-        for (int i = 0; i < robots.Count; i++)
-        {
+        for (int i = 0; i < robots.Count; i++){
             robotsMovingPreviews.Add(new GameObject());
             robotsMovingPreviews[i].name = "Robot moving preview";
             robotsMovingPreviews[i].SetActive(false);
@@ -147,24 +147,18 @@ public class TurnHandlerBehaviour : MonoBehaviour
         }
         turns++;
 
-        for (int i = 0; i < robotsMovingPreviews.Count;)
-        {
+        for (int i = 0; i < robotsMovingPreviews.Count;){
             Destroy(robotsMovingPreviews.Last());
             robotsMovingPreviews.Remove(robotsMovingPreviews.Last());
             robotMovingTrails[i].Clear();
         }
     }
-
-
-    void UndoLastMove()
-    {
-        if (Turns > 0)
-        {
-
+		
+    void UndoLastMove(){
+        if (Turns > 0){
             //reset all robots to the previous' move's position
             int turnIndex = 0;
-            for (int i = Turns - 1; i < Turns * robots.Count; i++)
-            {
+            for (int i = Turns - 1; i < Turns * robots.Count; i++){
                 turnIndex = (Turns - 1) * robots.Count + i;
                 robots[i].transform.position = moves[turnIndex].position;
                 robots[i].GetComponent<Rigidbody2D>().velocity = moves[turnIndex].Velocity;
@@ -174,7 +168,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
     void SelectRobot(GameObject r)
     {
-        UnityEngine.Debug.Log("LOOOOOOOOOOOOOOOOOOOOOGA ROOOL");
         if (Input.GetMouseButtonDown(0))
         {
             if (selectedRobot != r)
@@ -194,6 +187,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
                         break;
                     }
                 }
+
                 if (selectedRobot == null)
                 {
                     UnityEngine.Debug.Log("The selected robot is not know to the the TurnHandler, so therefore no commands can be given to it.");
@@ -240,8 +234,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
             {
                 maxInputTime = selectRB.freeTime - shockwaveLife;
             }
-            else
-            {
+            else {
                 maxInputTime = selectRB.freeTime;
             }
 
@@ -280,8 +273,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
                     command = new MoveCommand(selectedRobot, previewCommand as MoveCommand);
                     UnityEngine.Debug.Log("MoveCommand Added!");
                 }
-                else if (selectedCommand == AvailableCommands.PushCommand && timeInput <= rb.freeTime - shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime)
-                {
+				else if (selectedCommand == Command.AvailableCommands.Push && timeInput <= rb.freeTime - shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime){
                     command = new PushCommand(selectedRobot, cursorScreenPosition, timeInput, Turns);
                     previewCommand = new PushCommand(robotMovingTrails[selectedRobotIndex].Last().Node, cursorScreenPosition, timeInput, Turns);
                     UnityEngine.Debug.Log("PushCommand Added!");
@@ -290,7 +282,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 {
                     return;
                 }
-
                 latestTrail = new MovingTrail(previewCommand, timeInput, robotMovingTrails[selectedRobotIndex].Last().Node.GetComponent<RobotBehaviour>().prevVelocity);
                 latestTrail.TrailGameObject.transform.parent = robotsMovingPreviews[selectedRobotIndex].transform;
                 robotMovingTrails[selectedRobotIndex].Add(latestTrail);
@@ -301,6 +292,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         }
     }
 
+<<<<<<< HEAD
     IEnumerator PreviewAndGiveRobotCommand()
     {
         Vector3 prevCursorPosition = Vector3.zero;
@@ -425,6 +417,10 @@ public class TurnHandlerBehaviour : MonoBehaviour
         }
     }
 
+	public void SelectCommand(Command.AvailableCommands command){  //NEEDS PUBLIC ACCESS (STATIC?)
+		selectedCommand = command;
+	}
+	
     public void ReplayLastTurn()
     {
         //save commando lists in robots where they are longer than 0
@@ -441,13 +437,12 @@ public class TurnHandlerBehaviour : MonoBehaviour
         for (int i = moves.Count - 1; i > moves.Count - numberOfRobots - 1; i--)
         {
 
-            Move m = moves[i];
-            GameObject r = m.Robot;
-            r.GetComponent<Rigidbody2D>().angularVelocity = m.AngularVelocity;
-            r.GetComponent<Rigidbody2D>().velocity = m.Velocity;
-            r.transform.position = m.position;
-            r.transform.rotation = m.rotation;
-
+			Move m = moves[i];
+			GameObject r = m.Robot;
+			r.GetComponent<Rigidbody2D>().angularVelocity = m.AngularVelocity;
+			r.GetComponent<Rigidbody2D>().velocity = m.Velocity;
+			r.transform.position = m.position;
+			r.transform.rotation = m.rotation;
             r.GetComponent<RobotBehaviour>().Commands.AddRange(m.commands);
         }
     }
@@ -464,4 +459,5 @@ public class TurnHandlerBehaviour : MonoBehaviour
             }
         }
     }
+
 }
