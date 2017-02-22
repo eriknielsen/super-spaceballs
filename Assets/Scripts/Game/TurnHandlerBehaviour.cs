@@ -166,7 +166,11 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 {
                     UnityEngine.Debug.Log("The selected robot is not know to the the TurnHandler, so therefore no commands can be given to it.");
                 }
-                StartCoroutine(SetAndDisplayTimeInput());
+                else
+                {
+                    StartCoroutine(SetAndDisplayTimeInput());
+                }
+                
             }
             else
             {
