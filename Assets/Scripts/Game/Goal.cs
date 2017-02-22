@@ -5,9 +5,9 @@ using System.Collections;
 public class Goal : MonoBehaviour {
 
 	public int score { get; set; }
-
     public delegate void GoalScored();
     public event GoalScored OnGoalScored;
+
 	void Start(){
 		score = 0;
 	}

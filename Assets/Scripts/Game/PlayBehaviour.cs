@@ -9,36 +9,31 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     [SerializeField]
     TurnHandlerBehaviour turnHandler2;
 
-    bool isTH1Done = false;
-    bool isTH2Done = false;
-    int currentTurnHandler;
-   
-    GameTimer gameTimer;
-    Collider2D[] collidersInGame;
+	private bool isTH1Done = false;
+	private bool isTH2Done = false;
+    private int currentTurnHandler;
+	private GameTimer gameTimer;
 
+	public float gameTime;
     public Text gameTimeText;
-
-    public float gameTime;
-    public float intendedShockwaveLiftime;
     public float roundTime;
-	public static float RoundTime { get { return instance.roundTime; } }
+	public static float RoundTime { get { return Instance.roundTime; } }
+	public float intendedShockwaveLiftime;
 
     public Goal leftGoal;
     public Goal rightGoal;
 
     public delegate void ReturnMenuButtonClicked();
     public static event ReturnMenuButtonClicked OnReturnMenuButtonClick;
-
     public delegate void ReplayButtonClicked();
     public static event ReplayButtonClicked OnReplayButtonClick;
 
-    public static PlayBehaviour instance;
-    public static PlayBehaviour Instance { get { return instance; } }
+    public static PlayBehaviour Instance;
 
     void Awake(){
-		if (instance == null)
-			instance = this;
-		else if (instance != this) { //Makes sure there's only one instance of the script
+		if (Instance == null)
+			Instance = this;
+		else if (Instance != this) { //Makes sure there's only one instance of the script
 			Debug.Log("There's already an instance of PlayBehaviour");
 			Destroy(gameObject); //Goes nuclear
 		}
@@ -219,4 +214,9 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     public void ReplayButtonClick(){
         OnReplayButtonClick();
     }
+
+	public void SetSelectedCommand(Command.AvailableCommands command){ //Delegates the selected command change to the turn handlers
+		turnHandler1.SelectCommand(command);
+		turnHandler2.SelectCommand(command);
+	}
 }

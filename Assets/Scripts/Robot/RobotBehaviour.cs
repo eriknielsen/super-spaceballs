@@ -27,23 +27,21 @@ public class RobotBehaviour : MonoBehaviour {
     private Animator animatorComponent;
     private Rigidbody2D rigidBodyComponent;
 
+	private float speed;
+	Rigidbody2D rb;
+
     //AUDIOSOURCES
     [SerializeField]
     GameObject collideRobotSound;
     [SerializeField]
     GameObject moveSound;
 
-
-    float speed;
-
-    Rigidbody2D rb;
     public IRobotState CurrentState
     {
         get { return currentState; }
         set { currentState = value; }
     }
-
-    
+		
     public List<Command> Commands
     {
         get { return commands; }
@@ -83,16 +81,11 @@ public class RobotBehaviour : MonoBehaviour {
         rb = GetComponent<Rigidbody2D>();
         commands = new List<Command>();
 
-        anim = GetComponent<Animator>();
-        
+        anim = GetComponent<Animator>();   
     }
-    void Start()
-    {
-       
-    }
+
     void FixedUpdate()
     {
-        
         //anim.SetFloat("Speed", Math.Abs(rb.velocity.x + rb.velocity.y));
         CurrentState.UpdateState();
     }
@@ -110,6 +103,7 @@ public class RobotBehaviour : MonoBehaviour {
             }
         }
     }
+
     public void ClearCommands()
     {
         Commands.Clear();
@@ -119,8 +113,7 @@ public class RobotBehaviour : MonoBehaviour {
     {
         if (currentCommand != null && currentCommand.isFinished)
         {
-            //remove the currentcommand from the command list
-            Commands.Remove(currentCommand);
+			Commands.Remove(currentCommand); //remove currentCommand from the command list
             currentCommand = null;
             DecideCommand();
         }
@@ -154,7 +147,6 @@ public class RobotBehaviour : MonoBehaviour {
     {
         if (other.tag == "Robot")
         {
-            //play a soud here!
             AudioManager.instance.PlayAudioWithRandomPitch(collideRobotSound, false, gameObject);
             anim.SetTrigger("Push");
             anim.ResetTrigger("Push");
