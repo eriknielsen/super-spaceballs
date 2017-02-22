@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 7e36833ec2bfbfd4689a50323cc93c45
-timeCreated: 1487691510
+timeCreated: 1487773309
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -13,6 +13,8 @@ TextureImporter:
     21300012: forward_right_rosa_8
     21300014: forward_right_rosa_10
     21300016: forward_right_rosa_11
+    21300018: forward_right_rosa_4
+    21300020: forward_right_rosa_7
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -90,10 +92,10 @@ TextureImporter:
       name: forward_right_rosa_0
       rect:
         serializedVersion: 2
-        x: 181
-        y: 126
-        width: 153
-        height: 255
+        x: 0
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -103,10 +105,10 @@ TextureImporter:
       name: forward_right_rosa_1
       rect:
         serializedVersion: 2
-        x: 693
-        y: 95
-        width: 154
-        height: 273
+        x: 512
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -116,12 +118,12 @@ TextureImporter:
       name: forward_right_rosa_2
       rect:
         serializedVersion: 2
-        x: 1098
-        y: 98
-        width: 264
-        height: 253
+        x: 1024
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -129,10 +131,23 @@ TextureImporter:
       name: forward_right_rosa_3
       rect:
         serializedVersion: 2
-        x: 1618
-        y: 113
-        width: 263
-        height: 220
+        x: 1536
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: forward_right_rosa_4
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -142,12 +157,12 @@ TextureImporter:
       name: forward_right_rosa_5
       rect:
         serializedVersion: 2
-        x: 2139
-        y: 125
-        width: 252
-        height: 208
+        x: 2560
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -155,51 +170,38 @@ TextureImporter:
       name: forward_right_rosa_6
       rect:
         serializedVersion: 2
-        x: 2611
-        y: 143
-        width: 296
-        height: 190
+        x: 3072
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 13, y: 0, z: 0, w: 0}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: forward_right_rosa_7
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: forward_right_rosa_8
       rect:
         serializedVersion: 2
-        x: 3161
-        y: 125
-        width: 253
-        height: 208
+        x: 4096
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 16, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: forward_right_rosa_10
-      rect:
-        serializedVersion: 2
-        x: 3652
-        y: 71
-        width: 266
-        height: 280
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 36, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: forward_right_rosa_11
-      rect:
-        serializedVersion: 2
-        x: 4252
-        y: 89
-        width: 179
-        height: 275
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0

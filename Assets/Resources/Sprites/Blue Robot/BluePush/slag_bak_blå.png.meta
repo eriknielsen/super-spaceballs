@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: e1fb3fa463f557349bdfc70b63e454b7
-timeCreated: 1487603673
+timeCreated: 1487773254
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -89,10 +89,10 @@ TextureImporter:
       name: "slag_bak_bl\xE5_0"
       rect:
         serializedVersion: 2
-        x: 157
-        y: 127
-        width: 198
-        height: 257
+        x: 0
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -102,10 +102,10 @@ TextureImporter:
       name: "slag_bak_bl\xE5_1"
       rect:
         serializedVersion: 2
-        x: 679
-        y: 136
-        width: 172
-        height: 248
+        x: 512
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,10 +115,10 @@ TextureImporter:
       name: "slag_bak_bl\xE5_2"
       rect:
         serializedVersion: 2
-        x: 1165
-        y: 157
-        width: 198
-        height: 252
+        x: 1024
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,10 +128,10 @@ TextureImporter:
       name: "slag_bak_bl\xE5_3"
       rect:
         serializedVersion: 2
-        x: 1679
-        y: 152
-        width: 196
-        height: 265
+        x: 1536
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,10 +141,10 @@ TextureImporter:
       name: "slag_bak_bl\xE5_4"
       rect:
         serializedVersion: 2
-        x: 2213
-        y: 139
-        width: 206
-        height: 248
+        x: 2048
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,10 +154,10 @@ TextureImporter:
       name: "slag_bak_bl\xE5_5"
       rect:
         serializedVersion: 2
-        x: 2725
-        y: 155
-        width: 243
-        height: 238
+        x: 2560
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -167,10 +167,10 @@ TextureImporter:
       name: "slag_bak_bl\xE5_6"
       rect:
         serializedVersion: 2
-        x: 3231
-        y: 128
-        width: 234
-        height: 265
+        x: 3072
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -180,10 +180,10 @@ TextureImporter:
       name: "slag_bak_bl\xE5_7"
       rect:
         serializedVersion: 2
-        x: 3743
-        y: 123
-        width: 210
-        height: 269
+        x: 3584
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

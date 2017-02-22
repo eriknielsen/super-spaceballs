@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 55669c761f2a1cd48bf5a1a5751c8970
-timeCreated: 1487603047
+timeCreated: 1487773241
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -12,6 +12,7 @@ TextureImporter:
     21300010: "slag_34bak_h\xF6ger_bl\xE5_5"
     21300012: "slag_34bak_h\xF6ger_bl\xE5_6"
     21300014: "slag_34bak_h\xF6ger_bl\xE5_7"
+    21300016: "slag_34bak_h\xF6ger_bl\xE5_8"
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -89,10 +90,10 @@ TextureImporter:
       name: "slag_34bak_h\xF6ger_bl\xE5_0"
       rect:
         serializedVersion: 2
-        x: 181
-        y: 128
-        width: 155
-        height: 256
+        x: 0
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -102,10 +103,10 @@ TextureImporter:
       name: "slag_34bak_h\xF6ger_bl\xE5_1"
       rect:
         serializedVersion: 2
-        x: 687
-        y: 139
-        width: 204
-        height: 238
+        x: 512
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,10 +116,10 @@ TextureImporter:
       name: "slag_34bak_h\xF6ger_bl\xE5_2"
       rect:
         serializedVersion: 2
-        x: 1141
-        y: 129
-        width: 292
-        height: 247
+        x: 1024
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,10 +129,10 @@ TextureImporter:
       name: "slag_34bak_h\xF6ger_bl\xE5_3"
       rect:
         serializedVersion: 2
-        x: 1636
-        y: 151
-        width: 324
-        height: 242
+        x: 1536
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,10 +142,10 @@ TextureImporter:
       name: "slag_34bak_h\xF6ger_bl\xE5_4"
       rect:
         serializedVersion: 2
-        x: 2207
-        y: 135
-        width: 234
-        height: 244
+        x: 2048
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,10 +155,10 @@ TextureImporter:
       name: "slag_34bak_h\xF6ger_bl\xE5_5"
       rect:
         serializedVersion: 2
-        x: 2704
-        y: 136
-        width: 219
-        height: 253
+        x: 2560
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -167,10 +168,10 @@ TextureImporter:
       name: "slag_34bak_h\xF6ger_bl\xE5_6"
       rect:
         serializedVersion: 2
-        x: 3246
-        y: 143
-        width: 189
-        height: 236
+        x: 3072
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -180,10 +181,10 @@ TextureImporter:
       name: "slag_34bak_h\xF6ger_bl\xE5_7"
       rect:
         serializedVersion: 2
-        x: 3763
-        y: 135
-        width: 173
-        height: 236
+        x: 3584
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

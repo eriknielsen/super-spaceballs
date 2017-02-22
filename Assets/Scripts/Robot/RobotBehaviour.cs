@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class RobotBehaviour : MonoBehaviour {
 
@@ -14,7 +15,7 @@ public class RobotBehaviour : MonoBehaviour {
     public float freeTime;
 
     public Vector2 prevVelocity;
-
+    public Animator anim;
     //the robot goes through each commando and checks each update if the latest commando is finished or not
     //if it is finished then the robot starts the next commando
     public List<Command> commands;
@@ -26,23 +27,21 @@ public class RobotBehaviour : MonoBehaviour {
     private Animator animatorComponent;
     private Rigidbody2D rigidBodyComponent;
 
+	private float speed;
+	Rigidbody2D rb;
+
     //AUDIOSOURCES
     [SerializeField]
     GameObject collideRobotSound;
     [SerializeField]
     GameObject moveSound;
 
-    Animator anim;
-    
-
-    Rigidbody2D rb;
     public IRobotState CurrentState
     {
         get { return currentState; }
         set { currentState = value; }
     }
-
-    
+		
     public List<Command> Commands
     {
         get { return commands; }
@@ -81,13 +80,13 @@ public class RobotBehaviour : MonoBehaviour {
         currentState = pauseState;
         rb = GetComponent<Rigidbody2D>();
         commands = new List<Command>();
+
+        anim = GetComponent<Animator>();   
     }
-    void Start()
-    {
-       
-    }
+
     void FixedUpdate()
     {
+        //anim.SetFloat("Speed", Math.Abs(rb.velocity.x + rb.velocity.y));
         CurrentState.UpdateState();
     }
     /// <summary>
@@ -104,6 +103,7 @@ public class RobotBehaviour : MonoBehaviour {
             }
         }
     }
+
     public void ClearCommands()
     {
         Commands.Clear();
@@ -113,14 +113,25 @@ public class RobotBehaviour : MonoBehaviour {
     {
         if (currentCommand != null && currentCommand.isFinished)
         {
-            //remove the currentcommand from the command list
-            Commands.Remove(currentCommand);
+			Commands.Remove(currentCommand); //remove currentCommand from the command list
             currentCommand = null;
             DecideCommand();
         }
         else if(currentCommand != null)
         { 
             currentCommand.Execute();
+            if (currentCommand.GetType() == typeof(MoveCommand))
+            {
+                anim.SetBool("Accelerating", true);
+            }
+            else
+            {
+                anim.SetBool("Accelerating", false);
+            }
+        }
+        else
+        {
+            anim.SetBool("Accelerating", false);
         }
     }
 
@@ -136,7 +147,6 @@ public class RobotBehaviour : MonoBehaviour {
     {
         if (other.tag == "Robot")
         {
-            //play a soud here!
             AudioManager.instance.PlayAudioWithRandomPitch(collideRobotSound, false, gameObject);
             anim.SetTrigger("Push");
             anim.ResetTrigger("Push");

@@ -21,6 +21,9 @@ public class PlayState : IRobotState {
         robotScript.Commands.Clear();
         robotScript.prevVelocity = robot.GetComponent<Rigidbody2D>().velocity;
         robot.GetComponent<Rigidbody2D>().velocity = zeroVector;
+
+        robot.GetComponent<Animator>().enabled = false;
+        
     }
 
     public void EnterPlayState(){
@@ -28,6 +31,7 @@ public class PlayState : IRobotState {
     }
 
     public void UpdateState(){
+        
         robotScript.ExecuteRobotCommand();
         robotScript.UpdateAnimationAndCollider();
     }

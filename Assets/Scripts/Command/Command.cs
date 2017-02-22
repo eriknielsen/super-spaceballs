@@ -20,7 +20,7 @@ public abstract class Command {
 [System.Serializable]
 public class SerializableCommand {
 
-    public enum CommandType { Move,Push};
+    public enum CommandType { Move, Push };
     public CommandType type;
     public int robotIndex;
     public Position targetPosition;
