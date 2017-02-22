@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 78812d0abcf90454ea2148a549369ca3
-timeCreated: 1487681396
+timeCreated: 1487773171
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -90,10 +90,10 @@ TextureImporter:
       name: "up_bl\xE5_0"
       rect:
         serializedVersion: 2
-        x: 153
-        y: 127
-        width: 201
-        height: 258
+        x: 0
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -103,10 +103,10 @@ TextureImporter:
       name: "up_bl\xE5_1"
       rect:
         serializedVersion: 2
-        x: 669
-        y: 89
-        width: 198
-        height: 285
+        x: 512
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -116,10 +116,10 @@ TextureImporter:
       name: "up_bl\xE5_2"
       rect:
         serializedVersion: 2
-        x: 1179
-        y: 82
-        width: 207
-        height: 277
+        x: 1024
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -129,10 +129,10 @@ TextureImporter:
       name: "up_bl\xE5_3"
       rect:
         serializedVersion: 2
-        x: 1659
-        y: 33
-        width: 276
-        height: 317
+        x: 1536
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -142,10 +142,10 @@ TextureImporter:
       name: "up_bl\xE5_4"
       rect:
         serializedVersion: 2
-        x: 2168
-        y: 102
-        width: 280
-        height: 248
+        x: 2048
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -155,10 +155,10 @@ TextureImporter:
       name: "up_bl\xE5_5"
       rect:
         serializedVersion: 2
-        x: 2681
-        y: 62
-        width: 277
-        height: 287
+        x: 2560
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -168,10 +168,10 @@ TextureImporter:
       name: "up_bl\xE5_6"
       rect:
         serializedVersion: 2
-        x: 3195
-        y: 98
-        width: 273
-        height: 252
+        x: 3072
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -181,12 +181,12 @@ TextureImporter:
       name: "up_bl\xE5_7"
       rect:
         serializedVersion: 2
-        x: 3741
-        y: 67
-        width: 202
-        height: 290
+        x: 3584
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -194,10 +194,10 @@ TextureImporter:
       name: "up_bl\xE5_8"
       rect:
         serializedVersion: 2
-        x: 4254
-        y: 72
-        width: 201
-        height: 306
+        x: 4096
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

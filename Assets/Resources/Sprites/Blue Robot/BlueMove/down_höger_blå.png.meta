@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 4ab10d2b6ebbcbd4691a8ffe821455ca
-timeCreated: 1487681088
+timeCreated: 1487773066
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -13,6 +13,7 @@ TextureImporter:
     21300012: "down_h\xF6ger_bl\xE5_6"
     21300014: "down_h\xF6ger_bl\xE5_8"
     21300016: "down_h\xF6ger_bl\xE5_9"
+    21300018: "down_h\xF6ger_bl\xE5_7"
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -90,12 +91,12 @@ TextureImporter:
       name: "down_h\xF6ger_bl\xE5_0"
       rect:
         serializedVersion: 2
-        x: 177
-        y: 130
-        width: 159
-        height: 251
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 0
+        width: 512
+        height: 512
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -103,12 +104,12 @@ TextureImporter:
       name: "down_h\xF6ger_bl\xE5_1"
       rect:
         serializedVersion: 2
-        x: 669
-        y: 143
-        width: 178
-        height: 217
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 512
+        y: 0
+        width: 512
+        height: 512
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -116,12 +117,12 @@ TextureImporter:
       name: "down_h\xF6ger_bl\xE5_2"
       rect:
         serializedVersion: 2
-        x: 1114
-        y: 225
-        width: 251
-        height: 126
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 1024
+        y: 0
+        width: 512
+        height: 512
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -129,12 +130,12 @@ TextureImporter:
       name: "down_h\xF6ger_bl\xE5_3"
       rect:
         serializedVersion: 2
-        x: 1659
-        y: 205
-        width: 232
-        height: 217
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 1536
+        y: 0
+        width: 512
+        height: 512
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -142,12 +143,12 @@ TextureImporter:
       name: "down_h\xF6ger_bl\xE5_4"
       rect:
         serializedVersion: 2
-        x: 2191
-        y: 205
-        width: 213
-        height: 214
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 2048
+        y: 0
+        width: 512
+        height: 512
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -155,12 +156,12 @@ TextureImporter:
       name: "down_h\xF6ger_bl\xE5_5"
       rect:
         serializedVersion: 2
-        x: 2692
-        y: 205
-        width: 225
-        height: 236
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 2560
+        y: 0
+        width: 512
+        height: 512
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -168,12 +169,25 @@ TextureImporter:
       name: "down_h\xF6ger_bl\xE5_6"
       rect:
         serializedVersion: 2
-        x: 3216
-        y: 205
-        width: 213
-        height: 214
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 3072
+        y: 0
+        width: 512
+        height: 512
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: "down_h\xF6ger_bl\xE5_7"
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 0
+        width: 512
+        height: 512
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -181,25 +195,12 @@ TextureImporter:
       name: "down_h\xF6ger_bl\xE5_8"
       rect:
         serializedVersion: 2
-        x: 3673
-        y: 212
-        width: 252
-        height: 127
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: "down_h\xF6ger_bl\xE5_9"
-      rect:
-        serializedVersion: 2
-        x: 4254
-        y: 145
-        width: 175
-        height: 215
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 4096
+        y: 0
+        width: 512
+        height: 512
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0

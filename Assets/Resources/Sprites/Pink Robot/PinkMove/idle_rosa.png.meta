@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: b117c823baa02e24bab12533d539aa88
-timeCreated: 1487691614
+timeCreated: 1487773321
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -89,10 +89,10 @@ TextureImporter:
       name: idle_rosa_0
       rect:
         serializedVersion: 2
-        x: 157
-        y: 128
-        width: 198
-        height: 256
+        x: 0
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -102,10 +102,10 @@ TextureImporter:
       name: idle_rosa_1
       rect:
         serializedVersion: 2
-        x: 660
-        y: 139
-        width: 207
-        height: 253
+        x: 512
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,10 +115,10 @@ TextureImporter:
       name: idle_rosa_2
       rect:
         serializedVersion: 2
-        x: 1181
-        y: 143
-        width: 198
-        height: 252
+        x: 1024
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,10 +128,10 @@ TextureImporter:
       name: idle_rosa_3
       rect:
         serializedVersion: 2
-        x: 1684
-        y: 139
-        width: 207
-        height: 253
+        x: 1536
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,10 +141,10 @@ TextureImporter:
       name: idle_rosa_4
       rect:
         serializedVersion: 2
-        x: 2205
-        y: 128
-        width: 198
-        height: 256
+        x: 2048
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,10 +154,10 @@ TextureImporter:
       name: idle_rosa_5
       rect:
         serializedVersion: 2
-        x: 2711
-        y: 120
-        width: 210
-        height: 256
+        x: 2560
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -167,10 +167,10 @@ TextureImporter:
       name: idle_rosa_6
       rect:
         serializedVersion: 2
-        x: 3215
-        y: 119
-        width: 225
-        height: 252
+        x: 3072
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -180,10 +180,10 @@ TextureImporter:
       name: idle_rosa_7
       rect:
         serializedVersion: 2
-        x: 3735
-        y: 120
-        width: 210
-        height: 256
+        x: 3584
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

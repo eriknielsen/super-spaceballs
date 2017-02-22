@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: ffc028a2d9f3a684dab2416045f22eb3
-timeCreated: 1487691078
+timeCreated: 1487773287
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -13,6 +13,7 @@ TextureImporter:
     21300012: down_left_rosa_6
     21300014: down_left_rosa_7
     21300016: down_left_rosa_9
+    21300018: down_left_rosa_8
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -90,10 +91,10 @@ TextureImporter:
       name: down_left_rosa_0
       rect:
         serializedVersion: 2
-        x: 177
-        y: 126
-        width: 159
-        height: 255
+        x: 0
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -103,10 +104,10 @@ TextureImporter:
       name: down_left_rosa_1
       rect:
         serializedVersion: 2
-        x: 690
-        y: 144
-        width: 177
-        height: 216
+        x: 512
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -116,12 +117,12 @@ TextureImporter:
       name: down_left_rosa_2
       rect:
         serializedVersion: 2
-        x: 1194
-        y: 224
-        width: 260
-        height: 127
+        x: 1024
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -129,10 +130,10 @@ TextureImporter:
       name: down_left_rosa_3
       rect:
         serializedVersion: 2
-        x: 1691
-        y: 205
-        width: 237
-        height: 214
+        x: 1536
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -142,10 +143,10 @@ TextureImporter:
       name: down_left_rosa_4
       rect:
         serializedVersion: 2
-        x: 2204
-        y: 205
-        width: 213
-        height: 217
+        x: 2048
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -155,10 +156,10 @@ TextureImporter:
       name: down_left_rosa_5
       rect:
         serializedVersion: 2
-        x: 2717
-        y: 205
-        width: 227
-        height: 236
+        x: 2560
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -168,10 +169,10 @@ TextureImporter:
       name: down_left_rosa_6
       rect:
         serializedVersion: 2
-        x: 3230
-        y: 205
-        width: 211
-        height: 218
+        x: 3072
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -181,23 +182,23 @@ TextureImporter:
       name: down_left_rosa_7
       rect:
         serializedVersion: 2
-        x: 3753
-        y: 212
-        width: 264
-        height: 129
+        x: 3584
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: down_left_rosa_9
+      name: down_left_rosa_8
       rect:
         serializedVersion: 2
-        x: 4274
-        y: 143
-        width: 177
-        height: 217
+        x: 4096
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

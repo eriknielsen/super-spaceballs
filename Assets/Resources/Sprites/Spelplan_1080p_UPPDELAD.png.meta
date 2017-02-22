@@ -1,0 +1,252 @@
+fileFormatVersion: 2
+guid: b3f9e05f62ce1184a96b62e4b8a5bfad
+timeCreated: 1487771208
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: Spelplan_1080p_UPPDELAD_0
+    21300002: Spelplan_1080p_UPPDELAD_1
+    21300004: Spelplan_1080p_UPPDELAD_2
+    21300006: Spelplan_1080p_UPPDELAD_3
+    21300008: Spelplan_1080p_UPPDELAD_4
+    21300010: Spelplan_1080p_UPPDELAD_5
+    21300012: Spelplan_1080p_UPPDELAD_6
+    21300014: Spelplan_1080p_UPPDELAD_7
+    21300016: Spelplan_1080p_UPPDELAD_8
+    21300018: Spelplan_1080p_UPPDELAD_9
+    21300020: Spelplan_1080p_UPPDELAD_10
+    21300022: Spelplan_1080p_UPPDELAD_11
+  serializedVersion: 4
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: -1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: Standalone
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: WebGL
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Spelplan_1080p_UPPDELAD_1
+      rect:
+        serializedVersion: 2
+        x: 168
+        y: 628
+        width: 15
+        height: 282
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Spelplan_1080p_UPPDELAD_2
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 506
+        width: 111
+        height: 143
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Spelplan_1080p_UPPDELAD_3
+      rect:
+        serializedVersion: 2
+        x: 1595
+        y: 506
+        width: 112
+        height: 143
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Spelplan_1080p_UPPDELAD_4
+      rect:
+        serializedVersion: 2
+        x: 1733
+        y: 627
+        width: 17
+        height: 284
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Spelplan_1080p_UPPDELAD_5
+      rect:
+        serializedVersion: 2
+        x: 168
+        y: 178
+        width: 15
+        height: 272
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Spelplan_1080p_UPPDELAD_6
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 367
+        width: 112
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Spelplan_1080p_UPPDELAD_7
+      rect:
+        serializedVersion: 2
+        x: 1596
+        y: 367
+        width: 111
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Spelplan_1080p_UPPDELAD_8
+      rect:
+        serializedVersion: 2
+        x: 1733
+        y: 178
+        width: 19
+        height: 273
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Spelplan_1080p_UPPDELAD_9
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 29
+        width: 1593
+        height: 130
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Spelplan_1080p_UPPDELAD_0
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 925
+        width: 126
+        height: 129
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Spelplan_1080p_UPPDELAD_10
+      rect:
+        serializedVersion: 2
+        x: 289
+        y: 988
+        width: 1342
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Spelplan_1080p_UPPDELAD_11
+      rect:
+        serializedVersion: 2
+        x: 1631
+        y: 924
+        width: 125
+        height: 118
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    outline: []
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

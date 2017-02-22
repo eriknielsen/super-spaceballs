@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 22e1090f1563f2047a61e5969b50f814
-timeCreated: 1487680097
+timeCreated: 1487773352
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -93,12 +93,12 @@ TextureImporter:
       name: "idle_bl\xE5_0"
       rect:
         serializedVersion: 2
-        x: 157
-        y: 128
-        width: 198
-        height: 256
+        x: 0
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -106,12 +106,12 @@ TextureImporter:
       name: "idle_bl\xE5_1"
       rect:
         serializedVersion: 2
-        x: 660
-        y: 139
-        width: 207
-        height: 253
+        x: 512
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -119,12 +119,12 @@ TextureImporter:
       name: "idle_bl\xE5_2"
       rect:
         serializedVersion: 2
-        x: 1181
-        y: 143
-        width: 198
-        height: 252
+        x: 1024
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -132,12 +132,12 @@ TextureImporter:
       name: "idle_bl\xE5_3"
       rect:
         serializedVersion: 2
-        x: 1684
-        y: 139
-        width: 207
-        height: 253
+        x: 1536
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -145,12 +145,12 @@ TextureImporter:
       name: "idle_bl\xE5_4"
       rect:
         serializedVersion: 2
-        x: 2205
-        y: 128
-        width: 198
-        height: 256
+        x: 2048
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -158,12 +158,12 @@ TextureImporter:
       name: "idle_bl\xE5_5"
       rect:
         serializedVersion: 2
-        x: 2711
-        y: 120
-        width: 210
-        height: 256
+        x: 2560
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -171,12 +171,12 @@ TextureImporter:
       name: "idle_bl\xE5_6"
       rect:
         serializedVersion: 2
-        x: 3215
-        y: 119
-        width: 225
-        height: 252
+        x: 3072
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -184,12 +184,12 @@ TextureImporter:
       name: "idle_bl\xE5_7"
       rect:
         serializedVersion: 2
-        x: 3735
-        y: 120
-        width: 210
-        height: 256
+        x: 3584
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
