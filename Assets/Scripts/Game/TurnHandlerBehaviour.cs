@@ -179,6 +179,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
                     {
                         robotsMovingPreviews[selectedRobotIndex].SetActive(false);
                         selectedRobot = r;
+                        r.GetComponent<ParticleSystem>().Emit(15);
                         selectedRobotIndex = i;
                         robotsMovingPreviews[selectedRobotIndex].SetActive(true);
                         UnityEngine.Debug.Log("INDEX: " + i);

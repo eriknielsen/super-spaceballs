@@ -20,7 +20,7 @@ public class PauseState : IRobotState {
     public void EnterPlayState(){
 
         robotScript.CurrentState = robotScript.playState;
-   
+        robot.GetComponent<RobotBehaviour>().anim.enabled = true;
         robotScript.DecideCommand();
         robot.GetComponent<Rigidbody2D>().velocity = robotScript.prevVelocity;
     }

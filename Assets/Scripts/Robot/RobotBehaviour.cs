@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class RobotBehaviour : MonoBehaviour {
 
@@ -14,7 +15,7 @@ public class RobotBehaviour : MonoBehaviour {
     public float freeTime;
 
     public Vector2 prevVelocity;
-
+    public Animator anim;
     //the robot goes through each commando and checks each update if the latest commando is finished or not
     //if it is finished then the robot starts the next commando
     public List<Command> commands;
@@ -32,8 +33,8 @@ public class RobotBehaviour : MonoBehaviour {
     [SerializeField]
     GameObject moveSound;
 
-    Animator anim;
-    
+
+    float speed;
 
     Rigidbody2D rb;
     public IRobotState CurrentState
@@ -81,6 +82,9 @@ public class RobotBehaviour : MonoBehaviour {
         currentState = pauseState;
         rb = GetComponent<Rigidbody2D>();
         commands = new List<Command>();
+
+        anim = GetComponent<Animator>();
+        
     }
     void Start()
     {
@@ -88,6 +92,8 @@ public class RobotBehaviour : MonoBehaviour {
     }
     void FixedUpdate()
     {
+        
+        //anim.SetFloat("Speed", Math.Abs(rb.velocity.x + rb.velocity.y));
         CurrentState.UpdateState();
     }
     /// <summary>
@@ -121,6 +127,18 @@ public class RobotBehaviour : MonoBehaviour {
         else if(currentCommand != null)
         { 
             currentCommand.Execute();
+            if (currentCommand.GetType() == typeof(MoveCommand))
+            {
+                anim.SetBool("Accelerating", true);
+            }
+            else
+            {
+                anim.SetBool("Accelerating", false);
+            }
+        }
+        else
+        {
+            anim.SetBool("Accelerating", false);
         }
     }
 
