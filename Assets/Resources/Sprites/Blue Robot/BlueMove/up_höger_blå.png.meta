@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 504ff796bea4bc64cbeed71eee1958b2
-timeCreated: 1487680508
+timeCreated: 1487773056
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -13,6 +13,23 @@ TextureImporter:
     21300012: "r\xF6relse_34bak_h\xF6ger_bl\xE5_8"
     21300014: "r\xF6relse_34bak_h\xF6ger_bl\xE5_10"
     21300016: "r\xF6relse_34bak_h\xF6ger_bl\xE5_11"
+    21300018: "up_h\xF6ger_bl\xE5_0"
+    21300020: "up_h\xF6ger_bl\xE5_1"
+    21300022: "up_h\xF6ger_bl\xE5_2"
+    21300024: "up_h\xF6ger_bl\xE5_3"
+    21300026: "up_h\xF6ger_bl\xE5_4"
+    21300028: "up_h\xF6ger_bl\xE5_5"
+    21300030: "up_h\xF6ger_bl\xE5_6"
+    21300032: "up_h\xF6ger_bl\xE5_7"
+    21300034: "up_h\xF6ger_bl\xE5_8"
+    21300036: "up_h\xF6ger_bl\xE5_9"
+    21300038: "up_h\xF6ger_bl\xE5_10"
+    21300040: "up_h\xF6ger_bl\xE5_11"
+    21300042: "up_h\xF6ger_bl\xE5_12"
+    21300044: "up_h\xF6ger_bl\xE5_13"
+    21300046: "up_h\xF6ger_bl\xE5_14"
+    21300048: "up_h\xF6ger_bl\xE5_15"
+    21300050: "up_h\xF6ger_bl\xE5_16"
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -83,11 +100,59 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+  - buildTarget: iPhone
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: tvOS
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: Android
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: Tizen
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: Windows Store Apps
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: Samsung TV
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "r\xF6relse_34bak_h\xF6ger_bl\xE5_0"
+      name: "up_h\xF6ger_bl\xE5_0"
       rect:
         serializedVersion: 2
         x: 181
@@ -100,7 +165,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: "r\xF6relse_34bak_h\xF6ger_bl\xE5_1"
+      name: "up_h\xF6ger_bl\xE5_1"
       rect:
         serializedVersion: 2
         x: 693
@@ -113,20 +178,20 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: "r\xF6relse_34bak_h\xF6ger_bl\xE5_2"
+      name: "up_h\xF6ger_bl\xE5_2"
       rect:
         serializedVersion: 2
-        x: 1089
-        y: 97
-        width: 273
-        height: 254
+        x: 1131
+        y: 98
+        width: 231
+        height: 253
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: "r\xF6relse_34bak_h\xF6ger_bl\xE5_3"
+      name: "up_h\xF6ger_bl\xE5_3"
       rect:
         serializedVersion: 2
         x: 1618
@@ -139,20 +204,33 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: "r\xF6relse_34bak_h\xF6ger_bl\xE5_5"
+      name: "up_h\xF6ger_bl\xE5_4"
       rect:
         serializedVersion: 2
-        x: 2142
-        y: 126
-        width: 249
-        height: 207
+        x: 2139
+        y: 179
+        width: 22
+        height: 22
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: "r\xF6relse_34bak_h\xF6ger_bl\xE5_6"
+      name: "up_h\xF6ger_bl\xE5_5"
+      rect:
+        serializedVersion: 2
+        x: 2150
+        y: 125
+        width: 241
+        height: 208
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: "up_h\xF6ger_bl\xE5_6"
       rect:
         serializedVersion: 2
         x: 2611
@@ -165,41 +243,132 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: "r\xF6relse_34bak_h\xF6ger_bl\xE5_8"
+      name: "up_h\xF6ger_bl\xE5_7"
       rect:
         serializedVersion: 2
-        x: 3168
+        x: 3164
+        y: 179
+        width: 21
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: "up_h\xF6ger_bl\xE5_8"
+      rect:
+        serializedVersion: 2
+        x: 3174
         y: 125
-        width: 246
+        width: 240
         height: 208
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: "r\xF6relse_34bak_h\xF6ger_bl\xE5_10"
+      name: "up_h\xF6ger_bl\xE5_9"
       rect:
         serializedVersion: 2
-        x: 3651
+        x: 3645
+        y: 153
+        width: 29
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: "up_h\xF6ger_bl\xE5_10"
+      rect:
+        serializedVersion: 2
+        x: 3684
         y: 71
-        width: 267
+        width: 234
         height: 280
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: "r\xF6relse_34bak_h\xF6ger_bl\xE5_11"
+      name: "up_h\xF6ger_bl\xE5_11"
       rect:
         serializedVersion: 2
-        x: 4245
+        x: 4267
         y: 90
-        width: 186
+        width: 164
         height: 275
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: "up_h\xF6ger_bl\xE5_12"
+      rect:
+        serializedVersion: 2
+        x: 1089
+        y: 135
+        width: 39
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: "up_h\xF6ger_bl\xE5_13"
+      rect:
+        serializedVersion: 2
+        x: 2148
+        y: 143
+        width: 31
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: "up_h\xF6ger_bl\xE5_14"
+      rect:
+        serializedVersion: 2
+        x: 3171
+        y: 145
+        width: 32
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: "up_h\xF6ger_bl\xE5_15"
+      rect:
+        serializedVersion: 2
+        x: 3664
+        y: 95
+        width: 27
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: "up_h\xF6ger_bl\xE5_16"
+      rect:
+        serializedVersion: 2
+        x: 4247
+        y: 107
+        width: 28
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
