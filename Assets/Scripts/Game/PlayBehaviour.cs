@@ -23,11 +23,6 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     public Goal leftGoal;
     public Goal rightGoal;
 
-    public delegate void ReturnMenuButtonClicked();
-    public static event ReturnMenuButtonClicked OnReturnMenuButtonClick;
-    public delegate void ReplayButtonClicked();
-    public static event ReplayButtonClicked OnReplayButtonClick;
-
     public static PlayBehaviour Instance;
 
     void Awake(){
@@ -61,7 +56,6 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
         NewTurn();
     }
 
-    // Update is called once per frame
     void Update(){
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
 
@@ -176,13 +170,9 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
             currentTurnHandler = -1;
         }
     }
-    /// <summary>
-    /// this either pauses the game and deactivates ui and active turnhandler
-    ///  or it activates ui and active turnhandler
-    ///  Is called by GameBehaviour
-    /// </summary>
-    /// <param name="activate"></param>
-    public void Activate(bool activate){
+    /// Pauses the game and deactivates ui and active turnhandler or activates ui and active turnhandler
+    /// Called by GameBehaviour
+    public void Activate(bool activate){ //REMOVE FUNCTION?
         if (activate == false){
             //DestroyTurnHandlers();
      
@@ -194,33 +184,27 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
             NewTurn();
         }
     }
-    /// <summary>
-    /// sends event to gamebehaviour about pausing the game
-    ///  and showing the main menu
-    /// </summary>
-    public void PressReturnToMenu(){
-        //game behaviour calls Activate(false) in here
-        OnReturnMenuButtonClick();
-    }
 
-    public void ReplayLastTurn(){
-        Debug.Log("replay?");
-        if (turnHandler1.Turns > 1){
-            //unpause game calls the necessary replayturn functions if we
-            //send the argument as true
-            StartCoroutine(UnpauseGame(true));
-        }
-        else {
-            Debug.Log("there needs to be at least one turn");
-        }
-    }
+//    public void ReplayLastTurn(){
+//        Debug.Log("replay?");
+//        if (turnHandler1.Turns > 1){
+//            //unpause game calls the necessary replayturn functions if we
+//            //send the argument as true
+//            StartCoroutine(UnpauseGame(true));
+//        }
+//        else {
+//            Debug.Log("there needs to be at least one turn");
+//        }
+//    }
 
-    public void ReplayButtonClick(){
-        OnReplayButtonClick();
-    }
+	//Stuff below passes functions through to the turn handlers, because our code structure is shit :D
+	public void DeselectRobot(){
+		turnHandler1.THDeselectRobot();
+		turnHandler2.THDeselectRobot();
+	}
 
-	public void SetSelectedCommand(Command.AvailableCommands command){ //Delegates the selected command change to the turn handlers
-		turnHandler1.SelectCommand(command);
-		turnHandler2.SelectCommand(command);
+	public void SelectedCommand(Command.AvailableCommands command){ 
+		turnHandler1.THSelectCommand(command);
+		turnHandler2.THSelectCommand(command);
 	}
 }

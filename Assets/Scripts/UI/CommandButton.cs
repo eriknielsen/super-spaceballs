@@ -6,9 +6,13 @@ public class CommandButton : MonoBehaviour {
 
 	[SerializeField]
 	private Command.AvailableCommands selectedCommand;
+	[SerializeField]
+	private float buttonAnimationDelay;
 
 	void OnMouseDown(){
-		PlayBehaviour.Instance.SetSelectedCommand(selectedCommand);
+		PlayBehaviour.Instance.SelectedCommand(selectedCommand);
+		transform.parent.parent.GetComponent<CommandWheelHandler>().SelectCommandUIChange(buttonAnimationDelay);
+		//AnimateButtonClick
 	}
 
 //	void OnMouseEnter(){	//For animation

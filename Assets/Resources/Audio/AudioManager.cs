@@ -14,42 +14,25 @@ using System.Collections;
 
 public class AudioManager : MonoBehaviour {
 
+	public float highPitchRange = 1.05f;
+	public float lowPitchRange = 0.95f;
+
 	public static AudioManager instance = null;
 
-
-    void Awake() {
+    void Awake (){
         if (instance == null)
             instance = this;
-        else if (instance != this) { //Makes sure there's only one instance of the script
+        else if (instance != this){ //Makes sure there's only one instance of the script
             Destroy(gameObject); //Goes nuclear
         }
         DontDestroyOnLoad(gameObject);
-
     }
-    void Start()
-    {
-        
-    }
-   
-    //public float minimumTimeBetweenSFX; //Necessary?
-    public float highPitchRange = 1.05f;
-    public float lowPitchRange = 0.95f;
 
-	public void PlayAudio(GameObject soundObject, bool follow, GameObject callingObject) {
+	public void PlayAudio (GameObject soundObject, bool follow, GameObject callingObject) {
 		PlaySound(soundObject, follow, 1f, callingObject.transform);
     }
 
-    public void PlayPersistentMusic(GameObject soundObject)
-    {
-        GameObject go = Instantiate(soundObject);
-        DontDestroyOnLoad(go);
-        
-        go.GetComponent<AudioSource>().Play();
-        
-
-
-    }
-    public void PlayAudioWithRandomPitch(GameObject soundObject, bool follow, GameObject callingObject) {
+    public void PlayAudioWithRandomPitch (GameObject soundObject, bool follow, GameObject callingObject){
         float randomPitch = Random.Range(lowPitchRange, highPitchRange);
         
         PlaySound(soundObject, follow, randomPitch, callingObject.transform);
@@ -60,7 +43,7 @@ public class AudioManager : MonoBehaviour {
 	// PRIVATE
 	// --------------
 
-	private void PlaySound(GameObject soundObject, bool follow, float pitch, Transform emitter) {
+	private void PlaySound (GameObject soundObject, bool follow, float pitch, Transform emitter){
 		GameObject go = (GameObject) Instantiate(soundObject, emitter.position, Quaternion.identity); //Instantiates the sound prefab at emitter position
 		if (follow)
 			go.transform.parent = emitter; //Sets calling game object as parent so that the audio source follows it
@@ -69,6 +52,6 @@ public class AudioManager : MonoBehaviour {
 		go.GetComponent<AudioSource>().Play();
         
         
-        Destroy(go, go.GetComponent<AudioSource>().clip.length*Time.timeScale); //Destroys the instantiated object after the sound finishes playing
+        Destroy(go, go.GetComponent<AudioSource>().clip.length / Time.timeScale); //Destroys the instantiated object after the sound finishes playing
     }
 }
