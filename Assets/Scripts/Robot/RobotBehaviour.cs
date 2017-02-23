@@ -29,6 +29,7 @@ public class RobotBehaviour : MonoBehaviour {
 
     private Vector2 startPosition;
 
+    public bool isPreview;
 	private float speed;
 	Rigidbody2D rb;
 
@@ -76,6 +77,7 @@ public class RobotBehaviour : MonoBehaviour {
 
     void Awake()
     {
+        
         if(GetComponent<Rigidbody2D>() == null)
         {
             gameObject.AddComponent<Rigidbody2D>();
@@ -97,7 +99,7 @@ public class RobotBehaviour : MonoBehaviour {
         thrusterComponent = GetComponent<AudioSource>();
         // reset position when a goal is made
         //ONLY IF WE ARE NOT A PREVIEW. PREVIEWS DONT HAVE THAT COMPONENT
-        if(thrusterComponent != null)
+        if(isPreview == false)
         {
             Goal.OnGoalScored += new Goal.GoalScored(
             () => transform.position = startPosition);
@@ -176,10 +178,14 @@ public class RobotBehaviour : MonoBehaviour {
 
     void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.tag == "Robot")
+        if(isPreview == false)
         {
-            AudioManager.instance.PlayAudioWithRandomPitch(collideRobotSound, false, gameObject);
+            if (other.gameObject.tag == "Robot")
+            {
+                AudioManager.instance.PlayAudioWithRandomPitch(collideRobotSound, false, gameObject);
+            }
         }
+        
         
     }
 }
