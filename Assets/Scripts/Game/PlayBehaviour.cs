@@ -52,6 +52,10 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
             Debug.Log("couldint find goals :(");
         }
         gameTimer = new GameTimer(120);
+        if(gameTimeText == null)
+        {
+            gameTimeText = GameObject.Find("GameTimeText").GetComponent<Text>();
+        }
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
 
         NewTurn();

@@ -63,7 +63,13 @@ public class TurnHandlerBehaviour : MonoBehaviour
             robots[i].GetComponent<RobotBehaviour>().freeTime = roundTime;
         }
     }
-
+    void Start()
+    {
+        if(cursorText == null)
+        {
+            cursorText = GameObject.Find("CursorText").GetComponent<Text>();
+        }
+    }
 	void Update(){
 		if (Input.GetMouseButton(1)){	//React to user input (OLD; REMOVE WHEN BUTTONS ARE DONE)
 			GiveCommandToSelectedRobot();
