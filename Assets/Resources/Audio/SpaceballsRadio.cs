@@ -1,15 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SpaceballsRadio : MonoBehaviour {
+public class SpaceballsRadio : MonoBehaviour { //Basic music player for now
 
+	[HideInInspector]
+	public AudioSource audioSource;
 
-
-	void Start () {
-	
-	}
-	
-	void Update () {
-	
+	void Start(){
+		audioSource = GetComponent<AudioSource>();
+		audioSource.Play();
 	}
 }

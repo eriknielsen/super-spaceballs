@@ -42,7 +42,7 @@ public class PlayState : IRobotState {
         anim.SetBool("Accelerating", true);
         //anim.Play("MoveEntry");
         //differentiate between the preview robot prefab and the real one
-        if(robotScript.igniteThrustersSound != null)
+        if(robotScript.isPreview == false)
         {
             AudioManager.instance.PlayAudioWithRandomPitch(robotScript.igniteThrustersSound, false, robot);
             //loop thruster sound after ignite is finished
@@ -53,7 +53,7 @@ public class PlayState : IRobotState {
     {
         anim.SetBool("Accelerating", false);
         //differentiate between the preview robot prefab and the real one
-        if (robotScript.endThrustersSound != null)
+        if (robotScript.isPreview == false)
         {
             AudioManager.instance.PlayAudioWithRandomPitch(robotScript.endThrustersSound, false, robot);
             robotScript.thrusterComponent.Stop();

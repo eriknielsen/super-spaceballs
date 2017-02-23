@@ -27,6 +27,9 @@ public class RobotBehaviour : MonoBehaviour {
     private Animator animatorComponent;
     private Rigidbody2D rigidBodyComponent;
 
+    private Vector2 startPosition;
+
+    public bool isPreview;
 	private float speed;
 	Rigidbody2D rb;
 
@@ -43,6 +46,7 @@ public class RobotBehaviour : MonoBehaviour {
     GameObject selectRobotSound;
     [HideInInspector]
     public AudioSource thrusterComponent;
+
     public IRobotState CurrentState
     {
         get { return currentState; }
@@ -73,6 +77,7 @@ public class RobotBehaviour : MonoBehaviour {
 
     void Awake()
     {
+        
         if(GetComponent<Rigidbody2D>() == null)
         {
             gameObject.AddComponent<Rigidbody2D>();
@@ -92,12 +97,22 @@ public class RobotBehaviour : MonoBehaviour {
         anim.enabled = false;
 
         thrusterComponent = GetComponent<AudioSource>();
+        // reset position when a goal is made
+        //ONLY IF WE ARE NOT A PREVIEW. PREVIEWS DONT HAVE THAT COMPONENT
+        if(isPreview == false)
+        {
+            Goal.OnGoalScored += new Goal.GoalScored(
+            () => transform.position = startPosition);
+        }
+        
     }
-
+    void Start()
+    {
+        startPosition = transform.position;
+    }
     void FixedUpdate()
     {
-        //anim.SetFloat("Speed", Math.Abs(rb.velocity.x + rb.velocity.y));
-        CurrentState.UpdateState();
+          CurrentState.UpdateState();
     }
     /// <summary>
     /// Picks the oldest command if possible and 
@@ -163,10 +178,14 @@ public class RobotBehaviour : MonoBehaviour {
 
     void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.tag == "Robot")
+        if(isPreview == false)
         {
-            AudioManager.instance.PlayAudioWithRandomPitch(collideRobotSound, false, gameObject);
+            if (other.gameObject.tag == "Robot")
+            {
+                AudioManager.instance.PlayAudioWithRandomPitch(collideRobotSound, false, gameObject);
+            }
         }
+        
         
     }
 }
