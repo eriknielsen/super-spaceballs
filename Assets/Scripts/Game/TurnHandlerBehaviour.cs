@@ -17,21 +17,27 @@ public class TurnHandlerBehaviour : MonoBehaviour
 	private GameObject selectedRobot;
     private int selectedRobotIndex;
     private Command.AvailableCommands selectedCommand;
-	private bool activated = false;
-	private bool gameIsPaused = true;
-	private bool mouseButtonIsPressed = false;
-	private float timeInput;
-	private List<GameObject> robotsMovingPreviews;
-	private List<List<GameObject>> robotsPreview;
-	private MovingTrail latestTrail;
-	private List<List<MovingTrail>> robotMovingTrails;
 
-    private int turns;
+    private bool activated = false;
+    private bool mouseButtonIsPressed = false;
+    private float timeInput;
+    private List<GameObject> robotsMovingPreview;
+    List<List<MovingTrail>> robotMovingTrails;
+    private MovingTrail latestTrail;
+
+    List<GameObject> robots;
+    int turns;
+    int numberOfRobots;
+    BoxCollider2D bc2D;
+
+    bool gameIsPaused = true;
+    //en lista med drag
+
     public int Turns
     {
         get { return turns; }
     }
-	List<GameObject> robots;
+	
     public List<GameObject> Robots
     {
         get { return robots; }
@@ -43,17 +49,15 @@ public class TurnHandlerBehaviour : MonoBehaviour
         moves = new List<Move>();
         robots = new List<GameObject>();
         FindRobots();
-        robotsMovingPreviews = new List<GameObject>();
+        robotsMovingPreview = new List<GameObject>();
         robotMovingTrails = new List<List<MovingTrail>>();
         UnityEngine.Debug.Log("Robot numbers: " + robots.Count);
         for (int i = 0; i < robots.Count; i++)
         {
-            robotsMovingPreviews.Add(new GameObject());
-            robotsMovingPreviews[i].name = "Robot moving preview";
-            robotsMovingPreviews[i].SetActive(false);
+            robotsMovingPreview.Add(new GameObject());
+            robotsMovingPreview[i].name = "Robot moving preview";
+            robotsMovingPreview[i].SetActive(false);
             robotMovingTrails.Add(new List<MovingTrail>());
-            robotMovingTrails[i].Add(new MovingTrail(new MoveCommand(robots[i], robots[i].transform.position, 0f, turns), 0f, Vector2.zero));
-            robotMovingTrails[i].Last().TrailGameObject.transform.parent = robotsMovingPreviews[i].transform;
         }
         turns = 1;
     }
@@ -70,40 +74,19 @@ public class TurnHandlerBehaviour : MonoBehaviour
             cursorText = GameObject.Find("CursorText").GetComponent<Text>();
         }
     }
-	void Update(){
-		if (Input.GetMouseButton(1)){	//React to user input (OLD; REMOVE WHEN BUTTONS ARE DONE)
-			GiveCommandToSelectedRobot();
-			mouseButtonIsPressed = true;
-		}
-		if (Input.GetKeyDown(KeyCode.Z)){
-			UnityEngine.Debug.Log("movecommand chosen");
-			selectedCommand = Command.AvailableCommands.Move;
-		}
-		if (Input.GetKeyDown(KeyCode.X)){
-			UnityEngine.Debug.Log("pushcommand chosen");
-			selectedCommand = Command.AvailableCommands.Push;
-		}
-		if (Input.GetMouseButtonUp(1)){
-			mouseButtonIsPressed = false;
-		}
-		if (Input.GetKeyDown(KeyCode.Escape)){
-			selectedRobot = null;
-			timeInput = 0;
-		}
-	}
-
+	
     public void PauseGame(){
 		foreach (GameObject r in robots){ //put all robots into pausestate
             RobotBehaviour rb = r.GetComponent<RobotBehaviour>();
             rb.CurrentState.EnterPauseState();
             rb.freeTime = roundTime;
         }
-        for (int i = 0; i < robots.Count; i++){
-            robotsMovingPreviews.Add(new GameObject());
-            robotsMovingPreviews[i].name = "Robot moving preview";
-            robotsMovingPreviews[i].SetActive(false);
-            robotMovingTrails[i].Add(new MovingTrail(new MoveCommand(robots[i], robots[i].transform.position, 0f, turns), 0f, Vector2.zero));
-            robotMovingTrails[i].Last().TrailGameObject.transform.parent = robotsMovingPreviews[i].transform.parent;
+
+        for (int i = 0; i < robots.Count; i++)
+        {
+            robotsMovingPreview.Add(new GameObject());
+            robotsMovingPreview[i].name = "Robot moving preview";
+            robotsMovingPreview[i].SetActive(false);
         }
     }
 
@@ -125,11 +108,13 @@ public class TurnHandlerBehaviour : MonoBehaviour
             r.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
         }
         turns++;
-
-        for (int i = 0; i < robotsMovingPreviews.Count;){
-            Destroy(robotsMovingPreviews.Last());
-            robotsMovingPreviews.Remove(robotsMovingPreviews.Last());
+        int i = 0;
+        while (robotsMovingPreview.Count > 0)
+        {
+            Destroy(robotsMovingPreview.First());
+            robotsMovingPreview.Remove(robotsMovingPreview.First());
             robotMovingTrails[i].Clear();
+            i++;
         }
     }
 		
@@ -156,13 +141,13 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 {
                     if (r == robots[i])
                     {
-                        robotsMovingPreviews[selectedRobotIndex].SetActive(false);
+                        robotsMovingPreview[selectedRobotIndex].SetActive(false);
                         selectedRobot = r;
                         r.GetComponent<ParticleSystem>().Emit(15);
                         selectedRobotIndex = i;
-                        robotsMovingPreviews[selectedRobotIndex].SetActive(true);
-                        UnityEngine.Debug.Log("INDEX: " + i);
+                        robotsMovingPreview[selectedRobotIndex].SetActive(true);
                         StartCoroutine(SetAndDisplayTimeInput());
+                        StartCoroutine(PreviewAndGiveRobotCommand());
                         UnityEngine.Debug.Log("Robot selected!");
                         break;
                     }
@@ -193,20 +178,28 @@ public class TurnHandlerBehaviour : MonoBehaviour
             cursorText = GameObject.Find("CursorText").GetComponent<Text>();
         }
         float secondsPerDistance = 0.3f;
-        RobotBehaviour selectRB = selectedRobot.GetComponent<RobotBehaviour>();
+        RobotBehaviour selectRB;
         Vector3 cursorPosition;
         Vector3 cursorScreenPosition;
         Vector3 deltaPosition;
-        float deltaDistance, maxDeltaDistance;
+        float deltaDistance;
         float remainingTimeForRobot;
         float previewInputTime, maxInputTime;
         float shockwaveLife = shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime;
         while (selectedRobot != null)
         {
+            selectRB = selectedRobot.GetComponent<RobotBehaviour>();
             cursorPosition = Input.mousePosition;
             cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
 
-            deltaPosition = cursorScreenPosition - robotMovingTrails[selectedRobotIndex].Last().Node.transform.position;
+            if (robotMovingTrails[selectedRobotIndex].Count > 0)
+            {
+                deltaPosition = cursorScreenPosition - robotMovingTrails[selectedRobotIndex].Last().Node.transform.position;
+            }
+            else
+            {
+                deltaPosition = cursorScreenPosition - selectedRobot.transform.position;
+            }
 
             deltaDistance = Mathf.Sqrt(Mathf.Pow(deltaPosition.x, 2) + Mathf.Pow(deltaPosition.y, 2));
 
@@ -216,6 +209,10 @@ public class TurnHandlerBehaviour : MonoBehaviour
             if (selectedCommand == Command.AvailableCommands.Push)
             {
                 maxInputTime = selectRB.freeTime - shockwaveLife;
+                if(maxInputTime < 0)
+                {
+                    maxInputTime = 0;
+                }
             }
             else {
                 maxInputTime = selectRB.freeTime;
@@ -227,7 +224,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
             }
             else
             {
-                timeInput = remainingTimeForRobot;
+                timeInput = maxInputTime;
             }
             cursorText.text = timeInput.ToString();
             cursorText.transform.position = cursorPosition;
@@ -235,44 +232,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
             yield return new WaitForSeconds(0.0001f);
         }
         cursorText.text = "";
-        yield return new WaitForSeconds(0.0001f);
-    }
-
-    void GiveCommandToSelectedRobot()
-    {
-        if (selectedRobot != null && !mouseButtonIsPressed)
-        {
-            //take the time for the command from the timetext
-            RobotBehaviour rb = selectedRobot.GetComponent<RobotBehaviour>();
-            if (timeInput > 0 && timeInput <= rb.freeTime)
-            {
-                Vector3 cursorPosition = Input.mousePosition;
-                Vector3 cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
-
-                Command command = null, previewCommand = null;
-                if (selectedCommand == Command.AvailableCommands.Move)
-                {
-                    previewCommand = new MoveCommand(robotMovingTrails[selectedRobotIndex].Last().Node, cursorScreenPosition, timeInput, Turns);
-                    command = new MoveCommand(selectedRobot, previewCommand as MoveCommand);
-                    UnityEngine.Debug.Log("MoveCommand Added!");
-                }
-				else if (selectedCommand == Command.AvailableCommands.Push && timeInput <= rb.freeTime - shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime){
-                    command = new PushCommand(selectedRobot, cursorScreenPosition, timeInput, Turns);
-                    previewCommand = new PushCommand(robotMovingTrails[selectedRobotIndex].Last().Node, cursorScreenPosition, timeInput, Turns);
-                    UnityEngine.Debug.Log("PushCommand Added!");
-                }
-                else
-                {
-                    return;
-                }
-                latestTrail = new MovingTrail(previewCommand, timeInput, robotMovingTrails[selectedRobotIndex].Last().Node.GetComponent<RobotBehaviour>().prevVelocity);
-                latestTrail.TrailGameObject.transform.parent = robotsMovingPreviews[selectedRobotIndex].transform;
-                robotMovingTrails[selectedRobotIndex].Add(latestTrail);
-                rb.Commands.Add(command);
-                rb.freeTime -= timeInput;
-                timeInput = 0;
-            }
-        }
     }
 
     IEnumerator PreviewAndGiveRobotCommand()
@@ -281,40 +240,66 @@ public class TurnHandlerBehaviour : MonoBehaviour
         Vector3 cursorPosition = Input.mousePosition;
         Vector3 cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
         Command previewCommand = null;
-        Stopwatch previewTimer = new Stopwatch();
-        previewTimer.Start();
-        float timeBetweenPreivews = 0.5f;
-        while (gameIsPaused)
+
+        GameObject previewRobot;
+        float timeBetweenPreivews = 0.1f;
+        Stopwatch timer = new Stopwatch();
+        Command.AvailableCommands prevSelectedCommand = selectedCommand;
+
+        timer.Start();
+        while (selectedRobot != null)
         {
             cursorPosition = Input.mousePosition;
             cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
-            if (timeInput > 0 && timeInput <= selectedRobot.GetComponent<RobotBehaviour>().freeTime)
+            if (timeInput > 0 && timeInput <= selectedRobot.GetComponent<RobotBehaviour>().freeTime && timer.Elapsed.TotalSeconds > timeBetweenPreivews)
             {
-                if (previewTimer.Elapsed.TotalSeconds > timeBetweenPreivews && prevCursorPosition != cursorPosition)
+                if (prevCursorPosition != cursorPosition || prevSelectedCommand != selectedCommand)
                 {
-                    Destroy(robotMovingTrails[selectedRobotIndex].Last().TrailGameObject);
-                    robotMovingTrails[selectedRobotIndex].Remove(robotMovingTrails[selectedRobotIndex].Last());
+                    timer.Reset();
+                    timer.Start();
+                    if (latestTrail != null)
+                    {
+                        Destroy(latestTrail.TrailGameObject);
+                    }
+                    if (robotMovingTrails[selectedRobotIndex].Count > 0)
+                    {
+                        previewRobot = robotMovingTrails[selectedRobotIndex].Last().Node;
+                    }
+                    else
+                    {
+                        previewRobot = selectedRobot;
+                    }
 
                     cursorPosition = Input.mousePosition;
                     cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
 
 					if (selectedCommand == Command.AvailableCommands.Move)
                     {
-                        previewCommand = new MoveCommand(robotMovingTrails[selectedRobotIndex].Last().Node, cursorScreenPosition, timeInput, Turns);
+                        previewCommand = new MoveCommand(previewRobot, cursorScreenPosition, timeInput, Turns);
                     }
 					else if (selectedCommand == Command.AvailableCommands.Push && timeInput <= selectedRobot.GetComponent<RobotBehaviour>().freeTime - shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime)
                     {
-                        previewCommand = new PushCommand(robotMovingTrails[selectedRobotIndex].Last().Node, cursorScreenPosition, timeInput, Turns);
+                        previewCommand = new PushCommand(previewRobot, cursorScreenPosition, timeInput, Turns);
+
                     }
 
-                    latestTrail = new MovingTrail(previewCommand, timeInput, robotMovingTrails[selectedRobotIndex].Last().Node.GetComponent<RobotBehaviour>().prevVelocity);
-                    latestTrail.TrailGameObject.transform.parent = robotsMovingPreviews[selectedRobotIndex].transform;
+                    latestTrail = new MovingTrail(previewCommand, timeInput, previewRobot.GetComponent<RobotBehaviour>().prevVelocity);
+                }
+                if (Input.GetMouseButton(1) && latestTrail != null)
+                {
+                    latestTrail.TrailGameObject.transform.parent = robotsMovingPreview[selectedRobotIndex].transform;
                     robotMovingTrails[selectedRobotIndex].Add(latestTrail);
-                    previewTimer.Reset();
+                    latestTrail = null;
+                    GiveRobotCommand(previewCommand);
                 }
             }
             prevCursorPosition = cursorPosition;
-            yield return new WaitForSeconds(0.0000001f);
+            prevSelectedCommand = selectedCommand;
+            yield return new WaitForSeconds(0.00000001f);
+        }
+        if (latestTrail != null)
+        {
+            Destroy(latestTrail.TrailGameObject);
         }
     }
 
@@ -327,9 +312,47 @@ public class TurnHandlerBehaviour : MonoBehaviour
         }
         else if (command.GetType() == typeof(PushCommand))
         {
-            givenCommand = new PushCommand(selectedRobot, command as PushCommand);
+            PushCommand pushCommand = command as PushCommand;
+            float previewDuration = pushCommand.LifeDuration;
+            givenCommand = new PushCommand(selectedRobot, command as PushCommand, previewDuration);
         }
+        UnityEngine.Debug.Log("Given command: " + givenCommand);
         selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(givenCommand);
+        selectedRobot.GetComponent<RobotBehaviour>().freeTime -= command.LifeDuration;
+    }
+
+
+    void Update()
+    {
+        ReactToUserInput();
+    }
+
+    void ReactToUserInput()
+    {
+        if (Input.GetMouseButton(1))
+        {
+            //GiveCommandToSelectedRobot();
+            mouseButtonIsPressed = true;
+        }
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            UnityEngine.Debug.Log("movecommand chosen");
+            selectedCommand = Command.AvailableCommands.Move;
+        }
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            UnityEngine.Debug.Log("pushcommand chosen");
+            selectedCommand = Command.AvailableCommands.Push;
+        }
+        if (Input.GetMouseButtonUp(1))
+        {
+            mouseButtonIsPressed = false;
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            selectedRobot = null;
+            timeInput = 0;
+        }
     }
 
     public void Activate(bool active)
@@ -358,9 +381,9 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 robots[i].GetComponent<RobotBehaviour>().shouldSendEvent = false;
             }
 
-            for (int i = 0; i < robotsMovingPreviews.Count; i++)
+            for (int i = 0; i < robotsMovingPreview.Count; i++)
             {
-                robotsMovingPreviews[i].SetActive(false);
+                robotsMovingPreview[i].SetActive(false);
             }
             enabled = false;
         }

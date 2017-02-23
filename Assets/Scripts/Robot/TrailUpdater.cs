@@ -14,8 +14,10 @@ class TrailUpdater : MonoBehaviour
     Vector3 previousLocation;
     float distanceBetweenMarkings = 1.0f;
     public GameObject node;
+    SpriteRenderer nodeSpriteRenderer;
     List<GameObject> trailMarkings;
     Command command;
+    Vector3 startPosition;
     float timeDuration;
     float elapsedTime = 0;
     void Awake()
@@ -30,6 +32,7 @@ class TrailUpdater : MonoBehaviour
         if (command != null && command.robot != null)
         {
             node = Instantiate(command.robot, transform) as GameObject;
+            startPosition = node.transform.position;
             foreach (Transform c in node.transform)
             {
                 if (c.gameObject.layer != LayerMask.NameToLayer("Passive Hitbox"))
@@ -41,12 +44,11 @@ class TrailUpdater : MonoBehaviour
             if (command.GetType() == typeof(MoveCommand))
             {
                 this.command = new MoveCommand(node, command as MoveCommand);
-                UnityEngine.Debug.Log("MOVE COMMAND");
             }
-            else
+            nodeSpriteRenderer = node.GetComponent<SpriteRenderer>();
+            if(nodeSpriteRenderer != null)
             {
-                UnityEngine.Debug.Log("OTHER COMMAND");
-
+                nodeSpriteRenderer.enabled = false;
             }
 
             node.GetComponent<RobotBehaviour>().Commands.Add(this.command);
@@ -100,6 +102,8 @@ class TrailUpdater : MonoBehaviour
                         trailMarking.name = "Trailmarking";
                         trailMarking.AddComponent<SpriteRenderer>();
                         trailMarking.GetComponent<SpriteRenderer>().sprite = trailMarkingSprite;
+                        trailMarking.GetComponent<SpriteRenderer>().enabled = false;
+
                         trailMarkings.Add(trailMarking);
                         previousLocation = node.transform.position;
                         trailMarking.transform.position = previousLocation;
@@ -110,6 +114,14 @@ class TrailUpdater : MonoBehaviour
                 }
                 else
                 {
+                    if(nodeSpriteRenderer != null && node.transform.position != startPosition)
+                    {
+                        nodeSpriteRenderer.enabled = true;
+                    }
+                    for(int i = 0; i < trailMarkings.Count; i++)
+                    {
+                        trailMarkings[i].GetComponent<SpriteRenderer>().enabled = true;
+                    }
                     node.GetComponent<RobotBehaviour>().CurrentState.EnterPauseState();
                     isFinished = true;
                     Time.timeScale = 1.0f;
