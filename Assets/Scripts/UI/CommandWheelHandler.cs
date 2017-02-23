@@ -2,28 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CommandWheelHandler : MonoBehaviour {
+public class ToggleObjects : MonoBehaviour {
 
 	[SerializeField]
-	private GameObject commandButtons;
+	private GameObject object1;
 	[SerializeField]
-	private GameObject backButton;
+	private GameObject object2;
 
-	public void SelectCommandUIChange(float delay){  //Hides and shows relevant buttons
-		Invoke ("ToggleButtonSet1", delay); //FixedUpdate time problem? Divide by Time.fixedDeltaTime?
-		ToggleButtonSet2();
+	public void ToggleWithDelay(float delay1, float delay2){
+		Invoke ("Toggle1", delay1); //FixedUpdate time problem? Divide by Time.fixedDeltaTime?
+		Invoke ("Toggle2", delay2);
 	}
 
-	public void DeselectCommandUIChange(){
-		ToggleButtonSet1();
-		ToggleButtonSet2();
+	public void Toggle(){
+		Toggle1();
+		Toggle2();
 	}
 
-	private void ToggleButtonSet1(){
-		commandButtons.SetActive(!commandButtons.activeInHierarchy);
+	public void Toggle1(){
+		object1.SetActive(!object1.activeInHierarchy);
 	}
 
-	private void ToggleButtonSet2(){
-		backButton.SetActive(!backButton.activeInHierarchy);
+	public void Toggle2(){
+		object2.SetActive(!object2.activeInHierarchy);
 	}
 }
