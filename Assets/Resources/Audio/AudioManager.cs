@@ -15,6 +15,8 @@ using System.Collections;
 public class AudioManager : MonoBehaviour {
 
 	public static AudioManager instance = null;
+
+
     void Awake() {
         if (instance == null)
             instance = this;
@@ -22,8 +24,13 @@ public class AudioManager : MonoBehaviour {
             Destroy(gameObject); //Goes nuclear
         }
         DontDestroyOnLoad(gameObject);
-    }
 
+    }
+    void Start()
+    {
+        
+    }
+   
     //public float minimumTimeBetweenSFX; //Necessary?
     public float highPitchRange = 1.05f;
     public float lowPitchRange = 0.95f;
@@ -32,9 +39,20 @@ public class AudioManager : MonoBehaviour {
 		PlaySound(soundObject, follow, 1f, callingObject.transform);
     }
 
-	public void PlayAudioWithRandomPitch(GameObject soundObject, bool follow, GameObject callingObject) {
+    public void PlayPersistentMusic(GameObject soundObject)
+    {
+        GameObject go = Instantiate(soundObject);
+        DontDestroyOnLoad(go);
+        
+        go.GetComponent<AudioSource>().Play();
+        
+
+
+    }
+    public void PlayAudioWithRandomPitch(GameObject soundObject, bool follow, GameObject callingObject) {
         float randomPitch = Random.Range(lowPitchRange, highPitchRange);
-		PlaySound(soundObject, follow, randomPitch, callingObject.transform);
+        
+        PlaySound(soundObject, follow, randomPitch, callingObject.transform);
     }
 
 
@@ -46,9 +64,11 @@ public class AudioManager : MonoBehaviour {
 		GameObject go = (GameObject) Instantiate(soundObject, emitter.position, Quaternion.identity); //Instantiates the sound prefab at emitter position
 		if (follow)
 			go.transform.parent = emitter; //Sets calling game object as parent so that the audio source follows it
-
+        
 		go.GetComponent<AudioSource>().pitch = pitch;
 		go.GetComponent<AudioSource>().Play();
-		Destroy(go, go.GetComponent<AudioSource>().clip.length); //Destroys the instantiated object after the sound finishes playing
+        
+        
+        Destroy(go, go.GetComponent<AudioSource>().clip.length*Time.timeScale); //Destroys the instantiated object after the sound finishes playing
     }
 }

@@ -81,7 +81,8 @@ public class RobotBehaviour : MonoBehaviour {
         rb = GetComponent<Rigidbody2D>();
         commands = new List<Command>();
 
-        anim = GetComponent<Animator>();   
+        anim = GetComponent<Animator>();
+        anim.enabled = false;
     }
 
     void FixedUpdate()
