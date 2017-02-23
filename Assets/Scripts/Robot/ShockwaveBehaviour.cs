@@ -56,10 +56,7 @@ public class ShockwaveBehaviour : MonoBehaviour {
     void Start()
     {
         //spela upp ljudet!
-
-        
         AudioManager.instance.PlayAudio(awakeSound,false,gameObject);
-
 
     }
     void FixedUpdate() {

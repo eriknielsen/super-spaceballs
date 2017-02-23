@@ -34,8 +34,15 @@ public class RobotBehaviour : MonoBehaviour {
     [SerializeField]
     GameObject collideRobotSound;
     [SerializeField]
-    GameObject moveSound;
-
+    public GameObject thrusterSound;
+    [SerializeField]
+    public GameObject igniteThrustersSound;
+    [SerializeField]
+    public GameObject endThrustersSound;
+    [SerializeField]
+    GameObject selectRobotSound;
+    [HideInInspector]
+    public AudioSource thrusterComponent;
     public IRobotState CurrentState
     {
         get { return currentState; }
@@ -83,6 +90,8 @@ public class RobotBehaviour : MonoBehaviour {
 
         anim = GetComponent<Animator>();
         anim.enabled = false;
+
+        thrusterComponent = GetComponent<AudioSource>();
     }
 
     void FixedUpdate()
@@ -123,11 +132,11 @@ public class RobotBehaviour : MonoBehaviour {
             currentCommand.Execute();
             if (currentCommand.GetType() == typeof(MoveCommand))
             {
-                anim.SetBool("Accelerating", true);
+                OnAccelerate();
             }
             else
             {
-                anim.SetBool("Accelerating", false);
+                OnDeaccelerate();
             }
         }
         else
@@ -135,23 +144,30 @@ public class RobotBehaviour : MonoBehaviour {
             anim.SetBool("Accelerating", false);
         }
     }
-
+    void OnAccelerate()
+    {
+        currentState.OnAccelerate(); 
+    }
+    void OnDeaccelerate()
+    {
+        currentState.OnDeaccelerate();
+    }
     void OnMouseDown()
     {
         if (OnClick != null && shouldSendEvent)
         {
             OnClick(gameObject);
+            AudioManager.instance.PlayAudioWithRandomPitch(selectRobotSound, false, gameObject);
         }
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.tag == "Robot")
+        if (other.gameObject.tag == "Robot")
         {
             AudioManager.instance.PlayAudioWithRandomPitch(collideRobotSound, false, gameObject);
-            anim.SetTrigger("Push");
-            anim.ResetTrigger("Push");
         }
+        
     }
 }
 

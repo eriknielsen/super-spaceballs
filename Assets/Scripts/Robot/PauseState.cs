@@ -28,4 +28,12 @@ public class PauseState : IRobotState {
     public void UpdateState(){
 
     }
+    public void OnAccelerate()
+    {
+
+    }
+    public void OnDeaccelerate()
+    {
+
+    }
 }
