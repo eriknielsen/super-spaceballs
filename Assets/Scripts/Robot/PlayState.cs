@@ -44,9 +44,9 @@ public class PlayState : IRobotState {
         //differentiate between the preview robot prefab and the real one
         if(robotScript.igniteThrustersSound != null)
         {
-            AudioManager.instance.PlayAudioWithRandomPitch(robotScript.igniteThrustersSound, false, robot);
+            //AudioManager.instance.PlayAudioWithRandomPitch(robotScript.igniteThrustersSound, false, robot);
             //loop thruster sound after ignite is finished
-            robotScript.thrusterComponent.PlayDelayed(robotScript.igniteThrustersSound.GetComponent<AudioSource>().clip.length);
+            //robotScript.thrusterComponent.PlayDelayed(robotScript.igniteThrustersSound.GetComponent<AudioSource>().clip.length);
         }
     }
     public void OnDeaccelerate()
@@ -55,8 +55,8 @@ public class PlayState : IRobotState {
         //differentiate between the preview robot prefab and the real one
         if (robotScript.endThrustersSound != null)
         {
-            AudioManager.instance.PlayAudioWithRandomPitch(robotScript.endThrustersSound, false, robot);
-            robotScript.thrusterComponent.Stop();
+            //AudioManager.instance.PlayAudioWithRandomPitch(robotScript.endThrustersSound, false, robot);
+            //robotScript.thrusterComponent.Stop();
         }
            
     }

@@ -28,6 +28,13 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     public delegate void ReplayButtonClicked();
     public static event ReplayButtonClicked OnReplayButtonClick;
 
+    public delegate void GamePaused();
+    public static event GamePaused OnPauseGame;
+
+    public delegate void GameUnpaused();
+    public static event GameUnpaused OnUnpauseGame;
+
+
     public static PlayBehaviour Instance;
 
     void Awake(){
@@ -45,8 +52,8 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
         rightGoal = GameObject.Find("RightGoal").GetComponent<Goal>();
         //event callbacks for scoring
         if(leftGoal != null || rightGoal != null){
-            leftGoal.OnGoalScored += new Goal.GoalScored(() => leftGoal.score++);
-            rightGoal.OnGoalScored += new Goal.GoalScored(() => rightGoal.score++);
+            Goal.OnGoalScored += new Goal.GoalScored(OnScore);
+            
         }
         else {
             Debug.Log("couldint find goals :(");
@@ -60,7 +67,20 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
 
         NewTurn();
     }
+    void OnScore()
+    {
 
+        //tell gametimer and the unpause to stop
+        StopAllCoroutines();
+        //do waht unpause does at the end
+        currentTurnHandler = -1;
+        NewTurn();
+        PauseGame();
+      
+        
+        
+        //robots reset their position by themselves
+    }
     // Update is called once per frame
     void Update(){
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
@@ -88,6 +108,7 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     //if we replayed the last turn, we dont want to do the newturn stuff
     IEnumerator UnpauseGame(bool asReplay){
 
+        OnUnpauseGame();
         ActivateTurnHandler(false);
         if (asReplay){
             turnHandler1.ReplayLastTurn();
@@ -113,6 +134,8 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     }
 
     void PauseGame(){
+        
+        OnPauseGame();
         turnHandler1.PauseGame();
         turnHandler2.PauseGame();
         //TurnOffColliders();

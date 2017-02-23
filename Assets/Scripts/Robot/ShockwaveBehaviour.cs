@@ -38,7 +38,8 @@ public class ShockwaveBehaviour : MonoBehaviour {
         
         this.shockwaveUser = shockwaveUser;
         this.velocity = velocity;
-        pushVector = velocity.normalized * (pushForce * chargeTime);
+        pushVector = velocity.normalized * (pushForce * (1+chargeTime));
+        
         enabled = true;
     }
 
@@ -50,24 +51,27 @@ public class ShockwaveBehaviour : MonoBehaviour {
             gameObject.AddComponent<Rigidbody2D>();
         }
         rb2dCompontent = GetComponent<Rigidbody2D>();
-        enabled = false;
-
+        
+        
     }
     void Start()
     {
-        //spela upp ljudet!
-
         AudioManager.instance.PlayAudio(awakeSound,false,gameObject);
+        
+        rb2dCompontent.AddForce(pushVector);
+        Vector3 diff = (Vector3)pushVector - transform.position; 
 
-
-    }
+        float rot_z = (Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg);
+        rb2dCompontent.rotation = rot_z;
+      }
+   
     void FixedUpdate() {
+       
         if (shouldUpdate) {
             if (remainingLifeTime >= 0) {
-                transform.rotation = Quaternion.LookRotation(rb2dCompontent.velocity);
-                remainingLifeTime -= Time.fixedDeltaTime;
-                rb2dCompontent.velocity = velocity;
-                transform.localScale += new Vector3(0.1f * Time.fixedDeltaTime, 0.1f * Time.fixedDeltaTime);
+                 remainingLifeTime -= Time.fixedDeltaTime;
+                 //scaling changes rotation??
+                //transform.localScale += new Vector3(0.1f*Time.deltaTime , 0.1f * Time.deltaTime, 0 );
             }
             else {
                 Destroy(gameObject);

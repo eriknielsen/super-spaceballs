@@ -27,6 +27,8 @@ public class RobotBehaviour : MonoBehaviour {
     private Animator animatorComponent;
     private Rigidbody2D rigidBodyComponent;
 
+    private Vector2 startPosition;
+
 	private float speed;
 	Rigidbody2D rb;
 
@@ -43,6 +45,7 @@ public class RobotBehaviour : MonoBehaviour {
     GameObject selectRobotSound;
     [HideInInspector]
     public AudioSource thrusterComponent;
+
     public IRobotState CurrentState
     {
         get { return currentState; }
@@ -92,12 +95,22 @@ public class RobotBehaviour : MonoBehaviour {
         anim.enabled = false;
 
         thrusterComponent = GetComponent<AudioSource>();
+        // reset position when a goal is made
+        //ONLY IF WE ARE NOT A PREVIEW. PREVIEWS DONT HAVE THAT COMPONENT
+        if(thrusterComponent != null)
+        {
+            Goal.OnGoalScored += new Goal.GoalScored(
+            () => transform.position = startPosition);
+        }
+        
     }
-
+    void Start()
+    {
+        startPosition = transform.position;
+    }
     void FixedUpdate()
     {
-        //anim.SetFloat("Speed", Math.Abs(rb.velocity.x + rb.velocity.y));
-        CurrentState.UpdateState();
+          CurrentState.UpdateState();
     }
     /// <summary>
     /// Picks the oldest command if possible and 
