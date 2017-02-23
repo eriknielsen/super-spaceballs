@@ -15,6 +15,11 @@ public abstract class Command {
     public int turn;
 
     public GameObject Robot { get { return robot; } }
+
+    public float LifeDuration
+    {
+        get { return lifeDuration; }
+    }
 }
 
 [System.Serializable]

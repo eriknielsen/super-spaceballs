@@ -29,14 +29,16 @@ public class PushCommand : Command {
         lifeTimer = lifeDuration;
         chargeTime = 0.1f;
         base.robot = robot;
-
-        shockwavePrefab = Resources.Load("Prefabs/ShockWave") as GameObject;     
+        shockwavePrefab = Resources.Load("Prefabs/ShockWave") as GameObject;
     }
 
-    public PushCommand(GameObject shockwaveUser, PushCommand original){
+    public PushCommand(GameObject shockwaveUser, PushCommand original, float time){
         velocity = original.Velocity;
         chargeTime = original.ChargeTime;
         robot = shockwaveUser;
+        shockwavePrefab = Resources.Load("Prefabs/ShockWave") as GameObject;
+        lifeDuration = time;
+        lifeTimer = time;
     }
 
     public override void Execute(){

@@ -95,9 +95,9 @@ public class RobotBehaviour : MonoBehaviour {
     /// </summary>
     public void DecideCommand()
     {
-        if (Commands.Count > 0)
+        if (Commands != null && Commands.Count > 0)
         {
-            if (Commands != null && Commands[0].isFinished == false)
+            if (Commands[0] != null && Commands[0].isFinished == false)
             {
                 currentCommand = Commands[0];
             }
