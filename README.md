@@ -3,15 +3,6 @@ Game project at HIS
 
 
 
-En match består av ett antal rundor. I varje runda så får spelaren göra ett drag per robot.
-Ett drag består av flera handlingar/kommandon.
-
-#Tills på torsdag
-#På torsdag
-* Sätta upp scenen med sarg,mål,boll,turnhandlers
-* Spela musik som loopar två/tre låtar
-* Lägga in ljudeffekter som pushkommand, bli tryckt, mål och robotfärd
-
 # Allmänna riktlinjer
 * Dela upp kod i sektioner: privata variabler > publika variabler > properties > privata funktioner > publika funktioner > protected funktioner.
 * Ha en avskiljare med rubrik över varje sektion.
