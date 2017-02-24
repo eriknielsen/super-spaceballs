@@ -32,6 +32,11 @@ class TrailUpdater : MonoBehaviour
         if (command != null && command.robot != null)
         {
             node = Instantiate(command.robot, transform) as GameObject;
+            if(node.GetComponent<RobotBehaviour>())
+            {
+                node.GetComponent<RobotBehaviour>().isPreview = true;
+            }
+
             startPosition = node.transform.position;
             foreach (Transform c in node.transform)
             {
@@ -75,7 +80,7 @@ class TrailUpdater : MonoBehaviour
         }
         else
         {
-            UnityEngine.Debug.Log("The moving object reference passed to the MovingTrail-script is null, so no trail is created.");
+            UnityEngine.Debug.Log("The moving object reference or command passed to the MovingTrail-script is null, so no trail is created.");
         }
     }
 

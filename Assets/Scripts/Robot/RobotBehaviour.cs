@@ -101,8 +101,7 @@ public class RobotBehaviour : MonoBehaviour {
         //ONLY IF WE ARE NOT A PREVIEW. PREVIEWS DONT HAVE THAT COMPONENT
         if(isPreview == false)
         {
-            Goal.OnGoalScored += new Goal.GoalScored(
-            () => transform.position = startPosition);
+            Goal.OnGoalScored += new Goal.GoalScored(() => transform.position = startPosition);
         }
         
     }

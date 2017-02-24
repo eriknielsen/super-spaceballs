@@ -9,9 +9,10 @@ public class PushCommand : Command {
     public delegate void InstantiateShockWave(GameObject r, Vector2 dir, float force);
     public static event InstantiateShockWave OnInstantiateShockWave;
 
+    float speed = 20f;
     float chargeTime;
     Vector2 velocity;
-    float speed = 8f;
+    
 
     public Vector2 Velocity { get { return velocity; } }
     public float Speed { get { return speed; } }

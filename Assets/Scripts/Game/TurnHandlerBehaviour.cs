@@ -7,6 +7,8 @@ using System.Diagnostics;
 
 public class TurnHandlerBehaviour : MonoBehaviour
 {
+    [SerializeField]
+    RobotBehaviour previewRobotPrefab;
 	public List<Move> moves;
     [SerializeField]
     GameObject shockWavePrefab;
@@ -43,7 +45,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
     void Start()
     {
-		selectedCommand = Command.AvailableCommands.None;
+		selectedCommand = Command.AvailableCommands.Move;
 		moves = new List<Move>();
 		robots = new List<GameObject>();
 		FindRobots();
@@ -276,6 +278,10 @@ public class TurnHandlerBehaviour : MonoBehaviour
 					else if (selectedCommand == Command.AvailableCommands.Push && timeInput <= selectedRobot.GetComponent<RobotBehaviour>().freeTime - shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime)
                     {
                         previewCommand = new PushCommand(previewRobot, cursorScreenPosition, timeInput, Turns);
+                    }
+                    else
+                    {
+                        UnityEngine.Debug.Log("No command selected!");
                     }
                     latestTrail = new MovingTrail(previewCommand, timeInput, previewRobot.GetComponent<RobotBehaviour>().prevVelocity);
                 }
