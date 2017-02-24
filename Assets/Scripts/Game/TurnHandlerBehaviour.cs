@@ -349,16 +349,18 @@ public class TurnHandlerBehaviour : MonoBehaviour
     {
         activated = active;
         if (active == true)
-        { //visually indicate that this turnhandlers robots are now active
+        {
+            enabled = true;
+            //visually indicate that this turnhandlers robots are now active
             //start taking events
             RobotBehaviour.OnClick += new RobotBehaviour.ClickedOnRobot(SelectRobot);
             //PushCommand.OnInstantiateShockWave += new PushCommand.InstantiateShockWave(InstantiateShockwave);
-
+            UnityEngine.Debug.Log(robots);
             foreach (GameObject r in robots)
             {
                 r.GetComponent<RobotBehaviour>().shouldSendEvent = true;
             }
-            enabled = true;
+            
         }
         else
         {
