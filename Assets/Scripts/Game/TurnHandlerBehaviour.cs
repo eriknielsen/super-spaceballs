@@ -348,7 +348,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
 	//TH prefix to indicate that these are passed through PlayBehaviour
 	public void THSelectCommand(Command.AvailableCommands command)
 	{
-		UnityEngine.Debug.Log(command);
 		selectedCommand = command;
 		if (selectedCommand != Command.AvailableCommands.None)
 		{
@@ -379,6 +378,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 //		StopCoroutine(PreviewAndGiveRobotCommand());
 		if (selectedCommandWheel != null)
 			Destroy (selectedCommandWheel);
+		movingPreviews[selectedRobotIndex].SetActive (false);
 	}
 
     public void Activate(bool active)
