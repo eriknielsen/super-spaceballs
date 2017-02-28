@@ -31,7 +31,6 @@ public class RobotBehaviour : MonoBehaviour {
 
     public bool isPreview;
 	private float speed;
-	Rigidbody2D rb;
 
     //AUDIOSOURCES
     [SerializeField]
@@ -77,11 +76,6 @@ public class RobotBehaviour : MonoBehaviour {
 
     void Awake()
     {
-        
-        if(GetComponent<Rigidbody2D>() == null)
-        {
-            gameObject.AddComponent<Rigidbody2D>();
-        }
         prevVelocity = gameObject.GetComponent<Rigidbody2D>().velocity;
         rigidBodyComponent = GetComponent<Rigidbody2D>();
         animatorComponent = GetComponent<Animator>();
@@ -90,7 +84,6 @@ public class RobotBehaviour : MonoBehaviour {
         pauseState = new PauseState(gameObject);
         playState = new PlayState(gameObject);
         currentState = pauseState;
-        rb = GetComponent<Rigidbody2D>();
         commands = new List<Command>();
 
         anim = GetComponent<Animator>();

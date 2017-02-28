@@ -60,6 +60,7 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
 
         NewTurn();
     }
+
     void OnScore()
     {
         //tell gametimer and the unpause to stop
@@ -123,7 +124,6 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     }
 
     void PauseGame(){
-        
         OnPauseGame();
         turnHandler1.PauseGame();
         turnHandler2.PauseGame();
@@ -221,7 +221,7 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
 		turnHandler2.THDeselectRobot();
 	}
 
-	public void SelectedCommand(Command.AvailableCommands command){ 
+	public void SelectCommand(Command.AvailableCommands command){ 
 		turnHandler1.THSelectCommand(command);
 		turnHandler2.THSelectCommand(command);
 	}
