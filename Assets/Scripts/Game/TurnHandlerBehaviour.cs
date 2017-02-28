@@ -26,9 +26,13 @@ public class TurnHandlerBehaviour : MonoBehaviour
     private bool activated = false;
 	private bool gameIsPaused = true;
     private float timeInput;
-    private List<GameObject> robotsMovingPreview;
-	private MovingTrail latestTrail;
+    private List<GameObject> movingPreviews;
+    private string movingPreviewsName = "Moving Previews";
+	private MovingTrail latestRobotTrail;
+    private MovingTrail latestBallTrail;
     private List<List<MovingTrail>> robotMovingTrails;
+    private List<List<MovingTrail>> ballMovingTrails;
+    private GameObject ball;
 
     List<GameObject> robots;
     int turns;
@@ -45,21 +49,24 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
     void Start()
     {
+        ball = FindObjectOfType<Ball>().gameObject;
 		selectedCommand = Command.AvailableCommands.Move;
 		moves = new List<Move>();
 		robots = new List<GameObject>();
 		FindRobots();
-		robotsMovingPreview = new List<GameObject>();
+		movingPreviews = new List<GameObject>();
 		robotMovingTrails = new List<List<MovingTrail>>();
+        ballMovingTrails = new List<List<MovingTrail>>();
 		UnityEngine.Debug.Log("Robot numbers: " + robots.Count);
 		for (int i = 0; i < robots.Count; i++)
 		{
-			robotsMovingPreview.Add(new GameObject());
-			robotsMovingPreview[i].name = "Robot moving preview";
-			robotsMovingPreview[i].SetActive(false);
+			movingPreviews.Add(new GameObject());
+			movingPreviews[i].name = movingPreviewsName;
+			movingPreviews[i].SetActive(false);
 			robotMovingTrails.Add(new List<MovingTrail>());
-		}
-		turns = 1;
+            ballMovingTrails.Add(new List<MovingTrail>());
+        }
+        turns = 1;
         if(cursorText == null)
         {
             cursorText = GameObject.Find("CursorText").GetComponent<Text>();
@@ -82,12 +89,12 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
         for (int i = 0; i < robots.Count; i++)
         {
-            robotsMovingPreview.Add(new GameObject());
-            robotsMovingPreview[i].name = "Robot moving preview";
-            robotsMovingPreview[i].SetActive(false);
+            movingPreviews.Add(new GameObject());
+            movingPreviews[i].name = movingPreviewsName;
+            movingPreviews[i].SetActive(false);
         }
     }
-
+    
     public void UnpauseGame()
     {
         gameIsPaused = false;
@@ -107,11 +114,12 @@ public class TurnHandlerBehaviour : MonoBehaviour
         }
         turns++;
         int i = 0;
-        while (robotsMovingPreview.Count > 0)
+        while (movingPreviews.Count > 0)
         {
-            Destroy(robotsMovingPreview.First());
-            robotsMovingPreview.Remove(robotsMovingPreview.First());
+            Destroy(movingPreviews.First());
+            movingPreviews.Remove(movingPreviews.First());
             robotMovingTrails[i].Clear();
+            ballMovingTrails[i].Clear();
             i++;
         }
     }
@@ -137,18 +145,20 @@ public class TurnHandlerBehaviour : MonoBehaviour
 				if (selectedCommandWheel != null) //Wheel should only be visible for currently selected robot
 					Destroy (selectedCommandWheel);
                 StopCoroutine(SetAndDisplayTimeInput());
+                StopCoroutine(PreviewTrajectoryAndGiveRobotCommand());
                 for (int i = 0; i < robots.Count; i++)
                 {
                     if (r == robots[i])
                     {
 						selectedCommandWheel = Instantiate (commandWheelPrefab, robots[i].transform.position, Quaternion.identity); //Command selection buttons
-                        robotsMovingPreview[selectedRobotIndex].SetActive(false);
+                        movingPreviews[selectedRobotIndex].SetActive(false);
                         selectedRobot = r;
                         r.GetComponent<ParticleSystem>().Emit(15);
                         selectedRobotIndex = i;
-                        robotsMovingPreview[selectedRobotIndex].SetActive(true);
+                        movingPreviews[selectedRobotIndex].SetActive(true);
                         StartCoroutine(SetAndDisplayTimeInput());
-                        StartCoroutine(PreviewAndGiveRobotCommand());
+                        StartCoroutine(PreviewTrajectoryAndGiveRobotCommand());
+                        StartCoroutine(PreviewBallTrajectory());
                         UnityEngine.Debug.Log("Robot selected!");
                         break;
                     }
@@ -233,7 +243,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         cursorText.text = "";
     }
 
-    IEnumerator PreviewAndGiveRobotCommand()
+    IEnumerator PreviewTrajectoryAndGiveRobotCommand()
     {
         Vector3 prevCursorPosition = Vector3.zero;
         Vector3 cursorPosition = Input.mousePosition;
@@ -256,9 +266,9 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 {
                     timer.Reset();
                     timer.Start();
-                    if (latestTrail != null)
+                    if (latestRobotTrail != null)
                     {
-                        Destroy(latestTrail.TrailGameObject);
+                        Destroy(latestRobotTrail.TrailGameObject);
                     }
                     if (robotMovingTrails[selectedRobotIndex].Count > 0)
                     {
@@ -283,13 +293,13 @@ public class TurnHandlerBehaviour : MonoBehaviour
                     {
                         UnityEngine.Debug.Log("No command selected!");
                     }
-                    latestTrail = new MovingTrail(previewCommand, timeInput, previewRobot.GetComponent<RobotBehaviour>().prevVelocity);
+                    latestRobotTrail = new MovingTrail(previewCommand, timeInput, previewRobot.GetComponent<RobotBehaviour>().prevVelocity);
                 }
-                if (Input.GetMouseButton(1) && latestTrail != null)
+                if (Input.GetMouseButton(1) && latestRobotTrail != null)
                 {
-                    latestTrail.TrailGameObject.transform.parent = robotsMovingPreview[selectedRobotIndex].transform;
-                    robotMovingTrails[selectedRobotIndex].Add(latestTrail);
-                    latestTrail = null;
+                    latestRobotTrail.TrailGameObject.transform.parent = movingPreviews[selectedRobotIndex].transform;
+                    robotMovingTrails[selectedRobotIndex].Add(latestRobotTrail);
+                    latestRobotTrail = null;
                     GiveRobotCommand(previewCommand);
                 }
             }
@@ -297,9 +307,33 @@ public class TurnHandlerBehaviour : MonoBehaviour
             prevSelectedCommand = selectedCommand;
             yield return new WaitForSeconds(0.00000001f);
         }
-        if (latestTrail != null)
+    }
+
+    IEnumerator PreviewBallTrajectory()
+    {
+        Vector3 prevCursorPosition = Vector3.zero;
+        Vector3 cursorPosition;
+        Vector3 cursorScreenPosition;
+        
+        while (selectedRobot != null && ball != null)
         {
-            Destroy(latestTrail.TrailGameObject);
+            cursorPosition = Input.mousePosition;
+            cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
+            UnityEngine.Debug.Log("Velocity: " + ball.GetComponent<Rigidbody2D>().velocity);
+            if (prevCursorPosition != cursorPosition)
+            {
+
+                if (ballMovingTrails != null && ballMovingTrails[selectedRobotIndex].Count > 0)
+                {
+                    Destroy(ballMovingTrails[selectedRobotIndex].First().TrailGameObject);
+                    ballMovingTrails[selectedRobotIndex].Clear();
+                }
+                MoveCommand emptyMoveCommand = new MoveCommand(ball, Vector2.zero, 0, turns);
+                latestBallTrail = new MovingTrail(emptyMoveCommand, timeInput, ball.GetComponent<Ball>().PreviousVelocity);
+                ballMovingTrails[selectedRobotIndex].Add(latestBallTrail);
+            }
+            prevCursorPosition = cursorPosition;
+            yield return new WaitForSeconds(0.000001f);
         }
     }
 
@@ -379,9 +413,9 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 robots[i].GetComponent<RobotBehaviour>().shouldSendEvent = false;
             }
 
-            for (int i = 0; i < robotsMovingPreview.Count; i++)
+            for (int i = 0; i < movingPreviews.Count; i++)
             {
-                robotsMovingPreview[i].SetActive(false);
+                movingPreviews[i].SetActive(false);
             }
             enabled = false;
         }

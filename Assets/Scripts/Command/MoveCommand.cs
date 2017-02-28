@@ -73,8 +73,8 @@ public class MoveCommand : Command
     
     public MoveCommand(GameObject r, Vector2 target, float lifetime, int turn)
     {
-        forceMagnitude = 3f;
-        initialForceMagnitude = forceMagnitude * 2;
+        forceMagnitude = 1f;
+        initialForceMagnitude = forceMagnitude * 7;
         initialForceTime = lifetime - lifetime / 4;
         targetPosition = target;
         robot = r;

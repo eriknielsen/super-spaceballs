@@ -10,11 +10,22 @@ public class Ball : MonoBehaviour {
 
     Vector2 prevVelocity;
     Rigidbody2D rb;
-	void Start(){
+    static bool isSubscribing = false;
+
+    public Vector2 PreviousVelocity
+    {
+        get { return prevVelocity; }
+    }
+
+	void Awake(){
 		startPosition = transform.position;
         rb = GetComponent<Rigidbody2D>();
-        PlayBehaviour.OnPauseGame += new PlayBehaviour.GamePaused(Pause);
-        PlayBehaviour.OnUnpauseGame += new PlayBehaviour.GameUnpaused(Unpause);
+        if (!isSubscribing)
+        {
+            PlayBehaviour.OnPauseGame += new PlayBehaviour.GamePaused(Pause);
+            PlayBehaviour.OnUnpauseGame += new PlayBehaviour.GameUnpaused(Unpause);
+            isSubscribing = true;
+        }
     }
     public void ResetPosition(){
 		transform.position = startPosition;

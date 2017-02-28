@@ -27,9 +27,9 @@ public class PlayState : IRobotState {
         anim.enabled = false;
         
     }
-
+    
     public void EnterPlayState(){
-        Debug.Log("already in playstate");
+        
     }
 
     public void UpdateState(){
