@@ -235,7 +235,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 {
                     timer.Reset();
                     timer.Start();
-					DestroyPreviewTrail ();
+					DestroyPreviewTrails ();
                     if (robotMovingTrails[selectedRobotIndex].Count > 0)
                     {
                         previewRobot = robotMovingTrails[selectedRobotIndex].Last().Node;
@@ -273,7 +273,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
             prevSelectedCommand = selectedCommand;
             yield return new WaitForSeconds(0.005f);
         }
-        DestroyPreviewTrail();
     }
 
     IEnumerator PreviewBallTrajectory()
@@ -297,14 +296,19 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 }
                 MoveCommand emptyMoveCommand = new MoveCommand(ball, Vector2.zero, 0, turns);
                 latestBallTrail = new MovingTrail(emptyMoveCommand, timeInput, ball.GetComponent<Ball>().PreviousVelocity);
+            }
+            if (Input.GetMouseButton(1) && latestRobotTrail != null)
+            {
+                latestRobotTrail.TrailGameObject.transform.parent = movingPreviews[selectedRobotIndex].transform;
                 ballMovingTrails[selectedRobotIndex].Add(latestBallTrail);
+                latestBallTrail = null;
             }
             prevCursorPosition = cursorPosition;
             yield return new WaitForSeconds(0.005f);
         }
     }
 
-	void DestroyPreviewTrail(){
+	void DestroyPreviewTrails(){
 		if (latestRobotTrail != null)
 		{
 			Destroy(latestRobotTrail.TrailGameObject);
@@ -359,7 +363,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 		{
 			movingPreviews[selectedRobotIndex].SetActive (false);
 			StopAllCoroutines ();
-			DestroyPreviewTrail ();
+			DestroyPreviewTrails ();
 			cursorText.text = "";
 //			StopCoroutine(SetAndDisplayTimeInput());
 //			StopCoroutine(PreviewAndGiveRobotCommand());
@@ -372,7 +376,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 		timeInput = 0;
 		selectedCommand = Command.AvailableCommands.None;
 		StopAllCoroutines ();
-		DestroyPreviewTrail ();
+		DestroyPreviewTrails ();
 		cursorText.text = "";
 //		StopCoroutine(SetAndDisplayTimeInput());
 //		StopCoroutine(PreviewAndGiveRobotCommand());
