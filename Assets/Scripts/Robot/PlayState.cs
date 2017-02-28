@@ -28,9 +28,9 @@ public class PlayState : IRobotState {
         //set the speed of the current anim clip to 0
         //and then set it to 1 in pauseState's enterplaystate()
     }
-
+    
     public void EnterPlayState(){
-        Debug.Log("already in playstate");
+        
     }
 
     public void UpdateState(){

@@ -10,7 +10,7 @@ class TrailUpdater : MonoBehaviour
     bool isInitialized = false;
     public bool isFinished = false;
     Sprite nodeSprite, trailMarkingSprite;
-    float nodeWidth = 1.0f, trailMarkingWidth = 0.5f;
+    float trailMarkingWidth = 0.5f;
     Vector3 previousLocation;
     float distanceBetweenMarkings = 1.0f;
     public GameObject node;
@@ -32,19 +32,13 @@ class TrailUpdater : MonoBehaviour
         if (command != null && command.robot != null)
         {
             node = Instantiate(command.robot, transform) as GameObject;
-            if(node.GetComponent<RobotBehaviour>())
-            {
-                node.GetComponent<RobotBehaviour>().isPreview = true;
-            }
 
             startPosition = node.transform.position;
             foreach (Transform c in node.transform)
             {
-                if (c.gameObject.layer != LayerMask.NameToLayer("Passive Hitbox"))
-                {
-                    c.gameObject.layer = LayerMask.NameToLayer("No Collision With Robot");
-                }
+                c.gameObject.layer = LayerMask.NameToLayer("No Collision With Robot");
             }
+            node.gameObject.layer = LayerMask.NameToLayer("No Collision With Robot");
             Type t = command.GetType();
             if (command.GetType() == typeof(MoveCommand))
             {
@@ -56,12 +50,16 @@ class TrailUpdater : MonoBehaviour
                 nodeSpriteRenderer.enabled = false;
             }
 
-            node.GetComponent<RobotBehaviour>().Commands.Add(this.command);
-            node.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
+            if (node.GetComponent<RobotBehaviour>())
+            {
+                node.GetComponent<RobotBehaviour>().isPreview = true;
+                node.GetComponent<RobotBehaviour>().Commands.Add(this.command);
+                node.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
+            }
+
             node.name = "Node";
             node.GetComponent<Rigidbody2D>().velocity = currentVelocity;
             timeDuration = lifeTime;
-            node.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
             previousLocation = node.transform.position;
             trailMarkingSprite = Resources.Load<Sprite>("Sprites/Prototype stuff (remove or rework)/fotball2");
             if (node.GetComponent<SpriteRenderer>() == null)
@@ -127,7 +125,10 @@ class TrailUpdater : MonoBehaviour
                     {
                         trailMarkings[i].GetComponent<SpriteRenderer>().enabled = true;
                     }
-                    node.GetComponent<RobotBehaviour>().CurrentState.EnterPauseState();
+                    if (node.GetComponent<RobotBehaviour>() != null)
+                    {
+                        node.GetComponent<RobotBehaviour>().CurrentState.EnterPauseState();
+                    }
                     isFinished = true;
                     Time.timeScale = 1.0f;
                 }
