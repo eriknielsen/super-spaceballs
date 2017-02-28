@@ -10,7 +10,7 @@ class TrailUpdater : MonoBehaviour
     bool isInitialized = false;
     public bool isFinished = false;
     Sprite nodeSprite, trailMarkingSprite;
-    float nodeWidth = 1.0f, trailMarkingWidth = 0.5f;
+    float trailMarkingWidth = 0.5f;
     Vector3 previousLocation;
     float distanceBetweenMarkings = 1.0f;
     public GameObject node;

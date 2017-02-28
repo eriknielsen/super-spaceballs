@@ -8,15 +8,11 @@ public class CommandButton : MonoBehaviour {
 	private Command.AvailableCommands selectedCommand;
 	[SerializeField]
 	private float buttonAnimationDelay;
-
+	[SerializeField]
 	private ToggleObjects commandWheelHandler;
 
-	void Start(){
-		commandWheelHandler = transform.parent.parent.GetComponent<ToggleObjects>();
-	}
-
 	void OnMouseDown(){
-		PlayBehaviour.Instance.SelectedCommand(selectedCommand);
+		PlayBehaviour.Instance.SelectCommand(selectedCommand);
 		if (selectedCommand == Command.AvailableCommands.None)
 			commandWheelHandler.Toggle();
 		else
