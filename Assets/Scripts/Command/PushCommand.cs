@@ -53,7 +53,10 @@ public class PushCommand : Command {
         if (isFinished){
             ShockwaveBehaviour shockWave = ShockwaveBehaviour.InstantiateShockWave(shockwavePrefab.GetComponent<ShockwaveBehaviour>());
             shockWave.Initialize(velocity, chargeTime, robot);
-            shockWave.transform.position = robot.transform.position;     
+            shockWave.transform.position = robot.transform.position;
+            robot.GetComponent<RobotBehaviour>().UpdateAnimationAngle(velocity.y, velocity.x);
+            
+            robot.GetComponent<RobotBehaviour>().anim.SetTrigger("Push");
         }
     }
 

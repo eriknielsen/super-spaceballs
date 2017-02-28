@@ -25,7 +25,8 @@ public class PlayState : IRobotState {
         robot.GetComponent<Rigidbody2D>().velocity = zeroVector;
 
         anim.enabled = false;
-        
+        //set the speed of the current anim clip to 0
+        //and then set it to 1 in pauseState's enterplaystate()
     }
 
     public void EnterPlayState(){
@@ -35,29 +36,43 @@ public class PlayState : IRobotState {
     public void UpdateState(){
         
         robotScript.ExecuteRobotCommand();
-        robotScript.UpdateAnimationAndCollider();
+        //robotScript.UpdateAnimationAngle(robot.);
     }
     public void OnAccelerate()
     {
-        anim.SetBool("Accelerating", true);
-        //anim.Play("MoveEntry");
-        //differentiate between the preview robot prefab and the real one
-        if(robotScript.isPreview == false)
+        if(robotScript.accelerated == false)
         {
-            AudioManager.instance.PlayAudioWithRandomPitch(robotScript.igniteThrustersSound, false, robot);
-            //loop thruster sound after ignite is finished
-            robotScript.thrusterComponent.PlayDelayed(robotScript.igniteThrustersSound.GetComponent<AudioSource>().clip.length);
+            
+            //differentiate between the preview robot prefab and the real one
+            if (robotScript.isPreview == false)
+            {
+                //anim.Play("MoveEntry");
+                robotScript.accelerated = true;
+                anim.SetBool("Accelerating", true);
+                Debug.Log("accelerating");
+                AudioManager.instance.PlayAudioWithRandomPitch(robotScript.igniteThrustersSound, false, robot);
+                //loop thruster sound after ignite is finished
+                robotScript.thrusterComponent.Play();
+            }
         }
+       
     }
     public void OnDeaccelerate()
     {
-        anim.SetBool("Accelerating", false);
-        //differentiate between the preview robot prefab and the real one
-        if (robotScript.isPreview == false)
+        if(robotScript.accelerated == true)
         {
-            AudioManager.instance.PlayAudioWithRandomPitch(robotScript.endThrustersSound, false, robot);
-            robotScript.thrusterComponent.Stop();
+            robotScript.accelerated = false;
+            anim.SetBool("Accelerating", false);
+            anim.SetTrigger("Deaccelerate");
+            Debug.Log("hej");
+            //differentiate between the preview robot prefab and the real one
+            if (robotScript.isPreview == false)
+            {
+                AudioManager.instance.PlayAudioWithRandomPitch(robotScript.endThrustersSound, false, robot);
+                robotScript.thrusterComponent.Stop();
+            }
         }
+       
            
     }
 }

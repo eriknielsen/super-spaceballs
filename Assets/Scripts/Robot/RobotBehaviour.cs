@@ -12,6 +12,7 @@ public class RobotBehaviour : MonoBehaviour {
     public static event ClickedOnRobot OnClick;
     public bool shouldSendEvent = false;
     //the remaining time for this round
+    [HideInInspector] //it is set by turnhandler's roundTime
     public float freeTime;
 
     public Vector2 prevVelocity;
@@ -25,7 +26,8 @@ public class RobotBehaviour : MonoBehaviour {
     private Command currentCommand;
 
     private Animator animatorComponent;
-    private Rigidbody2D rigidBodyComponent;
+    
+     float previousAnimAngle = -500;
 
     private Vector2 startPosition;
 
@@ -47,6 +49,10 @@ public class RobotBehaviour : MonoBehaviour {
     [HideInInspector]
     public AudioSource thrusterComponent;
 
+    //helps with onaccelerate and ondeaccelerate
+    public bool accelerated = false;
+
+
     public IRobotState CurrentState
     {
         get { return currentState; }
@@ -59,18 +65,25 @@ public class RobotBehaviour : MonoBehaviour {
         set { commands = value; }
     }
 
-    public void UpdateAnimationAndCollider()
+    public void UpdateAnimationAngle(float y, float x)
     {
         if (animatorComponent.runtimeAnimatorController != null)
         {
-            float directionAngle = Mathf.Atan2(rigidBodyComponent.velocity.y, rigidBodyComponent.velocity.x);
+
+            float directionAngle = Mathf.Atan2(y, x);
 
             directionAngle = directionAngle * Mathf.Rad2Deg;
             if (directionAngle < 0.0f)
             {
                 directionAngle += 360.0f;
             }
+
             string animationVariable = "DirectionAngle";
+            if(directionAngle >= 345 || directionAngle <= 15)
+            {
+                directionAngle = 359;
+            }
+            
             animatorComponent.SetFloat(animationVariable, directionAngle);
         }
     }
@@ -83,7 +96,7 @@ public class RobotBehaviour : MonoBehaviour {
             gameObject.AddComponent<Rigidbody2D>();
         }
         prevVelocity = gameObject.GetComponent<Rigidbody2D>().velocity;
-        rigidBodyComponent = GetComponent<Rigidbody2D>();
+        
         animatorComponent = GetComponent<Animator>();
         Commands = new List<Command>();
         oldCommands = new List<Command>();
@@ -94,11 +107,11 @@ public class RobotBehaviour : MonoBehaviour {
         commands = new List<Command>();
 
         anim = GetComponent<Animator>();
-        anim.enabled = false;
-
+        //anim.enabled = false;
+        
         thrusterComponent = GetComponent<AudioSource>();
         // reset position when a goal is made
-        //ONLY IF WE ARE NOT A PREVIEW. PREVIEWS DONT HAVE THAT COMPONENT
+      
         if(isPreview == false)
         {
             Goal.OnGoalScored += new Goal.GoalScored(() => transform.position = startPosition);
@@ -108,10 +121,20 @@ public class RobotBehaviour : MonoBehaviour {
     void Start()
     {
         startPosition = transform.position;
+
+        
+        anim.enabled = false;
+
     }
+
     void FixedUpdate()
     {
           CurrentState.UpdateState();
+        //UpdateAnimationAngle(rb.velocity.y, rb.velocity.x);
+    }
+    void Update()
+    {
+       // UpdateAnimationAngle(rb.velocity.y, rb.velocity.x);
     }
     /// <summary>
     /// Picks the oldest command if possible and 
@@ -144,25 +167,15 @@ public class RobotBehaviour : MonoBehaviour {
         else if(currentCommand != null)
         { 
             currentCommand.Execute();
-            if (currentCommand.GetType() == typeof(MoveCommand))
-            {
-                OnAccelerate();
-            }
-            else
-            {
-                OnDeaccelerate();
-            }
+           
         }
-        else
-        {
-            anim.SetBool("Accelerating", false);
-        }
+       
     }
-    void OnAccelerate()
+    public void OnAccelerate()
     {
         currentState.OnAccelerate(); 
     }
-    void OnDeaccelerate()
+    public void OnDeaccelerate()
     {
         currentState.OnDeaccelerate();
     }

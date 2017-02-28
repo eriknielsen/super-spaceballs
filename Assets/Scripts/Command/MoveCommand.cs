@@ -11,7 +11,7 @@ public class MoveCommand : Command
     float angle;
     Vector2 startPosition;
     Vector2 startSpeed;
-
+    bool hasStarted = false;
     public Vector2 Force
     {
         get
@@ -103,22 +103,31 @@ public class MoveCommand : Command
 
     public override void Execute()
     {
+        //on the first execute, do this
+        if (hasStarted == false)
+        {
+            robot.GetComponent<RobotBehaviour>().OnAccelerate();
+            hasStarted = true;
+        }
         //robot.transform.rotation = Quaternion.Lerp(robot.transform.rotation, Quaternion.Euler(0, 0, angle * Mathf.Rad2Deg), Time.deltaTime);
         if(lifeTimer > 0)
         {
+            robot.GetComponent<RobotBehaviour>().UpdateAnimationAngle(force.y, force.x);
             if(lifeTimer > initialForceTime)
             {
                 robot.GetComponent<Rigidbody2D>().AddForce(InitialForce);
             }
             else
             {
-                robot.GetComponent<Rigidbody2D>().AddForce(force); ;
+                robot.GetComponent<Rigidbody2D>().AddForce(force);
             }
             lifeTimer -= Time.deltaTime;
         }
         else
         {
             isFinished = true;
+            //if ending, call deaccelerate on the robot
+            robot.GetComponent<RobotBehaviour>().OnDeaccelerate();
         }
         
     }
