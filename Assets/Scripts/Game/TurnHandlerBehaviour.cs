@@ -165,7 +165,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         float remainingTimeForRobot;
         float previewInputTime, maxInputTime;
         float shockwaveLife = shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime;
-		while (selectedRobot != null && selectedCommand != null)
+		while (selectedRobot != null && selectedCommand != Command.AvailableCommands.None)
         {
 			selectedRB = selectedRobot.GetComponent<RobotBehaviour>();
             cursorPosition = Input.mousePosition;
