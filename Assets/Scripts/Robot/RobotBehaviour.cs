@@ -15,6 +15,7 @@ public class RobotBehaviour : MonoBehaviour {
     [HideInInspector] //it is set by turnhandler's roundTime
     public float freeTime;
 
+	public Rigidbody2D rb;
     public Vector2 prevVelocity;
     public Animator anim;
     //the robot goes through each commando and checks each update if the latest commando is finished or not
@@ -27,7 +28,7 @@ public class RobotBehaviour : MonoBehaviour {
 
     private Animator animatorComponent;
     
-     float previousAnimAngle = -500;
+    float previousAnimAngle = -500;
 
     private Vector2 startPosition;
 
@@ -89,9 +90,9 @@ public class RobotBehaviour : MonoBehaviour {
 
     void Awake()
     {
-        prevVelocity = gameObject.GetComponent<Rigidbody2D>().velocity;
-        
-        animatorComponent = GetComponent<Animator>();
+		rb = GetComponent<Rigidbody2D>();
+		prevVelocity = rb.velocity;
+		animatorComponent = GetComponent<Animator>();
         Commands = new List<Command>();
         oldCommands = new List<Command>();
         pauseState = new PauseState(gameObject);
@@ -107,9 +108,15 @@ public class RobotBehaviour : MonoBehaviour {
       
         if(isPreview == false)
         {
-            //Goal.OnGoalScored += new Goal.GoalScored(() => transform.position = startPosition);
+            Goal.OnGoalScored += new Goal.GoalScored(ResetPos);
         }
         
+    }
+    void ResetPos()
+    {
+        transform.position = startPosition;
+		rb.velocity = Vector2.zero;
+		prevVelocity = Vector2.zero;
     }
     void Start()
     {
@@ -123,12 +130,9 @@ public class RobotBehaviour : MonoBehaviour {
     void FixedUpdate()
     {
           CurrentState.UpdateState();
-        //UpdateAnimationAngle(rb.velocity.y, rb.velocity.x);
+        
     }
-    void Update()
-    {
-       // UpdateAnimationAngle(rb.velocity.y, rb.velocity.x);
-    }
+   
     /// <summary>
     /// Picks the oldest command if possible and 
     /// starts the commands lifetimetimer
@@ -192,6 +196,11 @@ public class RobotBehaviour : MonoBehaviour {
         }
         
         
+    }
+    void OnDestroy()
+    {
+        
+        Goal.OnGoalScored -=  ResetPos;
     }
 }
 

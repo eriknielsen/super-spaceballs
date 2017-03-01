@@ -33,16 +33,17 @@ public class Ball : MonoBehaviour {
 	}
     void Pause()
     {
-        Debug.Log("pause in boll");
         prevVelocity = rb.velocity;
         rb.velocity = Vector2.zero;
         rb.freezeRotation = true;
     }
+
     void Unpause()
     {
         rb.freezeRotation = false;
         rb.velocity = prevVelocity;
     }
+
     void OnCollisionEnter2D(Collision2D other)
     {
 

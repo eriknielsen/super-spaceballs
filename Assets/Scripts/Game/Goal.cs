@@ -16,8 +16,8 @@ public class Goal : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other){ //When ball enters goal ballposition is reset and score is increased
 		if (other.tag == "Ball"){
-            Debug.Log("score! this goal's team has points: " + score);
-            OnGoalScored();
+			OnGoalScored();
+			score++;
             scoreText.text = score.ToString();
 			other.gameObject.GetComponent<Ball>().ResetPosition();
 		}

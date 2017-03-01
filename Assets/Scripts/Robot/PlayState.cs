@@ -21,7 +21,7 @@ public class PlayState : IRobotState {
         robotScript.CurrentState = robotScript.pauseState;
         //empty the command list
         robotScript.Commands.Clear();
-        robotScript.prevVelocity = robot.GetComponent<Rigidbody2D>().velocity;
+        robotScript.prevVelocity = robotScript.rb.velocity;
         robot.GetComponent<Rigidbody2D>().velocity = zeroVector;
 
         anim.enabled = false;
@@ -36,7 +36,7 @@ public class PlayState : IRobotState {
     public void UpdateState(){
         
         robotScript.ExecuteRobotCommand();
-        //robotScript.UpdateAnimationAngle(robot.);
+        
     }
     public void OnAccelerate()
     {
@@ -49,7 +49,6 @@ public class PlayState : IRobotState {
                 //anim.Play("MoveEntry");
                 robotScript.accelerated = true;
                 anim.SetBool("Accelerating", true);
-                Debug.Log("accelerating");
                 AudioManager.instance.PlayAudioWithRandomPitch(robotScript.igniteThrustersSound, false, robot);
                 //loop thruster sound after ignite is finished
                 robotScript.thrusterComponent.Play();
@@ -64,7 +63,6 @@ public class PlayState : IRobotState {
             robotScript.accelerated = false;
             anim.SetBool("Accelerating", false);
             anim.SetTrigger("Deaccelerate");
-            Debug.Log("hej");
             //differentiate between the preview robot prefab and the real one
             if (robotScript.isPreview == false)
             {

@@ -217,12 +217,20 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
 
 	//Stuff below passes functions through to the turn handlers, because our code structure is shit :D
 	public void DeselectRobot(){
-		turnHandler1.THDeselectRobot();
-		turnHandler2.THDeselectRobot();
+		if (currentTurnHandler == 1) {
+			turnHandler1.THDeselectRobot ();
+		}
+		if (currentTurnHandler == 2) {
+			turnHandler2.THDeselectRobot ();
+		}
 	}
 
-	public void SelectCommand(Command.AvailableCommands command){ 
-		turnHandler1.THSelectCommand(command);
-		turnHandler2.THSelectCommand(command);
+	public void SelectCommand(Command.AvailableCommands command){
+		if (currentTurnHandler == 1) {
+			turnHandler1.THSelectCommand (command);
+		}
+		if (currentTurnHandler == 2) {
+			turnHandler2.THSelectCommand (command);
+		}
 	}
 }

@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
-using System.Diagnostics;
 
 public class TurnHandlerBehaviour : MonoBehaviour
 {
@@ -33,7 +32,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
     private List<List<MovingTrail>> robotMovingTrails;
     private List<List<MovingTrail>> ballMovingTrails;
     private GameObject ball;
-    
+    private PreviewMarker pm;
     List<GameObject> robots;
     int turns;
 
@@ -49,6 +48,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
     void Start()
     {
+        //pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
         ball = FindObjectOfType<Ball>().gameObject;
 		selectedCommand = Command.AvailableCommands.Move;
 		moves = new List<Move>();
@@ -57,7 +57,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
 		movingPreviews = new List<GameObject>();
 		robotMovingTrails = new List<List<MovingTrail>>();
         ballMovingTrails = new List<List<MovingTrail>>();
-		UnityEngine.Debug.Log("Robot numbers: " + robots.Count);
 		for (int i = 0; i < robots.Count; i++)
 		{
 			movingPreviews.Add(new GameObject());
@@ -88,12 +87,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
             robotBehaviour.freeTime = roundTime;
         }
 
-        for (int i = 0; i < robots.Count; i++)
-        {
-            movingPreviews.Add(new GameObject());
-            movingPreviews[i].name = movingPreviewsName;
-            movingPreviews[i].SetActive(false);
-        }
+        DisableMovingPreviews();
     }
 
     public void UnpauseGame()
@@ -108,16 +102,38 @@ public class TurnHandlerBehaviour : MonoBehaviour
             robot.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
         }
         turns++;
-        int i = 0;
-        while (movingPreviews.Count > 0)
+
+        RemoveAllMovingTrails();
+    }
+
+    void RemoveAllMovingTrails()
+    {
+        for (int i = 0; i < robotMovingTrails.Count; i++)
         {
-            Destroy(movingPreviews.First());
-            movingPreviews.Remove(movingPreviews.First());
+            for (int j = 0; j < robotMovingTrails[i].Count; j++)
+            {
+                robotMovingTrails[i][j].DestroyTrail();
+            }
             robotMovingTrails[i].Clear();
-            ballMovingTrails[i].Clear();
-            i++;
         }
-	}
+
+        for (int i = 0; i < ballMovingTrails.Count; i++)
+        {
+            for (int j = 0; j < ballMovingTrails[i].Count; j++)
+            {
+                ballMovingTrails[i][j].DestroyTrail();
+            }
+            ballMovingTrails[i].Clear();
+        }
+    }
+
+    void DisableMovingPreviews()
+    {
+        for (int i = 0; i < robots.Count; i++)
+        {
+            movingPreviews[i].SetActive(false);
+        }
+    }
 
     void UndoLastMove(){
         if (Turns > 0){
@@ -200,6 +216,8 @@ public class TurnHandlerBehaviour : MonoBehaviour
             if (previewInputTime <= maxInputTime)
             {
                 timeInput = previewInputTime;
+//                if (Input.GetKeyDown(KeyCode.Space))
+//                    pm.simulatepath2(selectedRobot.transform.position, selectedRobot.GetComponent<Rigidbody2D>().velocity, timeInput, cursorScreenPosition);
             }
             else
             {
@@ -221,7 +239,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
         GameObject previewRobot;
         float timeBetweenPreivews = 0.1f;
-        Stopwatch timer = new Stopwatch();
+		System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
         Command.AvailableCommands prevSelectedCommand = selectedCommand;
 
         timer.Start();
@@ -235,7 +253,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 {
                     timer.Reset();
                     timer.Start();
-					DestroyPreviewTrail ();
+					DestroyPreviewTrails();
                     if (robotMovingTrails[selectedRobotIndex].Count > 0)
                     {
                         previewRobot = robotMovingTrails[selectedRobotIndex].Last().Node;
@@ -273,7 +291,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
             prevSelectedCommand = selectedCommand;
             yield return new WaitForSeconds(0.005f);
         }
-        DestroyPreviewTrail();
+        DestroyPreviewTrails();
     }
 
     IEnumerator PreviewBallTrajectory()
@@ -286,7 +304,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
         {
             cursorPosition = Input.mousePosition;
             cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
-            UnityEngine.Debug.Log("Velocity: " + ball.GetComponent<Rigidbody2D>().velocity);
             if (prevCursorPosition != cursorPosition)
             {
 
@@ -304,7 +321,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         }
     }
 
-	void DestroyPreviewTrail(){
+	void DestroyPreviewTrails(){
 		if (latestRobotTrail != null)
 		{
 			Destroy(latestRobotTrail.TrailGameObject);
@@ -315,19 +332,25 @@ public class TurnHandlerBehaviour : MonoBehaviour
     void GiveRobotCommand(Command command)
     {
         Command givenCommand = null;
-		if (command.GetType() != typeof(NoneCommand)) {
-			if (command.GetType() == typeof(MoveCommand)) {
-				givenCommand = new MoveCommand (selectedRobot, command as MoveCommand);
-			}
-			else if (command.GetType() == typeof(PushCommand)) {
-				PushCommand pushCommand = command as PushCommand;
-				float previewDuration = pushCommand.LifeDuration;
-				givenCommand = new PushCommand (selectedRobot, command as PushCommand, previewDuration);
-			}
-			UnityEngine.Debug.Log ("Given command: " + givenCommand);
-			selectedRobot.GetComponent<RobotBehaviour> ().Commands.Add (givenCommand);
-			selectedRobot.GetComponent<RobotBehaviour> ().freeTime -= command.LifeDuration;
-		}
+        if (command != null)
+        {
+            if (command.GetType() != typeof(NoneCommand))
+            {
+                if (command.GetType() == typeof(MoveCommand))
+                {
+                    givenCommand = new MoveCommand(selectedRobot, command as MoveCommand);
+                }
+                else if (command.GetType() == typeof(PushCommand))
+                {
+                    PushCommand pushCommand = command as PushCommand;
+                    float previewDuration = pushCommand.LifeDuration;
+                    givenCommand = new PushCommand(selectedRobot, command as PushCommand, previewDuration);
+                }
+                UnityEngine.Debug.Log("Given command: " + givenCommand);
+                selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(givenCommand);
+                selectedRobot.GetComponent<RobotBehaviour>().freeTime -= command.LifeDuration;
+            }
+        }
     }
 		
     void Update()
@@ -352,14 +375,15 @@ public class TurnHandlerBehaviour : MonoBehaviour
 		if (selectedCommand != Command.AvailableCommands.None)
 		{
 			movingPreviews[selectedRobotIndex].SetActive (true);
-			StartCoroutine (SetAndDisplayTimeInput ());
-			StartCoroutine (PreviewTrajectoryAndGiveRobotCommand ());
+			StartCoroutine(SetAndDisplayTimeInput ());
+			StartCoroutine(PreviewTrajectoryAndGiveRobotCommand ());
+            //StartCoroutine(PreviewBallTrajectory());
 		}
 		else
 		{
 			movingPreviews[selectedRobotIndex].SetActive (false);
 			StopAllCoroutines ();
-			DestroyPreviewTrail ();
+			DestroyPreviewTrails();
 			cursorText.text = "";
 //			StopCoroutine(SetAndDisplayTimeInput());
 //			StopCoroutine(PreviewAndGiveRobotCommand());
@@ -368,19 +392,22 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
 	public void THDeselectRobot()
 	{
-		if (selectedRobot != null) {
-			selectedRobot = null;
-			selectedCommand = Command.AvailableCommands.None;
-			cursorText.text = "";
-			timeInput = 0;
-			DestroyPreviewTrail ();
-			StopAllCoroutines ();
-//			StopCoroutine(SetAndDisplayTimeInput());
-//			StopCoroutine(PreviewAndGiveRobotCommand());
-			if (selectedCommandWheel != null)
-				Destroy (selectedCommandWheel);
-			movingPreviews[selectedRobotIndex].SetActive (false);
-		}
+		selectedRobot = null;
+		timeInput = 0;
+		selectedCommand = Command.AvailableCommands.None;
+		StopAllCoroutines ();
+		DestroyPreviewTrails ();
+		cursorText.text = "";
+        //		StopCoroutine(SetAndDisplayTimeInput());
+        //		StopCoroutine(PreviewAndGiveRobotCommand());
+        if (selectedCommandWheel != null)
+        {
+            Destroy(selectedCommandWheel);
+        }
+        if (movingPreviews.Count > 0)
+        {
+            movingPreviews[selectedRobotIndex].SetActive(false);
+        }
 	}
 
     public void Activate(bool active)
@@ -391,10 +418,9 @@ public class TurnHandlerBehaviour : MonoBehaviour
             //visually indicate that this turnhandlers robots are now active
             //start taking events
             RobotBehaviour.OnClick += new RobotBehaviour.ClickedOnRobot(SelectRobot);
-            UnityEngine.Debug.Log(robots);
-            foreach (GameObject r in robots)
+			foreach (GameObject robot in robots)
             {
-                r.GetComponent<RobotBehaviour>().shouldSendEvent = true;
+                robot.GetComponent<RobotBehaviour>().shouldSendEvent = true;
             }
             
         }
