@@ -20,3 +20,10 @@ Game project at HIS
 * Git add för att lägga till filer i en commit. Git add . lägger till alla ändrade filer. Git add filnamn lägger till en fil/mapp
 * Git commit -m "meddelande" där meddelande är namnet på comitten.
 * Git push för att pusha. Kräver login.
+
+* git branch -a
+* git fetch (laddar bara ner från repot)
+* git merge (om man vill ha det som är där uppe)
+* fetch och sedan merge är ungefär likadant som att skriva git pull
+
+* git checkout <branchname>
