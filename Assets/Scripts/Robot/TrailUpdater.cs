@@ -50,7 +50,7 @@ class TrailUpdater : MonoBehaviour
                 nodeSpriteRenderer.enabled = false;
             }
 
-            if (node.GetComponent<RobotBehaviour>())
+            if (node.GetComponent<RobotBehaviour>() == true)
             {
                 node.GetComponent<RobotBehaviour>().isPreview = true;
                 node.GetComponent<RobotBehaviour>().Commands.Add(this.command);
@@ -86,7 +86,6 @@ class TrailUpdater : MonoBehaviour
     {
         MakeTrail();
     }
-
 
     void MakeTrail()
     {
@@ -140,6 +139,11 @@ class TrailUpdater : MonoBehaviour
             }
         }
     }
+
+    public void DestroyTrail()
+    {
+        Destroy(gameObject);
+    }
 }
 
 public class MovingTrail
@@ -153,6 +157,11 @@ public class MovingTrail
         g.name = "MovingTrail";
         trailUpdater = g.GetComponent<TrailUpdater>();
         trailUpdater.Initialize(command, timeDuration, currentVelocity);
+    }
+
+    public void DestroyTrail()
+    {
+        trailUpdater.DestroyTrail();
     }
 
     public GameObject TrailGameObject
