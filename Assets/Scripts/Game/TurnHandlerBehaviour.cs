@@ -22,8 +22,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
     private int selectedRobotIndex;
     private Command.AvailableCommands selectedCommand;
 
-    private bool activated = false;
-	private bool gameIsPaused = true;
+
     private float timeInput;
     private List<GameObject> movingPreviews;
     private string movingPreviewsName = "Moving Previews";
@@ -92,7 +91,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
     public void UnpauseGame()
     {
-        gameIsPaused = false;
+        
         //put all robots into play
         foreach (GameObject robot in robots)
         {
@@ -412,7 +411,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
     public void Activate(bool active)
     {
-        activated = active;
+      
         if (active == true)
         {
             //visually indicate that this turnhandlers robots are now active

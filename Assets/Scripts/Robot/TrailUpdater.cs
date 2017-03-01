@@ -40,7 +40,7 @@ class TrailUpdater : MonoBehaviour
             }
             node.gameObject.layer = LayerMask.NameToLayer("No Collision With Robot");
             Type t = command.GetType();
-            if (command.GetType() == typeof(MoveCommand))
+            if (t == typeof(MoveCommand))
             {
                 this.command = new MoveCommand(node, command as MoveCommand);
             }

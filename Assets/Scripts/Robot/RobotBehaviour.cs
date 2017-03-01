@@ -31,8 +31,6 @@ public class RobotBehaviour : MonoBehaviour {
     private Command currentCommand;
 
     private Animator animatorComponent;
-    
-    float previousAnimAngle = -500;
 
     private Vector2 startPosition;
     private float speed;

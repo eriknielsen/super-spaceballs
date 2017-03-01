@@ -6,8 +6,7 @@ public class PushCommand : Command {
 
     GameObject shockwavePrefab;
 
-    public delegate void InstantiateShockWave(GameObject r, Vector2 dir, float force);
-    public static event InstantiateShockWave OnInstantiateShockWave;
+ 
 
     float speed = 20f;
     float chargeTime;

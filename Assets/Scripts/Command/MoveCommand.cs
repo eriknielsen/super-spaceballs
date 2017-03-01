@@ -30,22 +30,6 @@ public class MoveCommand : Command
         set { initialForce = value; }
     }
 
-    public float LifeDuration
-    {
-        get
-        {
-            return lifeDuration;
-        }
-    }
-
-    public GameObject Robot
-    {
-        get
-        {
-            return robot;
-        }
-    }
-
     public Vector2 StartPosition
     {
         get

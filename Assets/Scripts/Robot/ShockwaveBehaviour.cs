@@ -33,10 +33,10 @@ public class ShockwaveBehaviour : MonoBehaviour {
         }
     }
 
-    public void Initialize(Vector2 velocity, float chargeTime, GameObject shockwaveUser) {
+    public void Initialize(Vector2 inputVelocity, float chargeTime, GameObject shockwaveUser) {
         
         this.shockwaveUser = shockwaveUser;
-        this.velocity = velocity;
+        velocity = inputVelocity;
         pushVector = velocity.normalized * (pushForce * (1+chargeTime));
         
         enabled = true;
@@ -78,7 +78,7 @@ public class ShockwaveBehaviour : MonoBehaviour {
         if (shouldUpdate) {
             if (remainingLifeTime >= 0) {
                  remainingLifeTime -= Time.deltaTime;
-                 //scaling changes rotation??
+               
                 transform.localScale += new Vector3(0.5f*Time.deltaTime , 0.5f * Time.deltaTime, 0 );
                 if(rb2dCompontent.rotation != realRotation)
                     rb2dCompontent.rotation = realRotation;
