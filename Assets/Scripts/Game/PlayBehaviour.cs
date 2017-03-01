@@ -14,17 +14,26 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     [SerializeField]
     TurnHandlerBehaviour turnHandler2;
 	
-	public float gameTime;
-    public Text gameTimeText;
-    public float roundTime;
-	public static float RoundTime { get { return Instance.roundTime; } }
-	public float intendedShockwaveLiftime;
 
-    public Goal leftGoal;
-    public Goal rightGoal;
+    Text gameTimeText;
+    /// <summary>
+    /// length of a planning -> play round
+    /// </summary>
+    public float roundTime;
+    /// <summary>
+    /// length of a whole match
+    /// </summary>
+    public float matchTime;
+	public static float RoundTime { get { return Instance.roundTime; } }
+
+
+    Goal leftGoal;
+    Goal rightGoal;
 
     public delegate void GamePaused();
     public static event GamePaused OnPauseGame;
+    public delegate void PreGamePaused();
+    public static event PreGamePaused PreOnPauseGame;
     public delegate void GameUnpaused();
     public static event GameUnpaused OnUnpauseGame;
 
@@ -108,7 +117,10 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
         turnHandler1.UnpauseGame();
         turnHandler2.UnpauseGame();
         StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
-        yield return new WaitForSeconds(roundTime);
+
+        yield return new WaitForSeconds(roundTime-Time.deltaTime);
+        PreOnPauseGame();
+        yield return new WaitForSeconds(Time.deltaTime);
         if (asReplay == false){
             currentTurnHandler = -1;
             NewTurn();
@@ -124,6 +136,7 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     }
 
     void PauseGame(){
+        
         OnPauseGame();
         turnHandler1.PauseGame();
         turnHandler2.PauseGame();

@@ -8,8 +8,7 @@ public class ShockwaveBehaviour : MonoBehaviour {
 
 	[SerializeField]
 	private float pushForce;
-    [SerializeField]
-	private float lifeTime;
+
     [SerializeField]
     GameObject awakeSound;
     private Vector2 velocity;
@@ -18,14 +17,14 @@ public class ShockwaveBehaviour : MonoBehaviour {
 	private float remainingLifeTime;
 	private bool shouldUpdate;
 	private GameObject shockwaveUser;
-    
+    float realRotation;
     public static ShockwaveBehaviour InstantiateShockWave(ShockwaveBehaviour shockWave) {
         return Instantiate(shockWave);
     }
 
     void OnValidate() {
-        if (lifeTime < 0) {
-            intendedLifetime = lifeTime;
+        if (intendedLifetime <= 0) {
+            Debug.LogError("intended lifetime in shockwave is zero or less, fix!");
 
             remainingLifeTime = 0;
         }
@@ -51,8 +50,8 @@ public class ShockwaveBehaviour : MonoBehaviour {
             gameObject.AddComponent<Rigidbody2D>();
         }
         rb2dCompontent = GetComponent<Rigidbody2D>();
-        
-        
+
+        PlayBehaviour.PreOnPauseGame += OnPause;
     }
     void Start()
     {
@@ -63,15 +62,26 @@ public class ShockwaveBehaviour : MonoBehaviour {
 
         float rot_z = (Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg);
         rb2dCompontent.rotation = rot_z;
+        realRotation = rot_z;
       }
-   
-    void FixedUpdate() {
+   void OnPause()
+    {
+        
+        Destroy(gameObject);
+    }
+    void OnDestroy()
+    {
+        PlayBehaviour.PreOnPauseGame -= OnPause;
+    }
+    void Update() {
        
         if (shouldUpdate) {
             if (remainingLifeTime >= 0) {
-                 remainingLifeTime -= Time.fixedDeltaTime;
+                 remainingLifeTime -= Time.deltaTime;
                  //scaling changes rotation??
-                //transform.localScale += new Vector3(0.1f*Time.deltaTime , 0.1f * Time.deltaTime, 0 );
+                transform.localScale += new Vector3(0.5f*Time.deltaTime , 0.5f * Time.deltaTime, 0 );
+                if(rb2dCompontent.rotation != realRotation)
+                    rb2dCompontent.rotation = realRotation;
             }
             else {
                 Destroy(gameObject);

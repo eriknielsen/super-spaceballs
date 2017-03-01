@@ -35,6 +35,7 @@ public class Ball : MonoBehaviour {
     {
         prevVelocity = rb.velocity;
         rb.velocity = Vector2.zero;
+        
         rb.freezeRotation = true;
     }
 

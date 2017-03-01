@@ -10,14 +10,18 @@ public class RobotBehaviour : MonoBehaviour {
     public PlayState playState;
     public delegate void ClickedOnRobot(GameObject robot);
     public static event ClickedOnRobot OnClick;
+    [HideInInspector]
     public bool shouldSendEvent = false;
     //the remaining time for this round
     [HideInInspector] //it is set by turnhandler's roundTime
     public float freeTime;
-
-	public Rigidbody2D rb;
+    [HideInInspector]
+    public Rigidbody2D rb;
+    [HideInInspector]
     public Vector2 prevVelocity;
+    [HideInInspector]
     public Animator anim;
+
     //the robot goes through each commando and checks each update if the latest commando is finished or not
     //if it is finished then the robot starts the next commando
     public List<Command> commands;
@@ -31,9 +35,10 @@ public class RobotBehaviour : MonoBehaviour {
     float previousAnimAngle = -500;
 
     private Vector2 startPosition;
-
+    private float speed;
+    [HideInInspector]
     public bool isPreview;
-	private float speed;
+	
 
     //AUDIOSOURCES
     [SerializeField]
@@ -49,6 +54,7 @@ public class RobotBehaviour : MonoBehaviour {
     [HideInInspector]
     public AudioSource thrusterComponent;
 
+    [HideInInspector]
     //helps with onaccelerate and ondeaccelerate
     public bool accelerated = false;
 
@@ -108,15 +114,17 @@ public class RobotBehaviour : MonoBehaviour {
       
         if(isPreview == false)
         {
-            Goal.OnGoalScored += new Goal.GoalScored(ResetPos);
+            Goal.OnGoalScored += new Goal.GoalScored(ResetRobotAfterScore);
         }
         
     }
-    void ResetPos()
+    void ResetRobotAfterScore()
     {
         transform.position = startPosition;
 		rb.velocity = Vector2.zero;
 		prevVelocity = Vector2.zero;
+        commands.Clear();
+        currentCommand = null;
     }
     void Start()
     {
@@ -200,7 +208,7 @@ public class RobotBehaviour : MonoBehaviour {
     void OnDestroy()
     {
         
-        Goal.OnGoalScored -=  ResetPos;
+        Goal.OnGoalScored -=  ResetRobotAfterScore;
     }
 }
 
