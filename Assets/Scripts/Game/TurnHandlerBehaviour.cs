@@ -33,7 +33,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
     private List<List<MovingTrail>> robotMovingTrails;
     private List<List<MovingTrail>> ballMovingTrails;
     private GameObject ball;
-    
+    private PreviewMarker pm;
     List<GameObject> robots;
     int turns;
 
@@ -49,6 +49,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
     void Start()
     {
+        pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
         ball = FindObjectOfType<Ball>().gameObject;
 		selectedCommand = Command.AvailableCommands.Move;
 		moves = new List<Move>();
@@ -217,6 +218,10 @@ public class TurnHandlerBehaviour : MonoBehaviour
             if (previewInputTime <= maxInputTime)
             {
                 timeInput = previewInputTime;
+                if (Input.GetKeyDown(KeyCode.Space))
+                    pm.simulatepath2(selectedRobot.transform.position, selectedRobot.GetComponent<Rigidbody2D>().velocity
+                        , timeInput, cursorScreenPosition);
+
             }
             else
             {
@@ -252,7 +257,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 {
                     timer.Reset();
                     timer.Start();
-					DestroyPreviewTrails ();
+					DestroyPreviewTrail ();
                     if (robotMovingTrails[selectedRobotIndex].Count > 0)
                     {
                         previewRobot = robotMovingTrails[selectedRobotIndex].Last().Node;
@@ -290,6 +295,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
             prevSelectedCommand = selectedCommand;
             yield return new WaitForSeconds(0.005f);
         }
+        DestroyPreviewTrail();
     }
 
     IEnumerator PreviewBallTrajectory()
@@ -312,19 +318,14 @@ public class TurnHandlerBehaviour : MonoBehaviour
                 }
                 MoveCommand emptyMoveCommand = new MoveCommand(ball, Vector2.zero, 0, turns);
                 latestBallTrail = new MovingTrail(emptyMoveCommand, timeInput, ball.GetComponent<Ball>().PreviousVelocity);
-            }
-            if (Input.GetMouseButton(1) && latestRobotTrail != null)
-            {
-                latestRobotTrail.TrailGameObject.transform.parent = movingPreviews[selectedRobotIndex].transform;
                 ballMovingTrails[selectedRobotIndex].Add(latestBallTrail);
-                latestBallTrail = null;
             }
             prevCursorPosition = cursorPosition;
             yield return new WaitForSeconds(0.005f);
         }
     }
 
-	void DestroyPreviewTrails(){
+	void DestroyPreviewTrail(){
 		if (latestRobotTrail != null)
 		{
 			Destroy(latestRobotTrail.TrailGameObject);
@@ -386,7 +387,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 		{
 			movingPreviews[selectedRobotIndex].SetActive (false);
 			StopAllCoroutines ();
-			DestroyPreviewTrails ();
+			DestroyPreviewTrail ();
 			cursorText.text = "";
 //			StopCoroutine(SetAndDisplayTimeInput());
 //			StopCoroutine(PreviewAndGiveRobotCommand());
@@ -421,7 +422,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
             //visually indicate that this turnhandlers robots are now active
             //start taking events
             RobotBehaviour.OnClick += new RobotBehaviour.ClickedOnRobot(SelectRobot);
-            //PushCommand.OnInstantiateShockWave += new PushCommand.InstantiateShockWave(InstantiateShockwave);
             UnityEngine.Debug.Log(robots);
             foreach (GameObject r in robots)
             {

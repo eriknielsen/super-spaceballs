@@ -107,9 +107,13 @@ public class RobotBehaviour : MonoBehaviour {
       
         if(isPreview == false)
         {
-            //Goal.OnGoalScored += new Goal.GoalScored(() => transform.position = startPosition);
+            Goal.OnGoalScored += new Goal.GoalScored(ResetPos);
         }
         
+    }
+    void ResetPos()
+    {
+        transform.position = startPosition;
     }
     void Start()
     {
@@ -123,12 +127,9 @@ public class RobotBehaviour : MonoBehaviour {
     void FixedUpdate()
     {
           CurrentState.UpdateState();
-        //UpdateAnimationAngle(rb.velocity.y, rb.velocity.x);
+        
     }
-    void Update()
-    {
-       // UpdateAnimationAngle(rb.velocity.y, rb.velocity.x);
-    }
+   
     /// <summary>
     /// Picks the oldest command if possible and 
     /// starts the commands lifetimetimer
@@ -192,6 +193,11 @@ public class RobotBehaviour : MonoBehaviour {
         }
         
         
+    }
+    void OnDestroy()
+    {
+        
+        Goal.OnGoalScored -=  ResetPos;
     }
 }
 
