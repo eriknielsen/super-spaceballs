@@ -33,7 +33,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
     private List<List<MovingTrail>> robotMovingTrails;
     private List<List<MovingTrail>> ballMovingTrails;
     private GameObject ball;
-    
+    private PreviewMarker pm;
     List<GameObject> robots;
     int turns;
 
@@ -49,6 +49,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
     void Start()
     {
+        pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
         ball = FindObjectOfType<Ball>().gameObject;
 		selectedCommand = Command.AvailableCommands.Move;
 		moves = new List<Move>();
@@ -200,6 +201,10 @@ public class TurnHandlerBehaviour : MonoBehaviour
             if (previewInputTime <= maxInputTime)
             {
                 timeInput = previewInputTime;
+                if (Input.GetKeyDown(KeyCode.Space))
+                    pm.simulatepath2(selectedRobot.transform.position, selectedRobot.GetComponent<Rigidbody2D>().velocity
+                        , timeInput, cursorScreenPosition);
+
             }
             else
             {

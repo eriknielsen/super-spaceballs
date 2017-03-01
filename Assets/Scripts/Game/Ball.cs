@@ -33,7 +33,7 @@ public class Ball : MonoBehaviour {
 	}
     void Pause()
     {
-        Debug.Log("pause in boll");
+
         prevVelocity = rb.velocity;
         rb.velocity = Vector2.zero;
         rb.freezeRotation = true;
