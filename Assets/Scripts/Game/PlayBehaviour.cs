@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class PlayBehaviour : MonoBehaviour { //class for local play
+public class PlayBehaviour : MonoBehaviour, IPlay { //class for local play
     
 	private bool isTH1Done = false;
 	private bool isTH2Done = false;
@@ -29,6 +29,11 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     /// length of overtime to be added ONCE
     /// </summary>
     public int overTime;
+
+    /// <summary>
+    /// length of planning time each player has
+    /// </summary>
+    public int planTime;
 	public static float RoundTime { get { return Instance.roundTime; } }
 
 
@@ -72,7 +77,7 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
             
         }
         else {
-            Debug.Log("couldint find goals :(");
+            Debug.LogError("couldint find goals :(");
         }
         gameTimer = new GameTimer(matchTime);
         if(gameTimeText == null)
@@ -88,7 +93,7 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     {
         //tell gametimer and the unpause to stop
         StopAllCoroutines();
-        //do waht unpause does at the end
+        //do what unpause does at the end
         currentTurnHandler = -1;
         NewTurn();
         //wait a bit so that the robot animations can be set to idle
@@ -128,6 +133,7 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
             }
             //wait a bit and then change scene to mainmenu
             yield return new WaitForSeconds(1f);
+            StopAllCoroutines();
             SceneManager.LoadScene("MainMenu");
         }
     }
@@ -259,20 +265,7 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
             currentTurnHandler = -1;
         }
     }
-    /// Pauses the game and deactivates ui and active turnhandler or activates ui and active turnhandler
-    /// Called by GameBehaviour
-    public void Activate(bool activate){ //REMOVE FUNCTION?
-        if (activate == false){
-            //DestroyTurnHandlers();
-     
-            enabled = false;
-        }
-        else {
-            enabled = true;
-            //CreateTurnHandlers();
-            NewTurn();
-        }
-    }
+
 
 
 	//Stuff below passes functions through to the turn handlers, because our code structure is shit :D
