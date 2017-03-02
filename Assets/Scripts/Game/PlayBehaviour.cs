@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayBehaviour : MonoBehaviour { //class for local play
     
@@ -13,17 +14,21 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     TurnHandlerBehaviour turnHandler1;
     [SerializeField]
     TurnHandlerBehaviour turnHandler2;
-	
+    bool isGamePaused = true;
 
     Text gameTimeText;
     /// <summary>
     /// length of a planning -> play round
     /// </summary>
-    public float roundTime;
+    public int roundTime;
     /// <summary>
     /// length of a whole match
     /// </summary>
-    public float matchTime;
+    public int matchTime;
+    /// <summary>
+    /// length of overtime to be added ONCE
+    /// </summary>
+    public int overTime;
 	public static float RoundTime { get { return Instance.roundTime; } }
 
 
@@ -60,7 +65,7 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
         else {
             Debug.Log("couldint find goals :(");
         }
-        gameTimer = new GameTimer(120);
+        gameTimer = new GameTimer(matchTime);
         if(gameTimeText == null)
         {
             gameTimeText = GameObject.Find("GameTimeText").GetComponent<Text>();
@@ -77,15 +82,56 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
         //do waht unpause does at the end
         currentTurnHandler = -1;
         NewTurn();
-        PauseGame();
+        //wait a bit so that the robot animations can be set to idle
+        Invoke("PauseGame",0.02f);
         //robots reset their position by themselves
     }
-
+    /// <summary>
+    /// displays who the winner was and goes back to the main menu
+    /// </summary>
+    IEnumerator HandleMatchEnd()
+    {
+        //check if the score is tied, then add overtime (if not already overtime) and continue
+        if (leftGoal.score == rightGoal.score && gameTimer.InOvertime() == false)
+        {
+            Debug.Log("show that overtime is happening!!");
+            gameTimer.AddOvertime(overTime);
+            
+        }
+        //if possible, display winner!
+        else
+        {
+            PauseGame();
+            //left won!
+            if (leftGoal.score > rightGoal.score)
+            {
+                Debug.Log("left team won!");
+            }
+            //right won! 
+            else if (rightGoal.score > leftGoal.score)
+            {
+                Debug.Log("right team won!");
+            }
+            else if(rightGoal.score == leftGoal.score)
+            {
+                Debug.Log("match was even!");
+            }
+            //wait a bit and then change scene to mainmenu
+            yield return new WaitForSeconds(1f);
+            SceneManager.LoadScene("MainMenu");
+        }
+    }
     void Update(){
+        //if gametime has run out, do stuff!
+        if (gameTimer.IsGameOver())
+        {
+                StartCoroutine(HandleMatchEnd());
+        }
+        
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
 
         //listen for buttonpresses like wanting to send your move etc
-        if (Input.GetKeyDown(KeyCode.Return)){
+        if (Input.GetKeyDown(KeyCode.Return) && isGamePaused){
             if (currentTurnHandler == 1){
                 isTH1Done = true;
             }
@@ -106,8 +152,9 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     }
     //if we replayed the last turn, we dont want to do the newturn stuff
     IEnumerator UnpauseGame(bool asReplay){
-
-        OnUnpauseGame();
+        isGamePaused = false;
+        if(OnUnpauseGame != null)
+            OnUnpauseGame();
         ActivateTurnHandler(false);
         if (asReplay){
             turnHandler1.ReplayLastTurn();
@@ -119,7 +166,8 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
         StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
 
         yield return new WaitForSeconds(roundTime-Time.deltaTime);
-        PreOnPauseGame();
+        if(PreOnPauseGame != null)
+            PreOnPauseGame();
         yield return new WaitForSeconds(Time.deltaTime);
         if (asReplay == false){
             currentTurnHandler = -1;
@@ -136,11 +184,11 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     }
 
     void PauseGame(){
-        
-        OnPauseGame();
+        isGamePaused = true;
+        if(OnPauseGame != null)
+            OnPauseGame();
         turnHandler1.PauseGame();
         turnHandler2.PauseGame();
-        //TurnOffColliders();
     }
 
     /// <summary>
@@ -216,17 +264,6 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
         }
     }
 
-//    public void ReplayLastTurn(){  //Incomplete
-//        Debug.Log("replay?");
-//        if (turnHandler1.Turns > 1){
-//            //unpause game calls the necessary replayturn functions if we
-//            //send the argument as true
-//            StartCoroutine(UnpauseGame(true));
-//        }
-//        else {
-//            Debug.Log("there needs to be at least one turn");
-//        }
-//    }
 
 	//Stuff below passes functions through to the turn handlers, because our code structure is shit :D
 	public void DeselectRobot(){

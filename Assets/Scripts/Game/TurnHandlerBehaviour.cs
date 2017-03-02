@@ -44,7 +44,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
     {
         get { return robots; }
     }
-
     void Start()
     {
         //pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
@@ -52,8 +51,8 @@ public class TurnHandlerBehaviour : MonoBehaviour
 		selectedCommand = Command.AvailableCommands.Move;
 		moves = new List<Move>();
 		robots = new List<GameObject>();
-		FindRobots();
-		movingPreviews = new List<GameObject>();
+        FindRobots();
+        movingPreviews = new List<GameObject>();
 		robotMovingTrails = new List<List<MovingTrail>>();
         ballMovingTrails = new List<List<MovingTrail>>();
 		for (int i = 0; i < robots.Count; i++)
@@ -384,8 +383,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 			StopAllCoroutines ();
 			DestroyPreviewTrails();
 			cursorText.text = "";
-//			StopCoroutine(SetAndDisplayTimeInput());
-//			StopCoroutine(PreviewAndGiveRobotCommand());
+
 		}
 	}
 

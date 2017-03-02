@@ -19,13 +19,18 @@ public class Ball : MonoBehaviour {
 
 	void Awake(){
 		startPosition = transform.position;
-        rb = GetComponent<Rigidbody2D>();
+        
         if (!isSubscribing)
         {
             PlayBehaviour.OnPauseGame += new PlayBehaviour.GamePaused(Pause);
             PlayBehaviour.OnUnpauseGame += new PlayBehaviour.GameUnpaused(Unpause);
             isSubscribing = true;
         }
+    }
+    void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+
     }
     public void ResetPosition(){
 		transform.position = startPosition;
@@ -41,10 +46,26 @@ public class Ball : MonoBehaviour {
 
     void Unpause()
     {
-        rb.freezeRotation = false;
-        rb.velocity = prevVelocity;
+        if(rb != null)
+        {
+            rb.freezeRotation = false;
+            rb.velocity = prevVelocity;
+        }
+        else
+        {
+            Debug.Log("rb was null");
+            rb = GetComponent<Rigidbody2D>();
+            Debug.Log("rb is: " + rb);
+            rb.freezeRotation = false;
+            rb.velocity = prevVelocity;
+        }
+    
     }
-
+    void OnDestroy()
+    {
+        PlayBehaviour.OnPauseGame -= Pause;
+        PlayBehaviour.OnUnpauseGame -= Unpause;
+    }
     void OnCollisionEnter2D(Collision2D other)
     {
 
