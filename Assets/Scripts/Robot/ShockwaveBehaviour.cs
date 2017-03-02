@@ -65,8 +65,7 @@ public class ShockwaveBehaviour : MonoBehaviour {
         realRotation = rot_z;
       }
    void OnPause()
-    {
-        
+    {        
         Destroy(gameObject);
     }
     void OnDestroy()

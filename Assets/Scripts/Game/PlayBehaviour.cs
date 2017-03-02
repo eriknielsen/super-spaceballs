@@ -119,7 +119,10 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
         StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
 
         yield return new WaitForSeconds(roundTime-Time.deltaTime);
-        PreOnPauseGame();
+        if(PreOnPauseGame != null)
+        {
+            PreOnPauseGame();
+        }
         yield return new WaitForSeconds(Time.deltaTime);
         if (asReplay == false){
             currentTurnHandler = -1;

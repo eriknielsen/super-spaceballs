@@ -45,7 +45,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         get { return robots; }
     }
 
-    void Start()
+    void Awake()
     {
         //pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
         ball = FindObjectOfType<Ball>().gameObject;
