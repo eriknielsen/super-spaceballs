@@ -27,3 +27,4 @@ detta är remote origin master
 * fetch och sedan merge är ungefär likadant som att skriva git pull
 
 * git checkout <branchname>
+* git rebase om man vill kopiera ändringar från en branch till en annan
