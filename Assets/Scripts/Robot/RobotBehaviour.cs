@@ -33,7 +33,10 @@ public class RobotBehaviour : MonoBehaviour {
     private Animator animatorComponent;
 
     private Vector2 startPosition;
-    private float speed;
+    /// <summary>
+    /// the acceleration used by movecommand to move the robot
+    /// </summary>
+    public float moveCommandAcceleration;
     [HideInInspector]
     public bool isPreview;
 	

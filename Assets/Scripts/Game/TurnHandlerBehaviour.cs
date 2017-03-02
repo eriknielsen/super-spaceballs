@@ -144,7 +144,10 @@ public class TurnHandlerBehaviour : MonoBehaviour
             }
         }
     }
-
+    void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
     void SelectRobot(GameObject robot)
     {
         if (Input.GetMouseButtonDown(0))
@@ -392,11 +395,12 @@ public class TurnHandlerBehaviour : MonoBehaviour
 		selectedRobot = null;
 		timeInput = 0;
 		selectedCommand = Command.AvailableCommands.None;
-		StopAllCoroutines ();
+        
+		
 		DestroyPreviewTrails ();
 		cursorText.text = "";
-        //		StopCoroutine(SetAndDisplayTimeInput());
-        //		StopCoroutine(PreviewAndGiveRobotCommand());
+        StopCoroutine(SetAndDisplayTimeInput());
+        StopCoroutine(PreviewTrajectoryAndGiveRobotCommand());
         if (selectedCommandWheel != null)
         {
             Destroy(selectedCommandWheel);

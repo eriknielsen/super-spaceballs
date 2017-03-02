@@ -6,6 +6,6 @@ public class RobotDeselectionCollider : MonoBehaviour {
 
 	void OnMouseDown(){
 		if (Input.GetMouseButtonDown(0))
-			PlayBehaviour.Instance.DeselectRobot();
+			GameObject.Find("LocalPlay").GetComponent<PlayBehaviour>().DeselectRobot();
 	}
 }

@@ -10,9 +10,9 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     private int currentTurnHandler;
 	private GameTimer gameTimer;
 
-    [SerializeField]
+   
     TurnHandlerBehaviour turnHandler1;
-    [SerializeField]
+    
     TurnHandlerBehaviour turnHandler2;
     bool isGamePaused = true;
 
@@ -42,12 +42,19 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     public delegate void GameUnpaused();
     public static event GameUnpaused OnUnpauseGame;
 
-    public static PlayBehaviour Instance;
+    static PlayBehaviour instance;
+
+    public static PlayBehaviour Instance
+    {
+        get {
+            return instance; 
+        }
+    }
 
     void Awake(){
-		if (Instance == null)
-			Instance = this;
-		else if (Instance != this) { //Makes sure there's only one instance of the script
+		if (instance == null)
+            instance = this;
+		else if (instance != this) { //Makes sure there's only one instance of the script
 			Debug.Log("There's already an instance of PlayBehaviour");
 			Destroy(gameObject); //Goes nuclear
 		}
@@ -57,8 +64,10 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     void Start(){
         leftGoal = GameObject.Find("LeftGoal").GetComponent<Goal>();
         rightGoal = GameObject.Find("RightGoal").GetComponent<Goal>();
+        turnHandler1 = GameObject.Find("TurnHandlerLeft").GetComponent<TurnHandlerBehaviour>();
+        turnHandler2 = GameObject.Find("TurnHandlerRight").GetComponent<TurnHandlerBehaviour>();
         //event callbacks for scoring
-        if(leftGoal != null || rightGoal != null){
+        if (leftGoal != null || rightGoal != null){
             Goal.OnGoalScored += new Goal.GoalScored(OnScore);
             
         }
@@ -92,9 +101,10 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     IEnumerator HandleMatchEnd()
     {
         //check if the score is tied, then add overtime (if not already overtime) and continue
-        if (leftGoal.score == rightGoal.score && gameTimer.InOvertime() == false)
+        if (leftGoal.score == rightGoal.score && gameTimer.InOvertime() == false && overTime > 0)
         {
             Debug.Log("show that overtime is happening!!");
+            
             gameTimer.AddOvertime(overTime);
             
         }
