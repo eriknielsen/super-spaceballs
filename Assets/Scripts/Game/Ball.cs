@@ -12,9 +12,7 @@ public class Ball : MonoBehaviour {
     Rigidbody2D rb;
 
     PreviewMarker pm;
-
-    
-
+    LineRenderer localLineRenderer;
     public Vector2 PreviousVelocity
     {
         get { return prevVelocity; }
@@ -22,7 +20,8 @@ public class Ball : MonoBehaviour {
 
 	void Awake(){
 		startPosition = transform.position;
-        rb = GetComponent<Rigidbody2D>(); 
+        rb = GetComponent<Rigidbody2D>();
+        localLineRenderer = GetComponent<LineRenderer>();
     }
     void Start()
     {
@@ -32,7 +31,7 @@ public class Ball : MonoBehaviour {
 		transform.position = startPosition;
         prevVelocity = Vector2.zero;
         rb.velocity = Vector2.zero;
-        pm.LineRenderer.enabled = false;
+        localLineRenderer.enabled = false;
         
 	}
     public void Pause()
@@ -44,8 +43,8 @@ public class Ball : MonoBehaviour {
         //if ball has a velocity, show it to the player
         if(prevVelocity.x != 0 && prevVelocity.y != 0)
         {
-            pm.LineRenderer.enabled = true;
-            pm.showBallDirection(transform.position, prevVelocity);
+            localLineRenderer.enabled = true;
+            pm.showBallDirection(transform.position, prevVelocity, localLineRenderer);
         }    
     }
     public void Unpause()
@@ -53,7 +52,7 @@ public class Ball : MonoBehaviour {
         rb.freezeRotation = false;
         rb.velocity = prevVelocity;
 
-        pm.LineRenderer.enabled = false;
+        localLineRenderer.enabled = false;
     }
 
     void OnCollisionEnter2D(Collision2D other)
