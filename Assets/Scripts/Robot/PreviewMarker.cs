@@ -9,7 +9,11 @@ using UnityEngine;
 public class PreviewMarker : MonoBehaviour {
     // Reference to the LineRenderer we will use to display the simulated path
      LineRenderer sightLine;
-
+     public LineRenderer LineRenderer
+    {
+        get { return sightLine; }
+        
+    }
     
 
     // Number of segments to calculate - more gives a smoother line

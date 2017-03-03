@@ -13,6 +13,8 @@ public class Ball : MonoBehaviour {
 
     PreviewMarker pm;
 
+    
+
     public Vector2 PreviousVelocity
     {
         get { return prevVelocity; }
@@ -29,7 +31,9 @@ public class Ball : MonoBehaviour {
     public void ResetPosition(){
 		transform.position = startPosition;
         prevVelocity = Vector2.zero;
-        Pause();
+        rb.velocity = Vector2.zero;
+        pm.LineRenderer.enabled = false;
+        
 	}
     public void Pause()
     {
@@ -40,7 +44,7 @@ public class Ball : MonoBehaviour {
         //if ball has a velocity, show it to the player
         if(prevVelocity.x != 0 && prevVelocity.y != 0)
         {
-            pm.GetComponent<LineRenderer>().enabled = true;
+            pm.LineRenderer.enabled = true;
             pm.showBallDirection(transform.position, prevVelocity);
         }    
     }
@@ -48,8 +52,8 @@ public class Ball : MonoBehaviour {
     {
         rb.freezeRotation = false;
         rb.velocity = prevVelocity;
-        
-        pm.GetComponent<LineRenderer>().enabled = false;
+
+        pm.LineRenderer.enabled = false;
     }
 
     void OnCollisionEnter2D(Collision2D other)
