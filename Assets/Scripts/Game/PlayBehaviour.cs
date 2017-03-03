@@ -20,11 +20,11 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
     /// <summary>
     /// length of a planning -> play round
     /// </summary>
-    public float roundTime;
+    public int roundTime;
     /// <summary>
     /// length of a whole match
     /// </summary>
-    public float matchTime;
+    public int matchTime;
 	public float RoundTime { get { return roundTime; } }
 
     //number of rounds played
@@ -43,6 +43,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
         leftGoal = GameObject.Find("LeftGoal").GetComponent<Goal>();
         rightGoal = GameObject.Find("RightGoal").GetComponent<Goal>();
         ball = GameObject.Find("Ball").GetComponent<Ball>();
+
         //event callbacks for scoring
         if(leftGoal != null || rightGoal != null){
             Goal.OnGoalScored += new Goal.GoalScored(OnScore); 
@@ -50,7 +51,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
         else {
             Debug.Log("couldint find goals :(");
         }
-        gameTimer = new GameTimer(120);
+        gameTimer = new GameTimer(matchTime);
         if(gameTimeText == null)
         {
             gameTimeText = GameObject.Find("GameTimeText").GetComponent<Text>();

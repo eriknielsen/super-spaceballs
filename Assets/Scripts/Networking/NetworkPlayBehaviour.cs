@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
+
 public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 
     public GameObject rightTurnhandlerPrefab;
@@ -16,12 +18,25 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     bool remoteIsReady = false;
     bool localIsReady = false;
 
+    public int matchTime;
     public int roundTime;
+
     public bool customIsServer;
     public ServerBehaviour server;
+
+    
+    //number of rounds played
+    int roundCount = 0;
+
+    Goal leftGoal;
+    Goal rightGoal;
+    Ball ball;
+    GameTimer gameTimer;
+    Text gameTimeText;
     // Use this for initialization
     void Start()
     {
+        InititializeGame();
         if (customIsServer)
         {
             playerTurnhandler = Instantiate(rightTurnhandlerPrefab).GetComponent<TurnHandlerBehaviour>();
@@ -34,13 +49,75 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 
         }
 
-
         //activate the playeturnhandler only
         playerTurnhandler.Activate(true);
 
     }
+    void InititializeGame()
+    {
+        leftGoal = GameObject.Find("LeftGoal").GetComponent<Goal>();
+        rightGoal = GameObject.Find("RightGoal").GetComponent<Goal>();
+        //event callbacks for scoring
+        if (leftGoal != null || rightGoal != null)
+        {
+            Goal.OnGoalScored += new Goal.GoalScored(OnScore);
+        }
+        else {
+            Debug.Log("couldint find goals :(");
+        }
+        ball = GameObject.Find("Ball").GetComponent<Ball>();
+        gameTimer = new GameTimer(matchTime);
+        if (gameTimeText == null)
+        {
+            gameTimeText = GameObject.Find("GameTimeText").GetComponent<Text>();
+        }
+        gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
+
+    }
+    /// <summary>
+    /// assuming the same thing happens on both clients nothing needs to be sent
+    /// over the network
+    /// </summary>
+    void OnScore()
+    {
+        //pause game
+        StopAllCoroutines();
+        PauseGame();
+       
+
+    }
 
 
+    // Update is called once per frame
+    void Update()
+    {
+        
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            SendCommands();
+            localIsReady = true;
+        }
+        if (remoteIsReady && localIsReady && customIsServer)
+        {
+            server.SendUnpauseGame();
+            StartCoroutine(UnpauseGame(false));
+        }
+    }
+    IEnumerator UnpauseGame(bool asReplay)
+    {
+        localIsReady = false;
+        remoteIsReady = false;
+        playerTurnhandler.UnpauseGame();
+        otherTurnhandler.UnpauseGame();
+        yield return new WaitForSeconds(roundTime);
+        PauseGame();
+    }
+    void PauseGame()
+    {
+        playerTurnhandler.PauseGame();
+        otherTurnhandler.PauseGame();
+        ball.Pause();
+    }
     /// <summary>
     /// turns serializablecommands to real commmands
     /// </summary>
@@ -68,38 +145,17 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             }
         }
     }
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            SendCommands();
-            localIsReady = true;
-        }
-        if (remoteIsReady && localIsReady && customIsServer)
-        {
-            server.SendUnpauseGame();
-            StartCoroutine(UnpauseGame(false));
-        }
-    }
-    IEnumerator UnpauseGame(bool asReplay)
-    {
-        localIsReady = false;
-        remoteIsReady = false;
-        playerTurnhandler.UnpauseGame();
-        otherTurnhandler.UnpauseGame();
-        yield return new WaitForSeconds(roundTime);
-        PauseGame();
-    }
-    void PauseGame()
-    {
-        playerTurnhandler.PauseGame();
-        otherTurnhandler.PauseGame();
-    }
     //#####
     // país mágico
     //#####
 
+    /*
+        write function that makes sure that things like 
+        gametimer, score 
+        is synced
+        also handle situations where score isn't synced......
+        
+    */
     //send commands to the other client
     void SendCommands()
     {
@@ -179,5 +235,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     {
 
     }
-    public void SelectCommand(Command.AvailableCommands c) { }
+    public void SelectCommand(Command.AvailableCommands c) {
+
+    }
 }

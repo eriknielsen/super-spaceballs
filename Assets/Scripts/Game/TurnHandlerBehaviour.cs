@@ -274,7 +274,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
                     }
                     else
                     {
-                        UnityEngine.Debug.Log("No command selected!");
+                        Debug.Log("No command selected!");
                     }
                     latestRobotTrail = new MovingTrail(previewCommand, timeInput, previewRobot.GetComponent<RobotBehaviour>().prevVelocity);
                 }
@@ -396,7 +396,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 			movingPreviews[selectedRobotIndex].SetActive (true);
 			StartCoroutine(SetAndDisplayTimeInput ());
 			StartCoroutine(PreviewTrajectoryAndGiveRobotCommand ());
-            StartCoroutine(PreviewBallTrajectory());
+            //StartCoroutine(PreviewBallTrajectory());
 		}
 		else
 		{
