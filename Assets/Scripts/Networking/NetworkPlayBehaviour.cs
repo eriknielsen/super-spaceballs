@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.Networking;
-public class NetworkPlayBehaviour : NetworkBehaviour {
+public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 
     public GameObject rightTurnhandlerPrefab;
     public GameObject leftTurnhandlerPrefab;
@@ -37,7 +37,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour {
 
         //activate the playeturnhandler only
         playerTurnhandler.Activate(true);
-       
+
     }
 
 
@@ -163,7 +163,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour {
     Dictionary<int, List<Command>> GetCommandDict(List<GameObject> robotList)
     {
         Dictionary<int, List<Command>> dict = new Dictionary<int, List<Command>>();
-        for(int i = 0; i < robotList.Count; i++)
+        for (int i = 0; i < robotList.Count; i++)
         {
 
             RobotBehaviour rb = robotList[i].GetComponent<RobotBehaviour>();
@@ -174,4 +174,10 @@ public class NetworkPlayBehaviour : NetworkBehaviour {
         }
         return dict;
     }
+
+    public void DeselectRobot()
+    {
+
+    }
+    public void SelectCommand(Command.AvailableCommands c) { }
 }

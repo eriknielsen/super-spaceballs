@@ -2,18 +2,18 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class PlayBehaviour : MonoBehaviour { //class for local play
+public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local play
     
 	private bool isTH1Done = false;
 	private bool isTH2Done = false;
-    private int currentTurnHandler;
+    //private int currentTurnHandler;
 	private GameTimer gameTimer;
 
     [SerializeField]
     TurnHandlerBehaviour turnHandler1;
     [SerializeField]
     TurnHandlerBehaviour turnHandler2;
-	
+    TurnHandlerBehaviour currentActiveTurnhandler;
 
     Text gameTimeText;
     /// <summary>
@@ -26,6 +26,8 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     public float matchTime;
 	public static float RoundTime { get { return Instance.roundTime; } }
 
+    //number of rounds played
+    int roundCount = 0;
 
     Goal leftGoal;
     Goal rightGoal;
@@ -75,7 +77,7 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
         //tell gametimer and the unpause to stop
         StopAllCoroutines();
         //do waht unpause does at the end
-        currentTurnHandler = -1;
+        currentActiveTurnhandler = null;
         NewTurn();
         PauseGame();
         //robots reset their position by themselves
@@ -86,10 +88,10 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
 
         //listen for buttonpresses like wanting to send your move etc
         if (Input.GetKeyDown(KeyCode.Return)){
-            if (currentTurnHandler == 1){
+            if (currentActiveTurnhandler == turnHandler1){
                 isTH1Done = true;
             }
-            else if (currentTurnHandler == 2){
+            else if (currentActiveTurnhandler == turnHandler2){
                 isTH2Done = true;
             }
             // are both players done?
@@ -125,7 +127,7 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
         }
         yield return new WaitForSeconds(Time.deltaTime);
         if (asReplay == false){
-            currentTurnHandler = -1;
+            currentActiveTurnhandler = null;
             NewTurn();
         }
         else {
@@ -143,7 +145,7 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
         OnPauseGame();
         turnHandler1.PauseGame();
         turnHandler2.PauseGame();
-        //TurnOffColliders();
+        
     }
 
     /// <summary>
@@ -158,14 +160,14 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
 
         if (activate){
             //gives control to the current turnhandler
-            if (currentTurnHandler == 1 && !isTH1Done){
+            if (currentActiveTurnhandler == turnHandler1 && !isTH1Done){
                 turnHandler1.Activate(true);
                 Debug.Log("activating1");
                 //make sure to deactivate the other one
                 turnHandler2.Activate(false);
 
             }
-            else if (currentTurnHandler == 2 && !isTH2Done){
+            else if (currentActiveTurnhandler == turnHandler2 && !isTH2Done){
                 turnHandler2.Activate(true);
                 Debug.Log("activating2");
                 //make sure to deactivate the other one
@@ -179,11 +181,12 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     }
 
     void NewTurn(){
-        if (turnHandler1.Turns % 2 == 0){
-            currentTurnHandler = 1;
+        roundCount++;
+        if (roundCount % 2 == 0){
+            currentActiveTurnhandler = turnHandler1;
         }
         else {
-            currentTurnHandler = 2;
+            currentActiveTurnhandler = turnHandler2;
         }
         isTH1Done = false;
         isTH2Done = false;
@@ -194,59 +197,22 @@ public class PlayBehaviour : MonoBehaviour { //class for local play
     void ChooseNextCurrentTurnHandler(){
         //if current is one and finished AND other one isnt done, 
         //give control to the other one
-        if (currentTurnHandler == 1 && isTH1Done && isTH2Done == false){
-            currentTurnHandler = 2;
+        if (currentActiveTurnhandler == turnHandler1 && isTH1Done && isTH2Done == false){
+            currentActiveTurnhandler = turnHandler2;
         }
-        else if (currentTurnHandler == 2 && isTH2Done && isTH1Done == false){
-            currentTurnHandler = 1;
+        else if (currentActiveTurnhandler == turnHandler2 && isTH2Done && isTH1Done == false){
+            currentActiveTurnhandler = turnHandler1;
         }
         else if (isTH1Done && isTH2Done){
-            currentTurnHandler = -1;
-        }
-    }
-    /// Pauses the game and deactivates ui and active turnhandler or activates ui and active turnhandler
-    /// Called by GameBehaviour
-    public void Activate(bool activate){ //REMOVE FUNCTION?
-        if (activate == false){
-            //DestroyTurnHandlers();
-     
-            enabled = false;
-        }
-        else {
-            enabled = true;
-            //CreateTurnHandlers();
-            NewTurn();
+            currentActiveTurnhandler = null;
         }
     }
 
-//    public void ReplayLastTurn(){  //Incomplete
-//        Debug.Log("replay?");
-//        if (turnHandler1.Turns > 1){
-//            //unpause game calls the necessary replayturn functions if we
-//            //send the argument as true
-//            StartCoroutine(UnpauseGame(true));
-//        }
-//        else {
-//            Debug.Log("there needs to be at least one turn");
-//        }
-//    }
-
-	//Stuff below passes functions through to the turn handlers, because our code structure is shit :D
+	//Stuff below passes functions through to the turn handlers
 	public void DeselectRobot(){
-		if (currentTurnHandler == 1) {
-			turnHandler1.THDeselectRobot ();
-		}
-		if (currentTurnHandler == 2) {
-			turnHandler2.THDeselectRobot ();
-		}
-	}
-
+        currentActiveTurnhandler.THDeselectRobot();
+    }
 	public void SelectCommand(Command.AvailableCommands command){
-		if (currentTurnHandler == 1) {
-			turnHandler1.THSelectCommand (command);
-		}
-		if (currentTurnHandler == 2) {
-			turnHandler2.THSelectCommand (command);
-		}
-	}
+        currentActiveTurnhandler.THSelectCommand(command);
+    }
 }
