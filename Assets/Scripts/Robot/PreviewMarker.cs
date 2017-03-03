@@ -118,7 +118,52 @@ public class PreviewMarker : MonoBehaviour {
     }
     */
 
-   
+    /// <summary>
+    /// takes the balls position and velocity and draws a line in the direction
+    /// it is moving
+    /// </summary>
+    /// <param name="initPosition"></param>
+    /// <param name="currentVelocity"></param>
+   public void showBallDirection(Vector2 initPosition, Vector2 currentVelocity)
+   {
+        
+        //lokal variabel
+        List<Vector3> points = new List<Vector3>();
+     
+        
+        //add the ball's current position
+        points.Add(initPosition);
+
+        //add the ball's "next" position
+        Vector3 nextPosition = initPosition;
+
+        //show the ball's position after one second
+
+        currentVelocity = currentVelocity * 0.5f;
+
+        nextPosition.x += currentVelocity.x;
+        nextPosition.y += currentVelocity.y;
+       
+        points.Add(nextPosition);
+       
+       for(int i = 0; i < points.Count;i++)
+        {
+            points[i] = new Vector3(points[i].x, points[i].y, -2);
+        }
+      
+        Color startColor = Color.blue;
+        Color endColor = Color.green;
+
+        sightLine.startColor = startColor;
+        sightLine.endColor = endColor;
+
+        sightLine.numPositions = points.Count;
+        for (int i = 0; i < points.Count; i++)
+        {
+            sightLine.SetPosition(i, points[i]);
+        }
+    }
+
     public void simulatepath2(Vector2 initPosition, Vector2 robotPrevVelocity, float time, Vector2 mousePosition)
     {
 

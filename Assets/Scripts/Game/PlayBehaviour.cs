@@ -145,6 +145,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
         OnPauseGame();
         turnHandler1.PauseGame();
         turnHandler2.PauseGame();
+
         
     }
 

@@ -11,6 +11,7 @@ public class Ball : MonoBehaviour {
     Vector2 prevVelocity;
     Rigidbody2D rb;
     static bool isSubscribing = false;
+    PreviewMarker pm;
 
     public Vector2 PreviousVelocity
     {
@@ -26,6 +27,13 @@ public class Ball : MonoBehaviour {
             PlayBehaviour.OnUnpauseGame += new PlayBehaviour.GameUnpaused(Unpause);
             isSubscribing = true;
         }
+        
+    }
+    void Start()
+    {
+        
+        pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
+
     }
     public void ResetPosition(){
 		transform.position = startPosition;
@@ -37,12 +45,21 @@ public class Ball : MonoBehaviour {
         rb.velocity = Vector2.zero;
         
         rb.freezeRotation = true;
+        //if ball has a velocity, show it to the player
+        if(prevVelocity.x != 0 && prevVelocity.y != 0)
+        {
+            pm.GetComponent<LineRenderer>().enabled = true;
+            pm.showBallDirection(transform.position, prevVelocity);
+        }
+            
     }
 
     void Unpause()
     {
         rb.freezeRotation = false;
         rb.velocity = prevVelocity;
+
+        pm.GetComponent<LineRenderer>().enabled = false;
     }
 
     void OnCollisionEnter2D(Collision2D other)
