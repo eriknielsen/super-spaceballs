@@ -245,9 +245,9 @@ public class TurnHandlerBehaviour : MonoBehaviour
         {
             cursorPosition = Input.mousePosition;
             cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
-            if (timeInput > 0 && timeInput <= selectedRobot.GetComponent<RobotBehaviour>().freeTime && timer.Elapsed.TotalSeconds > timeBetweenPreivews)
+            if (timeInput <= selectedRobot.GetComponent<RobotBehaviour>().freeTime && timer.Elapsed.TotalSeconds > timeBetweenPreivews)
             {
-                if (prevCursorPosition != cursorPosition || prevSelectedCommand != selectedCommand)
+                if (prevCursorPosition != cursorPosition || prevSelectedCommand != selectedCommand || RevertCommand())
                 {
                     timer.Reset();
                     timer.Start();
@@ -277,7 +277,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
                     }
                     latestRobotTrail = new MovingTrail(previewCommand, timeInput, previewRobot.GetComponent<RobotBehaviour>().prevVelocity);
                 }
-                if (Input.GetMouseButton(1) && latestRobotTrail != null)
+                if (Input.GetMouseButtonDown(1) && latestRobotTrail != null)
                 {
                     latestRobotTrail.TrailGameObject.transform.parent = movingPreviews[selectedRobotIndex].transform;
                     robotMovingTrails[selectedRobotIndex].Add(latestRobotTrail);
@@ -290,6 +290,26 @@ public class TurnHandlerBehaviour : MonoBehaviour
             yield return new WaitForSeconds(0.005f);
         }
         DestroyPreviewTrails();
+    }
+
+    bool RevertCommand()
+    {
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            if (robotMovingTrails[selectedRobotIndex].Count > 0)
+            {
+                robotMovingTrails[selectedRobotIndex].Last().DestroyTrail();
+                robotMovingTrails[selectedRobotIndex].RemoveAt(robotMovingTrails[selectedRobotIndex].Count - 1);
+            }
+            RobotBehaviour selectedRobotBehaviour = robots[selectedRobotIndex].GetComponent<RobotBehaviour>();
+            if(selectedRobotBehaviour.Commands.Count > 0)
+            {
+                selectedRobotBehaviour.freeTime += selectedRobotBehaviour.Commands.Last().lifeDuration;
+                selectedRobotBehaviour.Commands.RemoveAt(selectedRobotBehaviour.Commands.Count - 1);
+            }
+            return true;
+        }
+        return false;
     }
 
     IEnumerator PreviewBallTrajectory()
