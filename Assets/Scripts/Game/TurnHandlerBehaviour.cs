@@ -22,7 +22,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
     private int selectedRobotIndex;
     private Command.AvailableCommands selectedCommand;
 
-
     private float timeInput;
     private List<GameObject> movingPreviews;
     private string movingPreviewsName = "Moving Previews";
@@ -376,7 +375,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 			movingPreviews[selectedRobotIndex].SetActive (true);
 			StartCoroutine(SetAndDisplayTimeInput ());
 			StartCoroutine(PreviewTrajectoryAndGiveRobotCommand ());
-            //StartCoroutine(PreviewBallTrajectory());
+            StartCoroutine(PreviewBallTrajectory());
 		}
 		else
 		{

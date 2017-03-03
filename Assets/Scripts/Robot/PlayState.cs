@@ -7,7 +7,6 @@ public class PlayState : IRobotState {
     private GameObject robot;
     private RobotBehaviour robotScript;
 
-
     Vector2 zeroVector;
     Animator anim;
     public PlayState(GameObject r){
