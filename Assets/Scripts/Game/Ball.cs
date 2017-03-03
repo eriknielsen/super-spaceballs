@@ -10,7 +10,7 @@ public class Ball : MonoBehaviour {
 
     Vector2 prevVelocity;
     Rigidbody2D rb;
-    static bool isSubscribing = false;
+
     PreviewMarker pm;
 
     public Vector2 PreviousVelocity
@@ -20,45 +20,35 @@ public class Ball : MonoBehaviour {
 
 	void Awake(){
 		startPosition = transform.position;
-        rb = GetComponent<Rigidbody2D>();
-        if (!isSubscribing)
-        {
-            PlayBehaviour.OnPauseGame += new PlayBehaviour.GamePaused(Pause);
-            PlayBehaviour.OnUnpauseGame += new PlayBehaviour.GameUnpaused(Unpause);
-            isSubscribing = true;
-        }
-        
+        rb = GetComponent<Rigidbody2D>(); 
     }
     void Start()
     {
-        
         pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
-
     }
     public void ResetPosition(){
 		transform.position = startPosition;
+        prevVelocity = Vector2.zero;
         Pause();
 	}
-    void Pause()
+    public void Pause()
     {
         prevVelocity = rb.velocity;
         rb.velocity = Vector2.zero;
-        
+       
         rb.freezeRotation = true;
         //if ball has a velocity, show it to the player
         if(prevVelocity.x != 0 && prevVelocity.y != 0)
         {
             pm.GetComponent<LineRenderer>().enabled = true;
             pm.showBallDirection(transform.position, prevVelocity);
-        }
-            
+        }    
     }
-
-    void Unpause()
+    public void Unpause()
     {
         rb.freezeRotation = false;
         rb.velocity = prevVelocity;
-
+        
         pm.GetComponent<LineRenderer>().enabled = false;
     }
 

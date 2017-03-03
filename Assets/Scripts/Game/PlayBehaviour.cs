@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local play
     
@@ -24,40 +25,27 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
     /// length of a whole match
     /// </summary>
     public float matchTime;
-	public static float RoundTime { get { return Instance.roundTime; } }
+	public float RoundTime { get { return roundTime; } }
 
     //number of rounds played
     int roundCount = 0;
 
     Goal leftGoal;
     Goal rightGoal;
+    Ball ball;
 
-    public delegate void GamePaused();
-    public static event GamePaused OnPauseGame;
-    public delegate void PreGamePaused();
-    public static event PreGamePaused PreOnPauseGame;
-    public delegate void GameUnpaused();
-    public static event GameUnpaused OnUnpauseGame;
-
-    public static PlayBehaviour Instance;
-
+ 
     void Awake(){
-		if (Instance == null)
-			Instance = this;
-		else if (Instance != this) { //Makes sure there's only one instance of the script
-			Debug.Log("There's already an instance of PlayBehaviour");
-			Destroy(gameObject); //Goes nuclear
-		}
 		Physics.queriesHitTriggers = true;
     }
 
     void Start(){
         leftGoal = GameObject.Find("LeftGoal").GetComponent<Goal>();
         rightGoal = GameObject.Find("RightGoal").GetComponent<Goal>();
+        ball = GameObject.Find("Ball").GetComponent<Ball>();
         //event callbacks for scoring
         if(leftGoal != null || rightGoal != null){
-            Goal.OnGoalScored += new Goal.GoalScored(OnScore);
-            
+            Goal.OnGoalScored += new Goal.GoalScored(OnScore); 
         }
         else {
             Debug.Log("couldint find goals :(");
@@ -98,6 +86,8 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
             if (isTH1Done && isTH2Done){
                 //then play the game and pause again in 4 seconds
                 StartCoroutine(UnpauseGame(false));
+                isTH1Done = false;
+                isTH2Done = false;
             }
             //decides who plays next if both players arent done
             else {
@@ -109,23 +99,19 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
     //if we replayed the last turn, we dont want to do the newturn stuff
     IEnumerator UnpauseGame(bool asReplay){
 
-        OnUnpauseGame();
+        ball.Unpause();
         ActivateTurnHandler(false);
         if (asReplay){
             turnHandler1.ReplayLastTurn();
             turnHandler2.ReplayLastTurn();
         }
-
+     
         turnHandler1.UnpauseGame();
         turnHandler2.UnpauseGame();
         StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
 
-        yield return new WaitForSeconds(roundTime-Time.deltaTime);
-        if(PreOnPauseGame != null)
-        {
-            PreOnPauseGame();
-        }
-        yield return new WaitForSeconds(Time.deltaTime);
+        yield return new WaitForSeconds(roundTime);
+
         if (asReplay == false){
             currentActiveTurnhandler = null;
             NewTurn();
@@ -141,12 +127,10 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
     }
 
     void PauseGame(){
-        
-        OnPauseGame();
-        turnHandler1.PauseGame();
-        turnHandler2.PauseGame();
 
-        
+        ball.Pause();
+        turnHandler1.PauseGame();
+        turnHandler2.PauseGame();  
     }
 
     /// <summary>
@@ -163,14 +147,14 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
             //gives control to the current turnhandler
             if (currentActiveTurnhandler == turnHandler1 && !isTH1Done){
                 turnHandler1.Activate(true);
-                Debug.Log("activating1");
+                
                 //make sure to deactivate the other one
                 turnHandler2.Activate(false);
 
             }
             else if (currentActiveTurnhandler == turnHandler2 && !isTH2Done){
                 turnHandler2.Activate(true);
-                Debug.Log("activating2");
+             
                 //make sure to deactivate the other one
                 turnHandler1.Activate(false);
             }
@@ -189,6 +173,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
         else {
             currentActiveTurnhandler = turnHandler2;
         }
+      
         isTH1Done = false;
         isTH2Done = false;
 

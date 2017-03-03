@@ -201,7 +201,8 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
             if (selectedCommand == Command.AvailableCommands.Push)
             {
-                maxInputTime = selectedRB.freeTime - shockwaveLife;
+                //add a bit of time to make sure the shockwave dies before pausing
+                maxInputTime = selectedRB.freeTime - (shockwaveLife+0.08f);
                 if(maxInputTime < 0)
                 {
                     maxInputTime = 0;

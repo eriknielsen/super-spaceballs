@@ -29,7 +29,6 @@ public class PreviewMarker : MonoBehaviour {
     {
         sightLine = gameObject.GetComponent<LineRenderer>();
     }
-
     void FixedUpdate()
     {
         //simulatePath();
