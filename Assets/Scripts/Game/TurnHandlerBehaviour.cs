@@ -364,7 +364,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
                     float previewDuration = pushCommand.LifeDuration;
                     givenCommand = new PushCommand(selectedRobot, command as PushCommand, previewDuration);
                 }
-                UnityEngine.Debug.Log("Given command: " + givenCommand);
                 selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(givenCommand);
                 selectedRobot.GetComponent<RobotBehaviour>().freeTime -= command.LifeDuration;
             }
@@ -395,7 +394,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 			movingPreviews[selectedRobotIndex].SetActive (true);
 			StartCoroutine(SetAndDisplayTimeInput ());
 			StartCoroutine(PreviewTrajectoryAndGiveRobotCommand ());
-            StartCoroutine(PreviewBallTrajectory());
+            //StartCoroutine(PreviewBallTrajectory());
 		}
 		else
 		{
