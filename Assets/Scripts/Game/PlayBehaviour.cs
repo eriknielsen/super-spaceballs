@@ -86,26 +86,24 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
             // are both players done?
             if (isTH1Done && isTH2Done){
                 //then play the game and pause again in 4 seconds
-                StartCoroutine(UnpauseGame(false));
+                Debug.Log("ehj");
+                StartCoroutine(UnpauseGame());
                 isTH1Done = false;
                 isTH2Done = false;
             }
             //decides who plays next if both players arent done
-            else {
+            else  {
                 ChooseNextCurrentTurnHandler();
                 ActivateTurnHandler(true);
             }
         }
     }
     //if we replayed the last turn, we dont want to do the newturn stuff
-    IEnumerator UnpauseGame(bool asReplay){
+    IEnumerator UnpauseGame(){
 
         ball.Unpause();
         ActivateTurnHandler(false);
-        if (asReplay){
-            turnHandler1.ReplayLastTurn();
-            turnHandler2.ReplayLastTurn();
-        }
+
      
         turnHandler1.UnpauseGame();
         turnHandler2.UnpauseGame();
@@ -113,17 +111,11 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 
         yield return new WaitForSeconds(roundTime);
 
-        if (asReplay == false){
-            currentActiveTurnhandler = null;
-            NewTurn();
-        }
-        else {
-            //if we just replayed the turn, we have to put
-            // the commands they had before the replay back
-            turnHandler1.RevertToOldCommands();
-            turnHandler2.RevertToOldCommands();
-            ActivateTurnHandler(true);
-        }
+       
+        currentActiveTurnhandler = null;
+        NewTurn();
+     
+
         PauseGame();
     }
 

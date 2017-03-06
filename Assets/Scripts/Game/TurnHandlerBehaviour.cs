@@ -17,6 +17,9 @@ public class TurnHandlerBehaviour : MonoBehaviour
     [HideInInspector]
     public float roundTime;
 
+    //the time left for this player to plan their move
+    public float currentPlanTimeLeft;
+
     private Text cursorText;
 	private GameObject selectedRobot;
     private int selectedRobotIndex;
@@ -429,10 +432,10 @@ public class TurnHandlerBehaviour : MonoBehaviour
         }
 	}
 
-    public void Activate(bool active)
+    public void Activate(bool activate)
     {
       
-        if (active == true)
+        if (activate == true)
         {
             //visually indicate that this turnhandlers robots are now active
             //start taking events
