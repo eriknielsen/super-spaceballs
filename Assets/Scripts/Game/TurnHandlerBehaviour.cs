@@ -13,12 +13,14 @@ public class TurnHandlerBehaviour : MonoBehaviour
     GameObject shockWavePrefab;
 	[SerializeField]
 	GameObject commandWheelPrefab;  //Command selection buttons
-	GameObject selectedCommandWheel;
+    [SerializeField]
+    float planTime;
+
+    GameObject selectedCommandWheel;
     [HideInInspector]
     public float roundTime;
 
     //the time left for this player to plan their move
-    public float currentPlanTimeLeft;
 
     private Text cursorText;
 	private GameObject selectedRobot;
@@ -37,6 +39,9 @@ public class TurnHandlerBehaviour : MonoBehaviour
     List<GameObject> robots;
     int turns;
 
+    public float CurrentPlanTimeLeft { get; set; }
+    public float PlanTime { get { return planTime; } }
+
     public int Turns
     {
         get { return turns; }
@@ -49,6 +54,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
     void Awake()
     {
+        CurrentPlanTimeLeft = planTime;
         //pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
         ball = FindObjectOfType<Ball>().gameObject;
 		selectedCommand = Command.AvailableCommands.Move;
