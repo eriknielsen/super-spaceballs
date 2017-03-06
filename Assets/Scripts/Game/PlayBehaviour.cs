@@ -30,7 +30,6 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
     /// <summary>
     /// length of a player's planing phase
     /// </summary>
-    public int planTime;
 	public float RoundTime { get { return roundTime; } }
 
     //number of rounds played
@@ -63,14 +62,24 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
         {
             gameTimeText = GameObject.Find("GameTimeText").GetComponent<Text>();
         }
-        gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
-
         if(planTimeText == null)
         {
             planTimeText = GameObject.Find("PlanTimeText").GetComponent<Text>();
         }
-        planTimeText.text = "Plan time: " + planTime;
+        UpdateTimerTexts();
         NewTurn();
+    }
+
+    void UpdateTimerTexts()
+    {
+        if(gameTimeText != null)
+        {
+            gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
+        }
+        if(planTimeText != null && currentActiveTurnhandler != null && paused == true)
+        {
+            planTimeText.text = "Plan time: " + (int)currentActiveTurnhandler.CurrentPlanTimeLeft;
+        }
     }
 
     void OnScore()
@@ -89,22 +98,29 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
     /// <returns></returns>
     IEnumerator CountDownPlanningTime()
     {
-        while(currentActiveTurnhandler.currentPlanTimeLeft > 0)
+        while(currentActiveTurnhandler.CurrentPlanTimeLeft > 0)
         { 
             yield return new WaitForSecondsRealtime(1f);
-            currentActiveTurnhandler.currentPlanTimeLeft--;
+            currentActiveTurnhandler.CurrentPlanTimeLeft--;
         } 
     }
-    void Update(){
-        gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
 
+    void StopSomeCoroutine(Coroutine coroutine)
+    {
+        if(coroutine != null)
+        {
+            StopCoroutine(coroutine);
+        }
+    }
+
+    void Update(){
+
+        UpdateTimerTexts();
         //restrict the amount of time a player has to plan
         if (paused == true && currentActiveTurnhandler != null)
         {
-            planTimeText.text = "Plan time: " + 
-                (int)currentActiveTurnhandler.currentPlanTimeLeft;
             //if the player still hasn't run out of time, decrease it!
-            if(currentActiveTurnhandler.currentPlanTimeLeft <= 0) { 
+            if(currentActiveTurnhandler.CurrentPlanTimeLeft <= 0) { 
                 //if the player ran out of time, set them to ready
                 Debug.Log("current player ran out of plan time, setting it to ready");
                 
@@ -116,9 +132,10 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
                 {
                     isTH2Done = true;
                 }
+                StopSomeCoroutine(countDownCoroutineInstance);
                 ChooseNextCurrentTurnHandler();
                 ActivateTurnHandler(true);
-                StopCoroutine(countDownCoroutineInstance);
+               
             }
         }
         //listen for buttonpresses like wanting to send your move
@@ -131,7 +148,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
                 Debug.Log("2 is ready");
                 isTH2Done = true;
             }
-            StopCoroutine(countDownCoroutineInstance);
+            StopSomeCoroutine(countDownCoroutineInstance);
             // if someone still isnt done then give control to that player
             if (!isTH1Done || !isTH2Done){
                 ChooseNextCurrentTurnHandler();
@@ -141,7 +158,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
         // are both players done?
         if (isTH1Done && isTH2Done)
         {
-            StopCoroutine(countDownCoroutineInstance);
+            StopSomeCoroutine(countDownCoroutineInstance);
             //then play the game and pause again in roundTime seconds
           
             StartCoroutine(UnpauseGame());
@@ -152,7 +169,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
     }
     //if we replayed the last turn, we dont want to do the newturn stuff
     IEnumerator UnpauseGame(){
-
+        Debug.Log("GAME IS UNPAUSED!");
         paused = false;
         ball.Unpause();
         ActivateTurnHandler(false);
@@ -226,10 +243,10 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
         else {
             currentActiveTurnhandler = turnHandler2;
         }
-        turnHandler1.currentPlanTimeLeft = planTime;
+        turnHandler1.CurrentPlanTimeLeft = turnHandler1.PlanTime;
         isTH1Done = false;
        
-        turnHandler2.currentPlanTimeLeft = planTime;
+        turnHandler2.CurrentPlanTimeLeft = turnHandler2.PlanTime;
         isTH2Done = false;
 
 

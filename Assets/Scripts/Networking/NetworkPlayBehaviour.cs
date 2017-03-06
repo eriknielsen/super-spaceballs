@@ -246,7 +246,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     public void OnRecieveUnpause(NetworkMessage netMsg)
     {
         Debug.Log("unpause msg rec!");
-        StartCoroutine(UnpauseGame(false));
+        StartCoroutine(UnpauseGame());
     }
     /// <summary>
     /// Recieve and put the commands into the otherTurnhandler's robots
