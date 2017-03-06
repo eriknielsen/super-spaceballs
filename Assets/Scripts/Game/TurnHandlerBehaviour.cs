@@ -18,6 +18,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
     public float roundTime;
 
     //the time left for this player to plan their move
+    [HideInInspector]
     public float currentPlanTimeLeft;
 
     private Text cursorText;
@@ -50,7 +51,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
     void Awake()
     {
         //pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
-        ball = FindObjectOfType<Ball>().gameObject;
+        //ball = FindObjectOfType<Ball>().gameObject;
 		selectedCommand = Command.AvailableCommands.Move;
 		moves = new List<Move>();
 		robots = new List<GameObject>();

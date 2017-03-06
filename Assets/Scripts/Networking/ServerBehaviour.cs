@@ -22,7 +22,13 @@ public class ServerBehaviour : NetworkManager {
         public static short msgType = MsgType.Highest + 2;
     }
 
-    public GameObject networkedPlayPrefab;
+
+
+
+    //Gameobjects that need to start unenabled
+
+
+    public NetworkPlayBehaviour networkedPlayInstance;
 
     public Text statusText;
     MatchInfo currentMatchInfo;
@@ -124,11 +130,11 @@ public class ServerBehaviour : NetworkManager {
         //if we are a client connecting to a host then create the networkplayobject
         if (isServer == false)
         {
-            NetworkPlayBehaviour npb = Instantiate(networkedPlayPrefab).GetComponent<NetworkPlayBehaviour>();
-            npb.customIsServer = isServer;
-            npb.server = this;
-            conn.RegisterHandler(CommandMsg.msgType, npb.OnRecieveCommands);
-            conn.RegisterHandler(UnpauseMsg.msgType, npb.OnRecieveUnpause);
+            networkedPlayInstance.gameObject.SetActive(true);
+            networkedPlayInstance.customIsServer = isServer;
+            networkedPlayInstance.server = this;
+            conn.RegisterHandler(CommandMsg.msgType, networkedPlayInstance.OnRecieveCommands);
+            conn.RegisterHandler(UnpauseMsg.msgType, networkedPlayInstance.OnRecieveUnpause);
         }
     }
     public override void OnServerConnect(NetworkConnection conn)
@@ -138,11 +144,11 @@ public class ServerBehaviour : NetworkManager {
             if (conn != localClient.connection)
             {
                 Debug.Log("another player joined! now create local networkplaybehaviour");
-                NetworkPlayBehaviour npb = Instantiate(networkedPlayPrefab).GetComponent<NetworkPlayBehaviour>();
-                npb.customIsServer = isServer;
-                npb.server = this;
+                networkedPlayInstance.gameObject.SetActive(true);
+                networkedPlayInstance.customIsServer = isServer;
+                networkedPlayInstance.server = this;
 
-                conn.RegisterHandler(MsgType.Highest + 1, npb.OnRecieveCommands);
+                conn.RegisterHandler(MsgType.Highest + 1, networkedPlayInstance.OnRecieveCommands);
                 remoteConnection = conn;
             }
             else

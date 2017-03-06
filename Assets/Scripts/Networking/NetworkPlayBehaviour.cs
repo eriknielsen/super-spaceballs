@@ -8,8 +8,13 @@ using UnityEngine.UI;
 
 public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 
-    public GameObject rightTurnhandlerPrefab;
-    public GameObject leftTurnhandlerPrefab;
+    //stuff that needs to be enabled
+    public TurnHandlerBehaviour rightTurnhandlerInScene;
+    public TurnHandlerBehaviour leftTurnhandlerInScene;
+    public GameObject playingField;
+    public GameObject robotDeselectionCollider;
+    public GameObject ingameCanvas;
+    public GameObject matchmakingCanvas;
     //only ever activate the player turnhandler
     TurnHandlerBehaviour playerTurnhandler;
     //recive commands from the server/client and give to this turnhandler
@@ -20,38 +25,54 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 
     public int matchTime;
     public int roundTime;
+    public int planTime;
 
     public bool customIsServer;
+    [HideInInspector]
     public ServerBehaviour server;
 
     
     //number of rounds played
     int roundCount = 0;
-
+    Coroutine gameTimerCoroutine;
+    Coroutine planCountDownCoroutine;
     Goal leftGoal;
     Goal rightGoal;
+    [SerializeField]
     Ball ball;
     GameTimer gameTimer;
     Text gameTimeText;
-    // Use this for initialization
+    Text planTimeText;
+    bool paused = true;
+    
     void Start()
     {
-        InititializeGame();
+        
         if (customIsServer)
         {
-            playerTurnhandler = Instantiate(rightTurnhandlerPrefab).GetComponent<TurnHandlerBehaviour>();
-            otherTurnhandler = Instantiate(leftTurnhandlerPrefab).GetComponent<TurnHandlerBehaviour>();
+            playerTurnhandler = rightTurnhandlerInScene;
+            otherTurnhandler = leftTurnhandlerInScene;
+            
         }
         else
         {
-            playerTurnhandler = Instantiate(leftTurnhandlerPrefab).GetComponent<TurnHandlerBehaviour>();
-            otherTurnhandler = Instantiate(rightTurnhandlerPrefab).GetComponent<TurnHandlerBehaviour>();
-
+            playerTurnhandler = leftTurnhandlerInScene;
+            otherTurnhandler = rightTurnhandlerInScene;
         }
-
+        matchmakingCanvas.SetActive(false);
+        ingameCanvas.SetActive(true);
+        playerTurnhandler.gameObject.SetActive(true);
+        playerTurnhandler.currentPlanTimeLeft = planTime;
+        otherTurnhandler.gameObject.SetActive(true);
+        playingField.SetActive(true);
+        robotDeselectionCollider.SetActive(true);
+        
+        ball.gameObject.SetActive(true);
+        InititializeGame();
         //activate the playeturnhandler only
         playerTurnhandler.Activate(true);
-
+        
+        planCountDownCoroutine = StartCoroutine(CountDownPlanningTime());
     }
     void InititializeGame()
     {
@@ -65,13 +86,18 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         else {
             Debug.Log("couldint find goals :(");
         }
-        ball = GameObject.Find("Ball").GetComponent<Ball>();
+     
         gameTimer = new GameTimer(matchTime);
         if (gameTimeText == null)
         {
             gameTimeText = GameObject.Find("GameTimeText").GetComponent<Text>();
         }
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
+        if(planTimeText == null){
+            planTimeText = GameObject.Find("PlanTimeText").GetComponent<Text>();
+        }
+        planTimeText.text = "Plan time: " + (int)playerTurnhandler.currentPlanTimeLeft;
+
 
     }
     /// <summary>
@@ -81,41 +107,74 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     void OnScore()
     {
         //pause game
-        StopAllCoroutines();
-        PauseGame();
-       
+        if(gameTimerCoroutine != null)
+            StopCoroutine(gameTimerCoroutine);
 
+        PauseGame();
     }
 
-
+    IEnumerator CountDownPlanningTime(){
+        while(playerTurnhandler.currentPlanTimeLeft > 0 ){
+            yield return new WaitForSecondsRealtime(1f);
+            playerTurnhandler.currentPlanTimeLeft--;
+        }
+    }
     // Update is called once per frame
     void Update()
     {
-        
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            SendCommands();
-            localIsReady = true;
-        }
-        if (remoteIsReady && localIsReady && customIsServer)
-        {
-            server.SendUnpauseGame();
-            StartCoroutine(UnpauseGame(false));
+          gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
+          planTimeText.text = "Plan time: " + (int)playerTurnhandler.currentPlanTimeLeft;
+        if(paused){
+            //if time is out then
+            if(playerTurnhandler.currentPlanTimeLeft <= 0){
+                    SendCommands();
+                    localIsReady = true;
+                    //if we are the server, tell the other client to start as well since the time has run out
+                    if(customIsServer){
+                        server.SendUnpauseGame();
+                        StartCoroutine(UnpauseGame());
+                        paused = true;
+                    }
+            }
+            if (Input.GetKeyDown(KeyCode.Return) && paused == true && localIsReady == false)
+            {
+                SendCommands();
+                localIsReady = true;
+            }
+            //if we are server, tell the other client to unpause 
+            // as well as unpause the server
+            if (remoteIsReady && localIsReady && customIsServer)
+            {
+                server.SendUnpauseGame();
+                StartCoroutine(UnpauseGame());
+            }
         }
     }
-    IEnumerator UnpauseGame(bool asReplay)
+    IEnumerator UnpauseGame()
     {
-        localIsReady = false;
-        remoteIsReady = false;
+        Debug.Log("unpausing!");
+        StopCoroutine(CountDownPlanningTime());
+        paused = false;
+      
         playerTurnhandler.UnpauseGame();
         otherTurnhandler.UnpauseGame();
+        playerTurnhandler.currentPlanTimeLeft = planTime;
+        playerTurnhandler.Activate(false);
+        gameTimerCoroutine = StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
+       
         yield return new WaitForSeconds(roundTime);
+        localIsReady = false;
+        remoteIsReady = false;
         PauseGame();
     }
     void PauseGame()
     {
+        playerTurnhandler.Activate(true);
+        planCountDownCoroutine = StartCoroutine(CountDownPlanningTime());
+        paused = true;
         playerTurnhandler.PauseGame();
         otherTurnhandler.PauseGame();
+
         ball.Pause();
     }
     /// <summary>
@@ -149,13 +208,6 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     // país mágico
     //#####
 
-    /*
-        write function that makes sure that things like 
-        gametimer, score 
-        is synced
-        also handle situations where score isn't synced......
-        
-    */
     //send commands to the other client
     void SendCommands()
     {
@@ -233,9 +285,9 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 
     public void DeselectRobot()
     {
-
+        playerTurnhandler.THDeselectRobot();
     }
     public void SelectCommand(Command.AvailableCommands c) {
-
+        playerTurnhandler.THSelectCommand(c);
     }
 }
