@@ -135,7 +135,6 @@ class TrailUpdater : MonoBehaviour
                     }
                     if(commandSymbols != null)
                     {
-                        UnityEngine.Debug.Log("Command type: " + commandType);
                         GameObject commandSymbol = new GameObject();
                         commandSymbol.AddComponent<SpriteRenderer>();
                         commandSymbol.GetComponent<SpriteRenderer>().sprite = commandSymbols.GetSymbolSprite(commandType);

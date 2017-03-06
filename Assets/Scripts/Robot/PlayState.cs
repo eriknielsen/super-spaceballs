@@ -24,6 +24,7 @@ public class PlayState : IRobotState {
         robot.GetComponent<Rigidbody2D>().velocity = zeroVector;
 
         anim.enabled = false;
+        robotScript.GetComponent<AudioSource>().Stop();
         //set the speed of the current anim clip to 0
         //and then set it to 1 in pauseState's enterplaystate()
     }
@@ -48,7 +49,7 @@ public class PlayState : IRobotState {
                 //anim.Play("MoveEntry");
                 robotScript.accelerated = true;
                 anim.SetBool("Accelerating", true);
-                AudioManager.instance.PlayAudioWithRandomPitch(robotScript.igniteThrustersSound, false, robot);
+                AudioManager.instance.PlayAudioWithRandomPitch(robotScript.igniteThrustersSound, true, robot);
                 //loop thruster sound after ignite is finished
                 robotScript.thrusterComponent.Play();
             }
