@@ -29,7 +29,6 @@ public class PreviewMarker : MonoBehaviour {
     {
         sightLine = gameObject.GetComponent<LineRenderer>();
     }
-
     void FixedUpdate()
     {
         //simulatePath();
@@ -120,17 +119,17 @@ public class PreviewMarker : MonoBehaviour {
 
     /// <summary>
     /// takes the balls position and velocity and draws a line in the direction
-    /// it is moving
+    /// it is moving.
+    /// The ball script enables and unenables this line renderer!!!!
     /// </summary>
     /// <param name="initPosition"></param>
     /// <param name="currentVelocity"></param>
-   public void showBallDirection(Vector2 initPosition, Vector2 currentVelocity)
+   public void showBallDirection(Vector2 initPosition, Vector2 currentVelocity, LineRenderer lr)
    {
         
         //lokal variabel
         List<Vector3> points = new List<Vector3>();
      
-        
         //add the ball's current position
         points.Add(initPosition);
 
@@ -151,16 +150,12 @@ public class PreviewMarker : MonoBehaviour {
             points[i] = new Vector3(points[i].x, points[i].y, -2);
         }
       
-        Color startColor = Color.blue;
-        Color endColor = Color.green;
+    
 
-        sightLine.startColor = startColor;
-        sightLine.endColor = endColor;
-
-        sightLine.numPositions = points.Count;
+        lr.numPositions = points.Count;
         for (int i = 0; i < points.Count; i++)
         {
-            sightLine.SetPosition(i, points[i]);
+            lr.SetPosition(i, points[i]);
         }
     }
 

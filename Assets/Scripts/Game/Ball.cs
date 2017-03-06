@@ -10,9 +10,9 @@ public class Ball : MonoBehaviour {
 
     Vector2 prevVelocity;
     Rigidbody2D rb;
-    static bool isSubscribing = false;
-    PreviewMarker pm;
 
+    PreviewMarker pm;
+    LineRenderer localLineRenderer;
     public Vector2 PreviousVelocity
     {
         get { return prevVelocity; }
@@ -21,45 +21,38 @@ public class Ball : MonoBehaviour {
 	void Awake(){
 		startPosition = transform.position;
         rb = GetComponent<Rigidbody2D>();
-        if (!isSubscribing)
-        {
-            PlayBehaviour.OnPauseGame += new PlayBehaviour.GamePaused(Pause);
-            PlayBehaviour.OnUnpauseGame += new PlayBehaviour.GameUnpaused(Unpause);
-            isSubscribing = true;
-        }
-        
+        localLineRenderer = GetComponent<LineRenderer>();
     }
     void Start()
     {
-        
         pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
-
     }
     public void ResetPosition(){
 		transform.position = startPosition;
-        Pause();
+        prevVelocity = Vector2.zero;
+        rb.velocity = Vector2.zero;
+        localLineRenderer.enabled = false;
+        
 	}
-    void Pause()
+    public void Pause()
     {
         prevVelocity = rb.velocity;
         rb.velocity = Vector2.zero;
-        
+       
         rb.freezeRotation = true;
         //if ball has a velocity, show it to the player
         if(prevVelocity.x != 0 && prevVelocity.y != 0)
         {
-            pm.GetComponent<LineRenderer>().enabled = true;
-            pm.showBallDirection(transform.position, prevVelocity);
-        }
-            
+            localLineRenderer.enabled = true;
+            pm.showBallDirection(transform.position, prevVelocity, localLineRenderer);
+        }    
     }
-
-    void Unpause()
+    public void Unpause()
     {
         rb.freezeRotation = false;
         rb.velocity = prevVelocity;
 
-        pm.GetComponent<LineRenderer>().enabled = false;
+        localLineRenderer.enabled = false;
     }
 
     void OnCollisionEnter2D(Collision2D other)

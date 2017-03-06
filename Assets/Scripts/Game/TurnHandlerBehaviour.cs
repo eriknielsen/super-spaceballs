@@ -17,6 +17,9 @@ public class TurnHandlerBehaviour : MonoBehaviour
     [HideInInspector]
     public float roundTime;
 
+    //the time left for this player to plan their move
+    public float currentPlanTimeLeft;
+
     private Text cursorText;
 	private GameObject selectedRobot;
     private int selectedRobotIndex;
@@ -201,7 +204,8 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
             if (selectedCommand == Command.AvailableCommands.Push)
             {
-                maxInputTime = selectedRB.freeTime - shockwaveLife;
+                //add a bit of time to make sure the shockwave dies before pausing
+                maxInputTime = selectedRB.freeTime - (shockwaveLife+0.08f);
                 if(maxInputTime < 0)
                 {
                     maxInputTime = 0;
@@ -273,7 +277,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
                     }
                     else
                     {
-                        UnityEngine.Debug.Log("No command selected!");
+                        Debug.Log("No command selected!");
                     }
                     latestRobotTrail = new MovingTrail(previewCommand, timeInput, previewRobot.GetComponent<RobotBehaviour>().prevVelocity);
                 }
@@ -427,10 +431,10 @@ public class TurnHandlerBehaviour : MonoBehaviour
         }
 	}
 
-    public void Activate(bool active)
+    public void Activate(bool activate)
     {
       
-        if (active == true)
+        if (activate == true)
         {
             //visually indicate that this turnhandlers robots are now active
             //start taking events

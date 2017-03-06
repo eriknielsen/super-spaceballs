@@ -51,7 +51,7 @@ public class ShockwaveBehaviour : MonoBehaviour {
         }
         rb2dCompontent = GetComponent<Rigidbody2D>();
 
-        PlayBehaviour.PreOnPauseGame += OnPause;
+       
     }
     void Start()
     {
@@ -63,15 +63,14 @@ public class ShockwaveBehaviour : MonoBehaviour {
         float rot_z = (Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg);
         rb2dCompontent.rotation = rot_z;
         realRotation = rot_z;
+        //make sure the shockwave dissapears
+        
       }
    void OnPause()
     {        
         Destroy(gameObject);
     }
-    void OnDestroy()
-    {
-        PlayBehaviour.PreOnPauseGame -= OnPause;
-    }
+
     void Update() {
        
         if (shouldUpdate) {
@@ -88,7 +87,7 @@ public class ShockwaveBehaviour : MonoBehaviour {
         }
     }
 
-    void OnTriggerStay2D(Collider2D collidingObject) {
+    void OnTriggerEnter2D(Collider2D collidingObject) {
         GameObject root = collidingObject.transform.root.gameObject;       
         if (root != null && root.GetComponent<Rigidbody2D>() && root != shockwaveUser)
         {
