@@ -6,8 +6,6 @@ using UnityEngine.UI;
 
 public class TurnHandlerBehaviour : MonoBehaviour
 {
-    [SerializeField]
-    RobotBehaviour previewRobotPrefab;
 	public List<Move> moves;
     [SerializeField]
     GameObject shockWavePrefab;
