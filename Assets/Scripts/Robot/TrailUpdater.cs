@@ -17,14 +17,18 @@ class TrailUpdater : MonoBehaviour
     SpriteRenderer nodeSpriteRenderer;
     List<GameObject> trailMarkings;
     Command command;
+    Type commandType;
     Vector3 startPosition;
     float timeDuration;
     float elapsedTime = 0;
+    CommandSymbols commandSymbols;
+
     void Awake()
     {
         nodeSprite = Resources.Load<Sprite>("Sprites/fotball2");
         trailMarkingSprite = Resources.Load<Sprite>("Sprites/fotball2");
         trailMarkings = new List<GameObject>();
+        commandSymbols = FindObjectOfType<CommandSymbols>();
     }
 
     public void Initialize(Command command, float lifeTime, Vector2 currentVelocity)
@@ -32,18 +36,19 @@ class TrailUpdater : MonoBehaviour
         if (command != null && command.robot != null)
         {
             node = Instantiate(command.robot, transform) as GameObject;
-
             startPosition = node.transform.position;
+
+            commandType = command.GetType();
+            if (commandType == typeof(MoveCommand))
+            {
+                this.command = new MoveCommand(node, command as MoveCommand);
+            }
+
             foreach (Transform c in node.transform)
             {
                 c.gameObject.layer = LayerMask.NameToLayer("No Collision With Robot");
             }
             node.gameObject.layer = LayerMask.NameToLayer("No Collision With Robot");
-            Type t = command.GetType();
-            if (t == typeof(MoveCommand))
-            {
-                this.command = new MoveCommand(node, command as MoveCommand);
-            }
             nodeSpriteRenderer = node.GetComponent<SpriteRenderer>();
             if(nodeSpriteRenderer != null)
             {
@@ -118,7 +123,7 @@ class TrailUpdater : MonoBehaviour
                 {
                     if(nodeSpriteRenderer != null && node.transform.position != startPosition)
                     {
-                        nodeSpriteRenderer.enabled = true;
+                        //nodeSpriteRenderer.enabled = true;
                     }
                     for(int i = 0; i < trailMarkings.Count; i++)
                     {
@@ -127,6 +132,15 @@ class TrailUpdater : MonoBehaviour
                     if (node.GetComponent<RobotBehaviour>() != null)
                     {
                         node.GetComponent<RobotBehaviour>().CurrentState.EnterPauseState();
+                    }
+                    if(commandSymbols != null)
+                    {
+                        GameObject commandSymbol = new GameObject();
+                        commandSymbol.AddComponent<SpriteRenderer>();
+                        commandSymbol.GetComponent<SpriteRenderer>().sprite = commandSymbols.GetSymbolSprite(commandType);
+                        commandSymbol.transform.position = node.transform.position;
+                        commandSymbol.transform.parent = transform;
+                        commandSymbol.GetComponent<SpriteRenderer>().sortingOrder = node.GetComponent<SpriteRenderer>().sortingOrder + 1;
                     }
                     isFinished = true;
                     Time.timeScale = 1.0f;

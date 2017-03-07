@@ -11,15 +11,15 @@ public class CommandButton : MonoBehaviour {
 	[SerializeField]
 	private ToggleObjects commandWheelHandler;
 
-    public IPlay playBehaviour;
+    public IPlayBehaviour playBehaviour;
 
     void Start()
     {
-       playBehaviour = GameObject.FindGameObjectWithTag("PlayController").GetComponent<IPlay>();
+       playBehaviour = GameObject.FindGameObjectWithTag("PlayController").GetComponent<IPlayBehaviour>();
     }
 
 	void OnMouseDown(){
-      
+    
 		playBehaviour.SelectCommand(selectedCommand);
 		if (selectedCommand == Command.AvailableCommands.None)
 			commandWheelHandler.Toggle();

@@ -65,7 +65,7 @@ public class ShockwaveBehaviour : MonoBehaviour {
         }
         rb2dCompontent = GetComponent<Rigidbody2D>();
 
-        PlayBehaviour.PreOnPauseGame += OnPause;
+       
     }
     void Start()
     {
@@ -77,7 +77,15 @@ public class ShockwaveBehaviour : MonoBehaviour {
         float rot_z = (Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg);
         rb2dCompontent.rotation = rot_z;
         realRotation = rot_z;
+        //make sure the shockwave dissapears
+        
       }
+
+   void OnPause()
+    {        
+        Destroy(gameObject);
+    }
+
 
     void Update() {
        
@@ -104,14 +112,5 @@ public class ShockwaveBehaviour : MonoBehaviour {
             root.GetComponent<Rigidbody2D>().AddForce(pushVector);
 
         }
-    }
-    void OnPause()
-    {
-
-        Destroy(gameObject);
-    }
-    void OnDestroy()
-    {
-        PlayBehaviour.PreOnPauseGame -= OnPause;
     }
 }

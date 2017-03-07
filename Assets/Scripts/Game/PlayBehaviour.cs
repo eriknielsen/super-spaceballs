@@ -3,20 +3,29 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class PlayBehaviour : MonoBehaviour, IPlay { //class for local play
+public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local play
+
+
+
     
 	private bool isTH1Done = false;
 	private bool isTH2Done = false;
-    private int currentTurnHandler;
+    private bool paused = true;
+    //private int currentTurnHandler;
 	private GameTimer gameTimer;
-
-   
+    [SerializeField]
     TurnHandlerBehaviour turnHandler1;
-    
+    [SerializeField]
     TurnHandlerBehaviour turnHandler2;
+    TurnHandlerBehaviour currentActiveTurnhandler;
+   
+
+
     bool isGamePaused = true;
 
+
     Text gameTimeText;
+    Text planTimeText;
     /// <summary>
     /// length of a planning -> play round
     /// </summary>
@@ -26,6 +35,10 @@ public class PlayBehaviour : MonoBehaviour, IPlay { //class for local play
     /// </summary>
     public int matchTime;
     /// <summary>
+    /// length of a player's planing phase
+    /// </summary>
+	public float RoundTime { get { return roundTime; } }
+
     /// length of overtime to be added ONCE
     /// </summary>
     public int overTime;
@@ -34,73 +47,153 @@ public class PlayBehaviour : MonoBehaviour, IPlay { //class for local play
     /// length of planning time each player has
     /// </summary>
     public int planTime;
-	public static float RoundTime { get { return Instance.roundTime; } }
 
+
+
+    //number of rounds played
+    int roundCount = 0;
 
     Goal leftGoal;
     Goal rightGoal;
+    Ball ball;
 
-    public delegate void GamePaused();
-    public static event GamePaused OnPauseGame;
-    public delegate void PreGamePaused();
-    public static event PreGamePaused PreOnPauseGame;
-    public delegate void GameUnpaused();
-    public static event GameUnpaused OnUnpauseGame;
 
-    static PlayBehaviour instance;
+    Coroutine countDownCoroutineInstance;
 
-    public static PlayBehaviour Instance
-    {
-        get {
-            return instance; 
-        }
-    }
+
 
     void Awake(){
-		if (instance == null)
-            instance = this;
-		else if (instance != this) { //Makes sure there's only one instance of the script
-			Debug.Log("There's already an instance of PlayBehaviour");
-			Destroy(gameObject); //Goes nuclear
-		}
+
 		Physics.queriesHitTriggers = true;
     }
 
-    void Start(){
+     void Start(){
         leftGoal = GameObject.Find("LeftGoal").GetComponent<Goal>();
         rightGoal = GameObject.Find("RightGoal").GetComponent<Goal>();
-        turnHandler1 = GameObject.Find("TurnHandlerLeft").GetComponent<TurnHandlerBehaviour>();
-        turnHandler2 = GameObject.Find("TurnHandlerRight").GetComponent<TurnHandlerBehaviour>();
+        ball = GameObject.Find("Ball").GetComponent<Ball>();
+
         //event callbacks for scoring
-        if (leftGoal != null || rightGoal != null){
-            Goal.OnGoalScored += new Goal.GoalScored(OnScore);
-            
+        if(leftGoal != null || rightGoal != null){
+            Goal.OnGoalScored += new Goal.GoalScored(OnScore); 
         }
         else {
-            Debug.LogError("couldint find goals :(");
+            Debug.Log("couldint find goals :(");
         }
         gameTimer = new GameTimer(matchTime);
         if(gameTimeText == null)
         {
             gameTimeText = GameObject.Find("GameTimeText").GetComponent<Text>();
         }
-        gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
-
+        if(planTimeText == null)
+        {
+            planTimeText = GameObject.Find("PlanTimeText").GetComponent<Text>();
+        }
+        UpdateTimerTexts();
         NewTurn();
     }
 
-    void OnScore()
+    void UpdateTimerTexts()
+    {
+        if(gameTimeText != null)
+        {
+            gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
+        }
+        if(planTimeText != null && currentActiveTurnhandler != null && paused == true)
+        {
+            planTimeText.text = "Plan time: " + (int)currentActiveTurnhandler.CurrentPlanTimeLeft;
+        }
+    }
+
+     void OnScore()
     {
         //tell gametimer and the unpause to stop
         StopAllCoroutines();
-        //do what unpause does at the end
-        currentTurnHandler = -1;
+        //do waht unpause does at the end
+        currentActiveTurnhandler = null;
         NewTurn();
-        //wait a bit so that the robot animations can be set to idle
-        Invoke("PauseGame",0.02f);
+        PauseGame();
         //robots reset their position by themselves
     }
+
     /// <summary>
+    /// decreases the plantime of the currentactiveturnhandler
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator CountDownPlanningTime()
+    {
+        while(currentActiveTurnhandler.CurrentPlanTimeLeft > 0)
+        { 
+            yield return new WaitForSecondsRealtime(1f);
+            currentActiveTurnhandler.CurrentPlanTimeLeft--;
+        } 
+    }
+
+    void StopSomeCoroutine(Coroutine coroutine)
+    {
+        if(coroutine != null)
+        {
+            StopCoroutine(coroutine);
+        }
+    }
+
+    void Update(){
+           //if gametime has run out, do stuff!
+        if (gameTimer.IsGameOver())
+        {
+                StartCoroutine(HandleMatchEnd());
+        }
+        UpdateTimerTexts();
+        //restrict the amount of time a player has to plan
+        if (paused == true && currentActiveTurnhandler != null)
+        {
+            //if the player still hasn't run out of time, decrease it!
+            if(currentActiveTurnhandler.CurrentPlanTimeLeft <= 0) { 
+                //if the player ran out of time, set them to ready
+                Debug.Log("current player ran out of plan time, setting it to ready");
+                
+                if (currentActiveTurnhandler == turnHandler1)
+                {
+                    isTH1Done = true;
+                }
+                else if (currentActiveTurnhandler == turnHandler2)
+                {
+                    isTH2Done = true;
+                }
+                StopSomeCoroutine(countDownCoroutineInstance);
+                ChooseNextCurrentTurnHandler();
+                ActivateTurnHandler(true);
+               
+            }
+        }
+        //listen for buttonpresses like wanting to send your move
+        if (Input.GetKeyDown(KeyCode.Return) && paused == true){
+            if (currentActiveTurnhandler == turnHandler1){
+                Debug.Log("1 is ready");
+                isTH1Done = true;
+            }
+            else if (currentActiveTurnhandler == turnHandler2){
+                Debug.Log("2 is ready");
+                isTH2Done = true;
+            }
+            StopSomeCoroutine(countDownCoroutineInstance);
+            // if someone still isnt done then give control to that player
+            if (!isTH1Done || !isTH2Done){
+                ChooseNextCurrentTurnHandler();
+                ActivateTurnHandler(true);
+            }
+        }
+        // are both players done?
+        if (isTH1Done && isTH2Done)
+        {
+            StopSomeCoroutine(countDownCoroutineInstance);
+            //then play the game and pause again in roundTime seconds
+          
+            StartCoroutine(UnpauseGame());
+            isTH1Done = false;
+            isTH2Done = false;
+        }
+
+    }
     /// displays who the winner was and goes back to the main menu
     /// </summary>
     IEnumerator HandleMatchEnd()
@@ -137,79 +230,46 @@ public class PlayBehaviour : MonoBehaviour, IPlay { //class for local play
             SceneManager.LoadScene("MainMenu");
         }
     }
-    void Update(){
-        //if gametime has run out, do stuff!
-        if (gameTimer.IsGameOver())
-        {
-                StartCoroutine(HandleMatchEnd());
-        }
-        
-        gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
-
-        //listen for buttonpresses like wanting to send your move etc
-        if (Input.GetKeyDown(KeyCode.Return) && isGamePaused){
-            if (currentTurnHandler == 1){
-                isTH1Done = true;
-            }
-            else if (currentTurnHandler == 2){
-                isTH2Done = true;
-            }
-            // are both players done?
-            if (isTH1Done && isTH2Done){
-                //then play the game and pause again in 4 seconds
-                StartCoroutine(UnpauseGame(false));
-            }
-            //decides who plays next if both players arent done
-            else {
-                ChooseNextCurrentTurnHandler();
-                ActivateTurnHandler(true);
-            }
-        }
-    }
+    
     //if we replayed the last turn, we dont want to do the newturn stuff
-    IEnumerator UnpauseGame(bool asReplay){
-        isGamePaused = false;
-        if(OnUnpauseGame != null)
-            OnUnpauseGame();
-        ActivateTurnHandler(false);
-        if (asReplay){
-            turnHandler1.ReplayLastTurn();
-            turnHandler2.ReplayLastTurn();
-        }
 
+    IEnumerator UnpauseGame(){
+        Debug.Log("GAME IS UNPAUSED!");
+        paused = false;
+        ball.Unpause();
+
+        ActivateTurnHandler(false);
+        planTimeText.enabled = false;
+     
         turnHandler1.UnpauseGame();
         turnHandler2.UnpauseGame();
+        
         StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
 
-        yield return new WaitForSeconds(roundTime-Time.deltaTime);
-        if(PreOnPauseGame != null)
-            PreOnPauseGame();
-        yield return new WaitForSeconds(Time.deltaTime);
-        if (asReplay == false){
-            currentTurnHandler = -1;
-            NewTurn();
-        }
-        else {
-            //if we just replayed the turn, we have to put
-            // the commands they had before the replay back
-            turnHandler1.RevertToOldCommands();
-            turnHandler2.RevertToOldCommands();
-            ActivateTurnHandler(true);
-        }
+        yield return new WaitForSeconds(roundTime);
+
+       
+        currentActiveTurnhandler = null;
+        NewTurn();
+        
+
         PauseGame();
     }
 
     void PauseGame(){
-        isGamePaused = true;
-        if(OnPauseGame != null)
-            OnPauseGame();
+
+
+        ball.Pause();
+        planTimeText.enabled = true;
         turnHandler1.PauseGame();
         turnHandler2.PauseGame();
+        paused = true;
+
     }
 
     /// <summary>
     /// gives or takes control from the current turnhandler
-    /// activate true means to activate current turnhandler
+    /// activate true means to activate current turnhandler, also countsdown the planning time
     /// activate false means to deactivate current turnhandler
     /// </summary>
     void ActivateTurnHandler(bool activate){
@@ -219,35 +279,45 @@ public class PlayBehaviour : MonoBehaviour, IPlay { //class for local play
 
         if (activate){
             //gives control to the current turnhandler
-            if (currentTurnHandler == 1 && !isTH1Done){
+            if (currentActiveTurnhandler == turnHandler1 && !isTH1Done){
                 turnHandler1.Activate(true);
-                Debug.Log("activating1");
+                countDownCoroutineInstance = StartCoroutine(CountDownPlanningTime());
+                
+
                 //make sure to deactivate the other one
                 turnHandler2.Activate(false);
 
             }
-            else if (currentTurnHandler == 2 && !isTH2Done){
+            else if (currentActiveTurnhandler == turnHandler2 && !isTH2Done){
                 turnHandler2.Activate(true);
-                Debug.Log("activating2");
+                countDownCoroutineInstance =  StartCoroutine(CountDownPlanningTime());
+
                 //make sure to deactivate the other one
                 turnHandler1.Activate(false);
-            }
+
+            }   
         }
         else {
             turnHandler1.Activate(false);
             turnHandler2.Activate(false);
+            
         }
     }
 
     void NewTurn(){
-        if (turnHandler1.Turns % 2 == 0){
-            currentTurnHandler = 1;
+        roundCount++;
+        if (roundCount % 2 == 0){
+            currentActiveTurnhandler = turnHandler1;
         }
         else {
-            currentTurnHandler = 2;
+            currentActiveTurnhandler = turnHandler2;
         }
+        turnHandler1.CurrentPlanTimeLeft = turnHandler1.PlanTime;
         isTH1Done = false;
+       
+        turnHandler2.CurrentPlanTimeLeft = turnHandler2.PlanTime;
         isTH2Done = false;
+
 
         ActivateTurnHandler(true);
     }
@@ -255,35 +325,26 @@ public class PlayBehaviour : MonoBehaviour, IPlay { //class for local play
     void ChooseNextCurrentTurnHandler(){
         //if current is one and finished AND other one isnt done, 
         //give control to the other one
-        if (currentTurnHandler == 1 && isTH1Done && isTH2Done == false){
-            currentTurnHandler = 2;
+        if (currentActiveTurnhandler == turnHandler1 && isTH1Done && isTH2Done == false){
+            currentActiveTurnhandler = turnHandler2;
         }
-        else if (currentTurnHandler == 2 && isTH2Done && isTH1Done == false){
-            currentTurnHandler = 1;
+        else if (currentActiveTurnhandler == turnHandler2 && isTH2Done && isTH1Done == false){
+            currentActiveTurnhandler = turnHandler1;
         }
         else if (isTH1Done && isTH2Done){
-            currentTurnHandler = -1;
+            currentActiveTurnhandler = null;
         }
     }
 
 
 
-	//Stuff below passes functions through to the turn handlers, because our code structure is shit :D
-	public void DeselectRobot(){
-		if (currentTurnHandler == 1) {
-			turnHandler1.THDeselectRobot ();
-		}
-		if (currentTurnHandler == 2) {
-			turnHandler2.THDeselectRobot ();
-		}
-	}
 
+
+	//Stuff below passes functions through to the turn handlers
+	public void DeselectRobot(){
+        currentActiveTurnhandler.THDeselectRobot();
+    }
 	public void SelectCommand(Command.AvailableCommands command){
-		if (currentTurnHandler == 1) {
-			turnHandler1.THSelectCommand (command);
-		}
-		if (currentTurnHandler == 2) {
-			turnHandler2.THSelectCommand (command);
-		}
-	}
+        currentActiveTurnhandler.THSelectCommand(command);
+    }
 }
