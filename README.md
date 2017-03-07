@@ -2,6 +2,7 @@
 Game project at HIS
 
 
+
 # Allmänna riktlinjer
 * Dela upp kod i sektioner: privata variabler > publika variabler > properties > privata funktioner > publika funktioner > protected funktioner.
 * Ha en avskiljare med rubrik över varje sektion.
@@ -26,3 +27,4 @@ Game project at HIS
 * fetch och sedan merge är ungefär likadant som att skriva git pull
 
 * git checkout <branchname>
+* git rebase om man vill kopiera ändringar från en branch till en annan

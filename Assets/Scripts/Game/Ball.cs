@@ -26,7 +26,9 @@ public class Ball : MonoBehaviour {
     void Start()
     {
         pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
+
     }
+ 
     public void ResetPosition(){
 		transform.position = startPosition;
         prevVelocity = Vector2.zero;
@@ -52,9 +54,10 @@ public class Ball : MonoBehaviour {
         rb.freezeRotation = false;
         rb.velocity = prevVelocity;
 
-        localLineRenderer.enabled = false;
-    }
+        localLineRenderer.enabled = false; 
+    
 
+    }
     void OnCollisionEnter2D(Collision2D other)
     {
 

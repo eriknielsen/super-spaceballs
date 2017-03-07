@@ -57,8 +57,12 @@ public class MoveCommand : Command
     
     public MoveCommand(GameObject r, Vector2 target, float lifetime, int turn)
     {
-        forceMagnitude = 1f;
-        initialForceMagnitude = forceMagnitude * 7;
+        float speed = r.GetComponent<RobotBehaviour>().moveCommandAcceleration;
+        if (speed <= 0)
+        {
+            speed = 1f;
+        }
+        initialForceMagnitude = speed * 7;
         initialForceTime = lifetime - lifetime / 4;
         targetPosition = target;
         robot = r;
@@ -67,8 +71,8 @@ public class MoveCommand : Command
         this.turn = turn;
         startPosition = r.transform.position;
         startSpeed = r.GetComponent<Rigidbody2D>().velocity;
-
-        force = CaluculateForce(forceMagnitude);
+     
+        force = CaluculateForce(speed);
         initialForce = CaluculateForce(initialForceMagnitude);
     }
 

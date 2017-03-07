@@ -55,8 +55,8 @@ public class TurnHandlerBehaviour : MonoBehaviour
     {
         get { return robots; }
     }
-
     void Awake()
+
     {
         CurrentPlanTimeLeft = planTime;
         //pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
@@ -64,8 +64,8 @@ public class TurnHandlerBehaviour : MonoBehaviour
 		selectedCommand = Command.AvailableCommands.Move;
 		moves = new List<Move>();
 		robots = new List<GameObject>();
-		FindRobots();
-		movingPreviews = new List<GameObject>();
+        FindRobots();
+        movingPreviews = new List<GameObject>();
 		robotMovingTrails = new List<List<MovingTrail>>();
         ballMovingTrails = new List<List<MovingTrail>>();
 		for (int i = 0; i < robots.Count; i++)
@@ -157,7 +157,10 @@ public class TurnHandlerBehaviour : MonoBehaviour
             }
         }
     }
-
+    void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
     void SelectRobot(GameObject robot)
     {
         if (Input.GetMouseButtonDown(0))
@@ -416,8 +419,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 			StopAllCoroutines ();
 			DestroyPreviewTrails();
 			cursorText.text = "";
-//			StopCoroutine(SetAndDisplayTimeInput());
-//			StopCoroutine(PreviewAndGiveRobotCommand());
+
 		}
 	}
 
@@ -426,11 +428,12 @@ public class TurnHandlerBehaviour : MonoBehaviour
 		selectedRobot = null;
 		timeInput = 0;
 		selectedCommand = Command.AvailableCommands.None;
-		StopAllCoroutines ();
+        
+		
 		DestroyPreviewTrails ();
 		cursorText.text = "";
-        //		StopCoroutine(SetAndDisplayTimeInput());
-        //		StopCoroutine(PreviewAndGiveRobotCommand());
+        StopCoroutine(SetAndDisplayTimeInput());
+        StopCoroutine(PreviewTrajectoryAndGiveRobotCommand());
         if (selectedCommandWheel != null)
         {
             Destroy(selectedCommandWheel);

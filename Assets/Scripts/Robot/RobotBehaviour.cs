@@ -33,7 +33,10 @@ public class RobotBehaviour : MonoBehaviour {
     private Animator animatorComponent;
 
     private Vector2 startPosition;
-    private float speed;
+    /// <summary>
+    /// the acceleration used by movecommand to move the robot
+    /// </summary>
+    public float moveCommandAcceleration;
     [HideInInspector]
     public bool isPreview;
 	
@@ -105,11 +108,11 @@ public class RobotBehaviour : MonoBehaviour {
         commands = new List<Command>();
 
         anim = GetComponent<Animator>();
-        //anim.enabled = false;
         
         thrusterComponent = GetComponent<AudioSource>();
+
+
         // reset position when a goal is made
-      
         if(isPreview == false)
         {
             Goal.OnGoalScored += new Goal.GoalScored(ResetRobotAfterScore);
@@ -118,11 +121,14 @@ public class RobotBehaviour : MonoBehaviour {
     }
     void ResetRobotAfterScore()
     {
+        anim.SetBool("Accelerating", false);
+        anim.Play("Idle", 0);
         transform.position = startPosition;
 		rb.velocity = Vector2.zero;
 		prevVelocity = Vector2.zero;
         commands.Clear();
         currentCommand = null;
+        
     }
     void Start()
     {
@@ -138,7 +144,6 @@ public class RobotBehaviour : MonoBehaviour {
           CurrentState.UpdateState();
         
     }
-   
     /// <summary>
     /// Picks the oldest command if possible and 
     /// starts the commands lifetimetimer
@@ -172,7 +177,6 @@ public class RobotBehaviour : MonoBehaviour {
             currentCommand.Execute();
            
         }
-       
     }
     public void OnAccelerate()
     {
@@ -200,8 +204,6 @@ public class RobotBehaviour : MonoBehaviour {
                 AudioManager.instance.PlayAudioWithRandomPitch(collideRobotSound, false, gameObject);
             }
         }
-        
-        
     }
     void OnDestroy()
     {

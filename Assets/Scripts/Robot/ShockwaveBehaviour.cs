@@ -8,16 +8,29 @@ public class ShockwaveBehaviour : MonoBehaviour {
 
 	[SerializeField]
 	private float pushForce;
+    [SerializeField]
+    private float moveForce;
+    [SerializeField]
+    private float xScaling;
+    [SerializeField]
+    private float yScaling;
+    [SerializeField]
+    private float xPushForceLoss;
+    [SerializeField]
+    private float yPushForceLoss;
 
     [SerializeField]
     GameObject awakeSound;
     private Vector2 velocity;
 	private Vector2 pushVector;
-	private Rigidbody2D rb2dCompontent;
+    private Vector2 moveVector;
+    private Rigidbody2D rb2dCompontent;
 	private float remainingLifeTime;
 	private bool shouldUpdate;
 	private GameObject shockwaveUser;
     float realRotation;
+
+	float chargeTime;
     public static ShockwaveBehaviour InstantiateShockWave(ShockwaveBehaviour shockWave) {
         return Instantiate(shockWave);
     }
@@ -37,8 +50,9 @@ public class ShockwaveBehaviour : MonoBehaviour {
         
         this.shockwaveUser = shockwaveUser;
         velocity = inputVelocity;
-        pushVector = velocity.normalized * (pushForce * (1+chargeTime));
-        
+        moveVector = velocity.normalized * moveForce;
+		this.chargeTime = chargeTime;
+        pushVector = velocity.normalized * (pushForce * (chargeTime));
         enabled = true;
     }
 
@@ -57,8 +71,8 @@ public class ShockwaveBehaviour : MonoBehaviour {
     {
         AudioManager.instance.PlayAudio(awakeSound,false,gameObject);
         
-        rb2dCompontent.AddForce(pushVector);
-        Vector3 diff = (Vector3)pushVector - transform.position; 
+        rb2dCompontent.AddForce(moveVector);
+        Vector3 diff = (Vector3)moveVector - transform.position; 
 
         float rot_z = (Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg);
         rb2dCompontent.rotation = rot_z;
@@ -66,10 +80,12 @@ public class ShockwaveBehaviour : MonoBehaviour {
         //make sure the shockwave dissapears
         
       }
+
    void OnPause()
     {        
         Destroy(gameObject);
     }
+
 
     void Update() {
        
@@ -77,9 +93,11 @@ public class ShockwaveBehaviour : MonoBehaviour {
             if (remainingLifeTime >= 0) {
                  remainingLifeTime -= Time.deltaTime;
                
-                transform.localScale += new Vector3(0.5f*Time.deltaTime , 0.5f * Time.deltaTime, 0 );
+                transform.localScale += new Vector3(xScaling*Time.deltaTime , yScaling * Time.deltaTime, 0 );
                 if(rb2dCompontent.rotation != realRotation)
                     rb2dCompontent.rotation = realRotation;
+                pushVector -= new Vector2(xPushForceLoss * chargeTime * Time.deltaTime,yPushForceLoss * chargeTime* Time.deltaTime);
+
             }
             else {
                 Destroy(gameObject);
@@ -92,6 +110,7 @@ public class ShockwaveBehaviour : MonoBehaviour {
         if (root != null && root.GetComponent<Rigidbody2D>() && root != shockwaveUser)
         {
             root.GetComponent<Rigidbody2D>().AddForce(pushVector);
+
         }
     }
 }

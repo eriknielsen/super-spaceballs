@@ -1,21 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local play
+
+
+
     
 	private bool isTH1Done = false;
 	private bool isTH2Done = false;
     private bool paused = true;
     //private int currentTurnHandler;
 	private GameTimer gameTimer;
-
     [SerializeField]
     TurnHandlerBehaviour turnHandler1;
     [SerializeField]
     TurnHandlerBehaviour turnHandler2;
     TurnHandlerBehaviour currentActiveTurnhandler;
+   
+
+
+    bool isGamePaused = true;
+
 
     Text gameTimeText;
     Text planTimeText;
@@ -32,6 +39,17 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
     /// </summary>
 	public float RoundTime { get { return roundTime; } }
 
+    /// length of overtime to be added ONCE
+    /// </summary>
+    public int overTime;
+
+    /// <summary>
+    /// length of planning time each player has
+    /// </summary>
+    public int planTime;
+
+
+
     //number of rounds played
     int roundCount = 0;
 
@@ -39,13 +57,17 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
     Goal rightGoal;
     Ball ball;
 
+
     Coroutine countDownCoroutineInstance;
 
+
+
     void Awake(){
+
 		Physics.queriesHitTriggers = true;
     }
 
-    void Start(){
+     void Start(){
         leftGoal = GameObject.Find("LeftGoal").GetComponent<Goal>();
         rightGoal = GameObject.Find("RightGoal").GetComponent<Goal>();
         ball = GameObject.Find("Ball").GetComponent<Ball>();
@@ -82,7 +104,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
         }
     }
 
-    void OnScore()
+     void OnScore()
     {
         //tell gametimer and the unpause to stop
         StopAllCoroutines();
@@ -92,6 +114,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
         PauseGame();
         //robots reset their position by themselves
     }
+
     /// <summary>
     /// decreases the plantime of the currentactiveturnhandler
     /// </summary>
@@ -114,7 +137,11 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
     }
 
     void Update(){
-
+           //if gametime has run out, do stuff!
+        if (gameTimer.IsGameOver())
+        {
+                StartCoroutine(HandleMatchEnd());
+        }
         UpdateTimerTexts();
         //restrict the amount of time a player has to plan
         if (paused == true && currentActiveTurnhandler != null)
@@ -167,11 +194,50 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
         }
 
     }
+    /// displays who the winner was and goes back to the main menu
+    /// </summary>
+    IEnumerator HandleMatchEnd()
+    {
+        //check if the score is tied, then add overtime (if not already overtime) and continue
+        if (leftGoal.score == rightGoal.score && gameTimer.InOvertime() == false && overTime > 0)
+        {
+            Debug.Log("show that overtime is happening!!");
+            
+            gameTimer.AddOvertime(overTime);
+            
+        }
+        //if possible, display winner!
+        else
+        {
+            PauseGame();
+            //left won!
+            if (leftGoal.score > rightGoal.score)
+            {
+                Debug.Log("left team won!");
+            }
+            //right won! 
+            else if (rightGoal.score > leftGoal.score)
+            {
+                Debug.Log("right team won!");
+            }
+            else if(rightGoal.score == leftGoal.score)
+            {
+                Debug.Log("match was even!");
+            }
+            //wait a bit and then change scene to mainmenu
+            yield return new WaitForSeconds(1f);
+            StopAllCoroutines();
+            SceneManager.LoadScene("MainMenu");
+        }
+    }
+    
     //if we replayed the last turn, we dont want to do the newturn stuff
+
     IEnumerator UnpauseGame(){
         Debug.Log("GAME IS UNPAUSED!");
         paused = false;
         ball.Unpause();
+
         ActivateTurnHandler(false);
         planTimeText.enabled = false;
      
@@ -186,16 +252,19 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
         currentActiveTurnhandler = null;
         NewTurn();
         
+
         PauseGame();
     }
 
     void PauseGame(){
+
 
         ball.Pause();
         planTimeText.enabled = true;
         turnHandler1.PauseGame();
         turnHandler2.PauseGame();
         paused = true;
+
     }
 
     /// <summary>
@@ -266,6 +335,10 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
             currentActiveTurnhandler = null;
         }
     }
+
+
+
+
 
 	//Stuff below passes functions through to the turn handlers
 	public void DeselectRobot(){
