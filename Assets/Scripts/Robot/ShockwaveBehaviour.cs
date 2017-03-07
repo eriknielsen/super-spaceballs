@@ -88,7 +88,8 @@ public class ShockwaveBehaviour : MonoBehaviour {
                 transform.localScale += new Vector3(xScaling*Time.deltaTime , yScaling * Time.deltaTime, 0 );
                 if(rb2dCompontent.rotation != realRotation)
                     rb2dCompontent.rotation = realRotation;
-                pushVector -= new Vector2(xPushForceLoss * chargeTime * Time.deltaTime,yPushForceLoss * chargeTime* Time.deltaTime);
+				pushVector -= new Vector2(pushVector.normalized.x * xPushForceLoss * chargeTime * Time.deltaTime , pushVector.normalized.y * yPushForceLoss * chargeTime* Time.deltaTime);
+
 
             }
             else {
