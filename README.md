@@ -1,7 +1,7 @@
-﻿### super-spaceballs
+﻿### robo spaceball!
 Game project at HIS
 
-detta är remote origin master
+
 
 # Allmänna riktlinjer
 * Dela upp kod i sektioner: privata variabler > publika variabler > properties > privata funktioner > publika funktioner > protected funktioner.

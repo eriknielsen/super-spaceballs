@@ -29,7 +29,6 @@ public class PreviewMarker : MonoBehaviour {
     {
         sightLine = gameObject.GetComponent<LineRenderer>();
     }
-
     void FixedUpdate()
     {
         //simulatePath();
@@ -118,7 +117,48 @@ public class PreviewMarker : MonoBehaviour {
     }
     */
 
-   
+    /// <summary>
+    /// takes the balls position and velocity and draws a line in the direction
+    /// it is moving.
+    /// The ball script enables and unenables this line renderer!!!!
+    /// </summary>
+    /// <param name="initPosition"></param>
+    /// <param name="currentVelocity"></param>
+   public void showBallDirection(Vector2 initPosition, Vector2 currentVelocity, LineRenderer lr)
+   {
+        
+        //lokal variabel
+        List<Vector3> points = new List<Vector3>();
+     
+        //add the ball's current position
+        points.Add(initPosition);
+
+        //add the ball's "next" position
+        Vector3 nextPosition = initPosition;
+
+        //show the ball's position after one second
+
+        currentVelocity = currentVelocity * 0.5f;
+
+        nextPosition.x += currentVelocity.x;
+        nextPosition.y += currentVelocity.y;
+       
+        points.Add(nextPosition);
+       
+       for(int i = 0; i < points.Count;i++)
+        {
+            points[i] = new Vector3(points[i].x, points[i].y, -2);
+        }
+      
+    
+
+        lr.numPositions = points.Count;
+        for (int i = 0; i < points.Count; i++)
+        {
+            lr.SetPosition(i, points[i]);
+        }
+    }
+
     public void simulatepath2(Vector2 initPosition, Vector2 robotPrevVelocity, float time, Vector2 mousePosition)
     {
 
