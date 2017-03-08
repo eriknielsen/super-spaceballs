@@ -1,6 +1,58 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+//using System.Collections.Generic;
+//using System.IO;
+//
+//public class SoundPlayer : MonoBehaviour {
+//
+//	string absolutePath = "./"; // relative path to where the app is running
+//	string[] fileTypes = {"ogg"}; //compatible file extensions
+//
+//	int soundIndex = 0;
+//	FileInfo[] files;
+//	AudioSource audioSource;
+//	List<AudioClip> clips = new List<AudioClip>();
+//
+//	void Start(){
+//		if(Application.isEditor) //being able to test in unity
+//			absolutePath = "Assets/";
+//		if(audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+//			reloadSounds();
+//	}
+//
+//	void reloadSounds(){
+//		DirectoryInfo info = new DirectoryInfo(absolutePath);
+//		files = info.GetFiles();
+//
+//
+//		foreach (FileInfo f in files){ //check if the file is valid and load it
+//			if (validFileType(f.FullName)){
+//				StartCoroutine(loadFile(f.FullName));
+//			}
+//		}
+//	}
+//
+//	bool validFileType(string filename){
+//		foreach (string ext in fileTypes){
+//			if (filename.IndexOf(ext) > -1)
+//				return true;
+//		}
+//		return false;
+//	}
+//
+//	IEnumerator loadFile(string path){
+//		WWW www = new WWW("file://"+path);
+//
+//		AudioClip myAudioClip = www.audioClip;
+//		while (!myAudioClip.isReadyToPlay)
+//			yield return www;
+//
+//		AudioClip clip = www.GetAudioClip(false);
+//		string[] parts = path.Split('\\');
+//		clip.name = parts[parts.Length - 1];
+//		clips.Add(clip);
+//	}
+//}
 //Music playlist that works independently of update-rate (in case you want to tinker with fixed update for slow-mo or stuff like that)
 
 public class SpaceballsRadio : MonoBehaviour {
@@ -9,12 +61,12 @@ public class SpaceballsRadio : MonoBehaviour {
 	[HideInInspector]
 	public AudioSource audioSource;
 
-	public static SpaceballsRadio instance = null;
+	public static SpaceballsRadio Instance = null;
 
 	void Awake(){
-		if (instance == null)
-			instance = this;
-		else if (instance != this){ //Makes sure there's only one instance of the script
+		if (Instance == null)
+			Instance = this;
+		else if (Instance != this){ //Makes sure there's only one instance of the script
 			Destroy(gameObject); //Goes nuclear
 		}
 		DontDestroyOnLoad(gameObject);

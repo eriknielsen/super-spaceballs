@@ -7,9 +7,7 @@ public class MainMenu : MonoBehaviour {
 	public GameObject optionsMenu;
 	public GameObject mainButtons;
 
-   
 
-  
 	public void LocalPlay(){
 		SceneManager.LoadSceneAsync("LocalPlay", LoadSceneMode.Single);
 	}

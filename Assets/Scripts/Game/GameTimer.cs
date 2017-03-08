@@ -6,52 +6,49 @@ public class GameTimer {
 
 	public int remainingTime;
     bool inOvertime;
-    public GameTimer(int totalMatchTime) {
+    public GameTimer(int totalMatchTime){
         matchTime = totalMatchTime;
         remainingTime = matchTime;
     }
 
-    public IEnumerator CountDownSeconds(int seconds) {
-        while(seconds > 0) {
-            if(remainingTime > 0)
-            {
+    public IEnumerator CountDownSeconds(int seconds){
+        while (seconds > 0){
+            if (remainingTime > 0){
                 yield return new WaitForSeconds(1f);
                 seconds--;
                 remainingTime--;
             }
-            else
-            {
+            else {
                 break;
             }
-     
         }
     }
+
     /// <summary>
     /// adds overtime to the current remaining time
     /// </summary>
-    /// <param name="overtime"></param>
-    public void AddOvertime(int overtime)
-    {
+    public void AddOvertime(int overtime){
         remainingTime += overtime;
         inOvertime = true;
     }
-    public bool InOvertime()
-    {
+
+    public bool InOvertime(){
         return inOvertime;
     }
+
     /// <summary>
     /// called from the outside to check if the matchtime has run out
     /// </summary>
     public bool IsGameOver()
-    {
-        //if remaining time > 0 then false else true
-
+	{ //if remaining time > 0 then false else true
         return remainingTime > 0 ? false : true;
     }
-    public int MinutesRemaining() {
+
+    public int MinutesRemaining(){
         return remainingTime / 60;
     }
-    public int SecondsRemaining() {
+
+    public int SecondsRemaining(){
         return remainingTime % 60;
     }
 }

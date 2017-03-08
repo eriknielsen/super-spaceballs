@@ -8,5 +8,6 @@ public class LoadVolume : MonoBehaviour {
 
 	void Start () {
 		GetComponent<Slider>().value = PlayerPrefs.GetFloat(volumeType);
+		GetComponent<Slider>().colors = ToolBox.Instance.buttonColors;
 	}
 }
