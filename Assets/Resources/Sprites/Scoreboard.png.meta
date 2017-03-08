@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: 8a35eda298d0ee347a87e83faa147fa5
-timeCreated: 1488912574
-licenseType: Free
+timeCreated: 1488991244
+licenseType: Pro
 TextureImporter:
   fileIDToRecycleName:
     21300000: Left
@@ -9,6 +9,7 @@ TextureImporter:
     21300004: Mid
     21300006: Right
     21300008: RightMid
+    21300010: Scoreboard_0
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -32,7 +33,7 @@ TextureImporter:
   textureFormat: 1
   maxTextureSize: 2048
   textureSettings:
-    filterMode: -1
+    filterMode: 2
     aniso: -1
     mipBias: -1
     wrapMode: 1
@@ -44,8 +45,8 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spritePixelsToUnits: 64
+  spriteBorder: {x: 200, y: 583, z: 420, w: 255}
+  spritePixelsToUnits: 256
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
@@ -56,7 +57,7 @@ TextureImporter:
   textureFormatSet: 0
   platformSettings:
   - buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 1024
     textureFormat: -1
     textureCompression: 1
     compressionQuality: 50
@@ -64,7 +65,7 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
   - buildTarget: Standalone
-    maxTextureSize: 2048
+    maxTextureSize: 1024
     textureFormat: -1
     textureCompression: 1
     compressionQuality: 50
@@ -72,7 +73,7 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
   - buildTarget: Android
-    maxTextureSize: 2048
+    maxTextureSize: 1024
     textureFormat: -1
     textureCompression: 1
     compressionQuality: 50
@@ -80,7 +81,7 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
   - buildTarget: WebGL
-    maxTextureSize: 2048
+    maxTextureSize: 1024
     textureFormat: -1
     textureCompression: 1
     compressionQuality: 50
@@ -91,68 +92,16 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Left
+      name: Scoreboard_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 424
-        width: 200
-        height: 600
+        x: 4
+        y: 428
+        width: 1010
+        height: 596
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: LeftMid
-      rect:
-        serializedVersion: 2
-        x: 200
-        y: 424
-        width: 200
-        height: 600
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Mid
-      rect:
-        serializedVersion: 2
-        x: 350
-        y: 424
-        width: 100
-        height: 600
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Right
-      rect:
-        serializedVersion: 2
-        x: 600
-        y: 424
-        width: 400
-        height: 600
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: RightMid
-      rect:
-        serializedVersion: 2
-        x: 400
-        y: 424
-        width: 200
-        height: 600
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 200, y: 161, z: 412, w: 261}
       outline: []
       tessellationDetail: 0
     outline: []
