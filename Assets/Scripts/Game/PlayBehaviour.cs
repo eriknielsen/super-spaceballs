@@ -300,10 +300,10 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		else {
 			currentActiveTurnhandler = turnHandler2;
 		}
-		turnHandler1.CurrentPlanTimeLeft = turnHandler1.PlanTime;
+		turnHandler1.CurrentPlanTimeLeft = planTime;
 		isTH1Done = false;
 
-		turnHandler2.CurrentPlanTimeLeft = turnHandler2.PlanTime;
+		turnHandler2.CurrentPlanTimeLeft = planTime;
 		isTH2Done = false;
 
 		ActivateTurnHandler(true);
