@@ -15,6 +15,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     public GameObject robotDeselectionCollider;
     public GameObject ingameCanvas;
     public GameObject matchmakingCanvas;
+    public GameObject inGameMenuHandler;
     //only ever activate the player turnhandler
     TurnHandlerBehaviour playerTurnhandler;
     //recive commands from the server/client and give to this turnhandler
@@ -42,6 +43,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     [SerializeField]
     Ball ball;
     GameTimer gameTimer;
+    
     Text gameTimeText;
     Text planTimeText;
 
@@ -61,13 +63,16 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             playerTurnhandler = leftTurnhandlerInScene;
             otherTurnhandler = rightTurnhandlerInScene;
         }
-        matchmakingCanvas.SetActive(false);
+        inGameMenuHandler.SetActive(true);
         ingameCanvas.SetActive(true);
+        matchmakingCanvas.SetActive(false);
+      
         playerTurnhandler.gameObject.SetActive(true);
         playerTurnhandler.currentPlanTimeLeft = planTime;
         otherTurnhandler.gameObject.SetActive(true);
         playingField.SetActive(true);
         robotDeselectionCollider.SetActive(true);
+        
         
         ball.gameObject.SetActive(true);
         InititializeGame();
@@ -75,6 +80,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         playerTurnhandler.Activate(true);
         
         planCountDownCoroutine = StartCoroutine(CountDownPlanningTime());
+        
     }
     void InititializeGame()
     {
@@ -93,6 +99,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         if (gameTimeText == null)
         {
             gameTimeText = GameObject.Find("GameTimeText").GetComponent<Text>();
+            Debug.Log(gameTimeText);
         }
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
         if(planTimeText == null){
@@ -161,10 +168,13 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         {
             gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
         }
+     
+
         if(planTimeText != null && paused == true)
         {
            planTimeText.text = "Plan time: " + (int)playerTurnhandler.currentPlanTimeLeft;
         }
+
     }
     IEnumerator HandleMatchEnd()
     {

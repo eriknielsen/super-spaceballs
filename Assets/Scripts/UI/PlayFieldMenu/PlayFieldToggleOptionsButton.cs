@@ -9,6 +9,7 @@ public class PlayFieldToggleOptionsButton : MonoBehaviour {
 
 	void Awake(){
 		menuHandler = GameObject.FindWithTag("MenuHandler").GetComponent<PlayFieldMenu>();
+		
 		GetComponent<Button>().colors = ToolBox.Instance.buttonColors;
 	}
 
