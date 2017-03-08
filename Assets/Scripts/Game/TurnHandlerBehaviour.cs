@@ -252,6 +252,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         Vector3 cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
         Command previewCommand = null;
 
+        GameObject lastRobot = null;
         GameObject previewRobot;
         float timeBetweenPreivews = 0.1f;
 		System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
@@ -264,11 +265,11 @@ public class TurnHandlerBehaviour : MonoBehaviour
             cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
             if (timeInput <= selectedRobot.GetComponent<RobotBehaviour>().freeTime && timer.Elapsed.TotalSeconds > timeBetweenPreivews)
             {
-                if (prevCursorPosition != cursorPosition || prevSelectedCommand != selectedCommand || RevertCommand())
+                if (prevCursorPosition != cursorPosition || prevSelectedCommand != selectedCommand || RevertCommand() || lastRobot != selectedRobot)
                 {
                     timer.Reset();
                     timer.Start();
-					DestroyPreviewTrails();
+					DestroyLatestPreviewTrail();
                     if (robotMovingTrails[selectedRobotIndex].Count > 0)
                     {
                         previewRobot = robotMovingTrails[selectedRobotIndex].Last().Node;
@@ -302,11 +303,16 @@ public class TurnHandlerBehaviour : MonoBehaviour
                     GiveRobotCommand(previewCommand);
                 }
             }
+            if(selectedRobot != lastRobot)
+            {
+                DestroyLatestPreviewTrail();
+            }
             prevCursorPosition = cursorPosition;
             prevSelectedCommand = selectedCommand;
+            lastRobot = selectedRobot;
             yield return new WaitForSeconds(0.005f);
         }
-        DestroyPreviewTrails();
+        DestroyLatestPreviewTrail();
     }
 
     bool RevertCommand()
@@ -356,7 +362,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         }
     }
 
-	void DestroyPreviewTrails(){
+	void DestroyLatestPreviewTrail(){
 		if (latestRobotTrail != null)
 		{
 			Destroy(latestRobotTrail.TrailGameObject);
@@ -417,7 +423,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 		{
 			movingPreviews[selectedRobotIndex].SetActive (false);
 			StopAllCoroutines ();
-			DestroyPreviewTrails();
+			DestroyLatestPreviewTrail();
 			cursorText.text = "";
 
 		}
@@ -430,7 +436,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 		selectedCommand = Command.AvailableCommands.None;
         
 		
-		DestroyPreviewTrails ();
+		DestroyLatestPreviewTrail ();
 		cursorText.text = "";
         StopCoroutine(SetAndDisplayTimeInput());
         StopCoroutine(PreviewTrajectoryAndGiveRobotCommand());

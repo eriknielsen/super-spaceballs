@@ -107,11 +107,10 @@ public class ShockwaveBehaviour : MonoBehaviour {
     }
 
     void OnTriggerEnter2D(Collider2D collidingObject) {
-        GameObject root = collidingObject.transform.root.gameObject;       
+        GameObject root = collidingObject.transform.root.gameObject;
         if (root != null && root.GetComponent<Rigidbody2D>() && root != shockwaveUser)
         {
             root.GetComponent<Rigidbody2D>().AddForce(pushVector);
-
         }
     }
 }
