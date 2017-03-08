@@ -278,11 +278,13 @@ public class TurnHandlerBehaviour : MonoBehaviour {
                         previewRobot = selectedRobot;
                     }
                     cursorPosition = Input.mousePosition;
+                 
                     cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
-
+                   
 					if (selectedCommand == Command.AvailableCommands.Move)
                     {
                         previewCommand = new MoveCommand(previewRobot, cursorScreenPosition, timeInput, Turns);
+                        
                     }
 					else if (selectedCommand == Command.AvailableCommands.Push && timeInput <= selectedRobot.GetComponent<RobotBehaviour>().freeTime - shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime)
                     {
@@ -299,6 +301,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
                     latestRobotTrail.TrailGameObject.transform.parent = movingPreviews[selectedRobotIndex].transform;
                     robotMovingTrails[selectedRobotIndex].Add(latestRobotTrail);
                     latestRobotTrail = null;
+                    Debug.Log(previewCommand.targetPosition.x + " " + previewCommand.targetPosition.y);
                     GiveRobotCommand(previewCommand);
                 }
             }
@@ -387,6 +390,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
                     givenCommand = new PushCommand(selectedRobot, command as PushCommand, previewDuration);
                 }
                 selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(givenCommand);
+                Debug.Log(givenCommand.targetPosition.x + " " + givenCommand.targetPosition.y);
                 selectedRobot.GetComponent<RobotBehaviour>().freeTime -= command.LifeDuration;
             }
         }
@@ -538,7 +542,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
             if (robot.GetComponent<RobotBehaviour>().oldCommands.Count > 0)
             {
                 RobotBehaviour robotBehaviour = robot.GetComponent<RobotBehaviour>();
-				robotBehaviour.commands = robotBehaviour.oldCommands;
+				robotBehaviour.Commands = robotBehaviour.oldCommands;
 				robotBehaviour.oldCommands.Clear();
             }
         }

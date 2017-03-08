@@ -245,6 +245,9 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     }
     void PauseGame()
     {
+        if(paused== true){
+            return;
+        }
         playerTurnhandler.Activate(true);
         planCountDownCoroutine = StartCoroutine(CountDownPlanningTime());
         paused = true;
@@ -287,9 +290,16 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     //send commands to the other client
     void SendCommands()
     {
-        Debug.Log("try to convert and send commands");
+        
         Dictionary<int, List<Command>> commandDict = new Dictionary<int, List<Command>>();
         commandDict = GetCommandDict(playerTurnhandler.Robots);
+        
+        for(int i = 0; i < playerTurnhandler.Robots.Count;i++){
+            if(playerTurnhandler.Robots[i].GetComponent<RobotBehaviour>().Commands.Count > 0){
+  //Debug.Log(playerTurnhandler.Robots[i].GetComponent<RobotBehaviour>().Commands[0].targetPosition.x + " y: " +  //playerTurnhandler.Robots[i].GetComponent<RobotBehaviour>().Commands[0].targetPosition.y);
+            }
+          
+        }
         ServerBehaviour.SerializableCommandList scList = new ServerBehaviour.SerializableCommandList();
 
 
@@ -298,6 +308,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             for (int i = 0; i < pair.Value.Count; i++)
             {
                 Command c = pair.Value[i];
+            
                 Type t = c.GetType();
                 if (t == typeof(MoveCommand))
                 {
@@ -322,7 +333,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     public void OnRecieveUnpause(NetworkMessage netMsg)
     {
         Debug.Log("unpause msg rec!");
-        StartCoroutine(UnpauseGame());
+        if(paused == true)
+            StartCoroutine(UnpauseGame());
     }
     /// <summary>
     /// Recieve and put the commands into the otherTurnhandler's robots
@@ -353,7 +365,11 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             RobotBehaviour rb = robotList[i].GetComponent<RobotBehaviour>();
             if (rb.Commands.Count > 0)
             {
+                
                 dict.Add(i, rb.Commands);
+                //for(int j = 0; j < rb.Commands.Count;j++ ){
+                    //Debug.Log("x: " + rb.Commands[j].targetPosition.x + " y:" + rb.Commands[j].targetPosition.y);
+                //}
             }
         }
         return dict;

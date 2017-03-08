@@ -24,7 +24,7 @@ public class RobotBehaviour : MonoBehaviour {
 
     //the robot goes through each commando and checks each update if the latest commando is finished or not
     //if it is finished then the robot starts the next commando
-    public List<Command> commands;
+    List<Command> commands;
     public List<Command> oldCommands;
     //when switching commands, call the FinishedCoroutine coroutine
     //robot's playstate's updatestate calls the current command's execute
@@ -142,7 +142,6 @@ public class RobotBehaviour : MonoBehaviour {
     void FixedUpdate()
     {
           CurrentState.UpdateState();
-        
     }
     /// <summary>
     /// Picks the oldest command if possible and 

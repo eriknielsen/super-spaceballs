@@ -39,6 +39,7 @@ public class PushCommand : Command {
         shockwavePrefab = Resources.Load("Prefabs/ShockWave") as GameObject;
         lifeDuration = time;
         lifeTimer = time;
+        targetPosition = original.targetPosition;
     }
 
     public override void Execute(){

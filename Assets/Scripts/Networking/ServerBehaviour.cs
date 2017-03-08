@@ -205,9 +205,10 @@ public class ServerBehaviour : NetworkManager {
         CommandMsg msg = new CommandMsg();
         msg.commands = new SerializableCommandList();
         msg.commands = commands;
-        Debug.Log("msgcommands is " + msg.commands.Count + " long and the argument was " + commands.Count);
+        //Debug.Log(commands[0].targetPosition.x + " y: " + commands[0].targetPosition.y);
 
         byte[] result;
+        
 
         BinaryFormatter bf = new BinaryFormatter();
         System.IO.MemoryStream ms = new System.IO.MemoryStream();
@@ -217,7 +218,7 @@ public class ServerBehaviour : NetworkManager {
         CommandMsg cmdMsg = new CommandMsg();
 
         cmdMsg.serializedCommands = result;
-
+        f(cmdMsg.serializedCommands);
         if (remoteConnection != null)
         {
             remoteConnection.Send(CommandMsg.msgType, cmdMsg);
@@ -226,6 +227,18 @@ public class ServerBehaviour : NetworkManager {
         {
             Debug.Log("no remote connection to send to");
         }
+    }
+      public void f(byte[] input)
+    {
+        List<SerializableCommand> deserializedCommands = new List<SerializableCommand>();
+        BinaryFormatter bf = new BinaryFormatter();
+        Byte[] buffer = input;
+        System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
+        deserializedCommands = bf.Deserialize(ms) as List<SerializableCommand>;
+        //Debug.Log(deserializedCommands[0].targetPosition.x + " y: " + deserializedCommands[0]//.targetPosition.y);
+        
+
+        
     }
     public void SendUnpauseGame()
     {
