@@ -164,9 +164,19 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     }
       void UpdateTimerTexts()
     {
+        string zeroBeforeMin;
+		string zeroBeforeSec;
+		if (gameTimer.MinutesRemaining () < 10)
+			zeroBeforeMin = "0";
+		else
+			zeroBeforeMin = "";
+		if (gameTimer.SecondsRemaining () < 10)
+			zeroBeforeSec = "0";
+		else
+			zeroBeforeSec = "";
         if(gameTimeText != null)
         {
-            gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
+            gameTimeText.text = zeroBeforeMin + gameTimer.MinutesRemaining() + ":" + zeroBeforeSec + gameTimer.SecondsRemaining();
         }
      
 

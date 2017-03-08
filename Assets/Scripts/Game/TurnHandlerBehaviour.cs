@@ -76,13 +76,15 @@ public class TurnHandlerBehaviour : MonoBehaviour {
             ballMovingTrails.Add(new List<MovingTrail>());
         }
         turns = 1;
-        if(cursorText == null)
+      
+    }
+    void Start(){
+  if(cursorText == null)
         {
             cursorText = GameObject.Find("CursorText").GetComponent<Text>();
 			cursorText.text = "";
         }
     }
-
 	void FindRobots(){
 		for (int i = 0; transform.childCount > i; i++){
 			robots.Add(transform.GetChild(i).gameObject);
