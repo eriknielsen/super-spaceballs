@@ -424,16 +424,11 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 		else
 		{
 			movingPreviews[selectedRobotIndex].SetActive (false);
-<<<<<<< HEAD
-			StopAllCoroutines ();
-			DestroyLatestPreviewTrail();
-			cursorText.text = "";
 
-=======
 			HideCursorText();
 			DestroyPreviewTrails();
 			StopCoroutineIfNotNull(previewTrajectoryAndGiveRobotCommand);
->>>>>>> origin/master
+
 		}
 	}
 
@@ -443,17 +438,12 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 		timeInput = 0;
 		selectedCommand = Command.AvailableCommands.None;
         
-<<<<<<< HEAD
-		
-		DestroyLatestPreviewTrail ();
-		cursorText.text = "";
-        StopCoroutine(SetAndDisplayTimeInput());
-        StopCoroutine(PreviewTrajectoryAndGiveRobotCommand());
-=======
+
 		HideCursorText();
 		DestroyPreviewTrails();
 		StopCoroutineIfNotNull(previewTrajectoryAndGiveRobotCommand);
->>>>>>> origin/master
+      
+
         if (selectedCommandWheel != null)
         {
             Destroy(selectedCommandWheel);
