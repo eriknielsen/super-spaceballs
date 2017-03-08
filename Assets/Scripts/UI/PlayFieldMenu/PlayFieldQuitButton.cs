@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayFieldQuitButton : MonoBehaviour {
 
@@ -8,6 +9,7 @@ public class PlayFieldQuitButton : MonoBehaviour {
 
 	void Awake(){
 		menuHandler = GameObject.FindWithTag("MenuHandler").GetComponent<PlayFieldMenu>();
+		GetComponent<Button>().colors = ToolBox.Instance.buttonColors;
 	}
 
 	public void OnClick(){

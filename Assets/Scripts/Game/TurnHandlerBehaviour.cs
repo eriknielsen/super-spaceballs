@@ -4,60 +4,59 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
 
-public class TurnHandlerBehaviour : MonoBehaviour
-{
+public class TurnHandlerBehaviour : MonoBehaviour {
+	
 	public List<Move> moves;
-    [SerializeField]
-    GameObject shockWavePrefab;
-	[SerializeField]
-	GameObject commandWheelPrefab;  //Command selection buttons
-    [SerializeField]
-    int planTime;
 
     GameObject selectedCommandWheel;
+	[SerializeField]
+	GameObject shockWavePrefab;
+	[SerializeField]
+	GameObject commandWheelPrefab;  //Command selection buttons
+	[SerializeField]
+	int planTime; //Plantime per player round
+
     [HideInInspector]
     public float roundTime;
-
-    //the time left for this player to plan their move
-
     [HideInInspector]
-    public float currentPlanTimeLeft;
+	public float currentPlanTimeLeft; //the time left for this player to plan their move
 
 
-    private Text cursorText;
-	private GameObject selectedRobot;
-    private int selectedRobotIndex;
-    private Command.AvailableCommands selectedCommand;
+    Text cursorText;
 
-    private float timeInput;
-    private List<GameObject> movingPreviews;
-    private string movingPreviewsName = "Moving Previews";
-	private MovingTrail latestRobotTrail;
-    private MovingTrail latestBallTrail;
-    private List<List<MovingTrail>> robotMovingTrails;
-    private List<List<MovingTrail>> ballMovingTrails;
-    private GameObject ball;
-    private PreviewMarker pm;
+	int selectedRobotIndex;
+	GameObject selectedRobot;
+    Command.AvailableCommands selectedCommand;
+
+	int turns;
+    float timeInput;
+	GameObject ball;
+	PreviewMarker pm;
+	Coroutine previewBallTrajectory;
+	Coroutine setAndDisplayTimeInput;
+	Coroutine previewTrajectoryAndGiveRobotCommand;
+	List<GameObject> movingPreviews;
+	MovingTrail latestBallTrail;
+	MovingTrail latestRobotTrail;
+	List<List<MovingTrail>> ballMovingTrails;
+    List<List<MovingTrail>> robotMovingTrails;
     List<GameObject> robots;
-    int turns;
-    public int CurrentPlanTimeLeft{
+	public List<GameObject> Robots
+	{
+		get { return robots; }
+	}
+    public int CurrentPlanTimeLeft {
         get; set;
     }
-    public int PlanTime{
+    public int PlanTime {
         get{return planTime;}
     }
      public int Turns
     {
         get { return turns; }
     }
-	
-    public List<GameObject> Robots
-    {
-        get { return robots; }
-    }
-    void Awake()
 
-    {
+    void Awake(){
         CurrentPlanTimeLeft = planTime;
         //pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
         //ball = FindObjectOfType<Ball>().gameObject;
@@ -71,7 +70,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
 		for (int i = 0; i < robots.Count; i++)
 		{
 			movingPreviews.Add(new GameObject());
-			movingPreviews[i].name = movingPreviewsName;
+			movingPreviews[i].name = "Moving Previews";
 			movingPreviews[i].SetActive(false);
 			robotMovingTrails.Add(new List<MovingTrail>());
             ballMovingTrails.Add(new List<MovingTrail>());
@@ -97,15 +96,12 @@ public class TurnHandlerBehaviour : MonoBehaviour
             robotBehaviour.CurrentState.EnterPauseState();
             robotBehaviour.freeTime = roundTime;
         }
-
         DisableMovingPreviews();
     }
 
     public void UnpauseGame()
     {
-        
-        //put all robots into play
-        foreach (GameObject robot in robots)
+		foreach (GameObject robot in robots) //put all robots into play
         {
 			//save the robots position,velocity, commands etc
             moves.Add(new Move(robot, Turns, robot.GetComponent<RobotBehaviour>().Commands));
@@ -157,10 +153,11 @@ public class TurnHandlerBehaviour : MonoBehaviour
             }
         }
     }
-    void OnDestroy()
-    {
+
+    void OnDestroy(){
         StopAllCoroutines();
     }
+
     void SelectRobot(GameObject robot)
     {
         if (Input.GetMouseButtonDown(0))
@@ -195,6 +192,9 @@ public class TurnHandlerBehaviour : MonoBehaviour
         float remainingTimeForRobot;
         float previewInputTime, maxInputTime;
         float shockwaveLife = shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime;
+
+		Cursor.visible = false;
+
 		while (selectedRobot != null && selectedCommand != Command.AvailableCommands.None)
         {
 			selectedRB = selectedRobot.GetComponent<RobotBehaviour>();
@@ -209,7 +209,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
             {
                 deltaPosition = cursorScreenPosition - selectedRobot.transform.position;
             }
-
             deltaDistance = Mathf.Sqrt(Mathf.Pow(deltaPosition.x, 2) + Mathf.Pow(deltaPosition.y, 2));
 
             previewInputTime = secondsPerDistance * deltaDistance;
@@ -218,7 +217,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
             if (selectedCommand == Command.AvailableCommands.Push)
             {
                 //add a bit of time to make sure the shockwave dies before pausing
-                maxInputTime = selectedRB.freeTime - (shockwaveLife+0.08f);
+                maxInputTime = selectedRB.freeTime - (shockwaveLife+0.1f);
                 if(maxInputTime < 0)
                 {
                     maxInputTime = 0;
@@ -231,14 +230,14 @@ public class TurnHandlerBehaviour : MonoBehaviour
             if (previewInputTime <= maxInputTime)
             {
                 timeInput = previewInputTime;
-//                if (Input.GetKeyDown(KeyCode.Space))
+//                if (Input.GetKeyDown(KeyCode.Space)) //Code related to other preview marking method
 //                    pm.simulatepath2(selectedRobot.transform.position, selectedRobot.GetComponent<Rigidbody2D>().velocity, timeInput, cursorScreenPosition);
             }
             else
             {
                 timeInput = maxInputTime;
             }
-            cursorText.text = timeInput.ToString();
+			cursorText.text = System.Math.Round(timeInput, 2).ToString();
             cursorText.transform.position = cursorPosition;
 
             yield return new WaitForSeconds(0.005f);
@@ -412,20 +411,25 @@ public class TurnHandlerBehaviour : MonoBehaviour
 	public void THSelectCommand(Command.AvailableCommands command)
 	{
 		selectedCommand = command;
-		if (selectedCommand != Command.AvailableCommands.None)
+		if (selectedCommand != Command.AvailableCommands.None) //StartCoroutine(PreviewBallTrajectory());?
 		{
 			movingPreviews[selectedRobotIndex].SetActive (true);
-			StartCoroutine(SetAndDisplayTimeInput ());
-			StartCoroutine(PreviewTrajectoryAndGiveRobotCommand ());
-            //StartCoroutine(PreviewBallTrajectory());
+			setAndDisplayTimeInput = StartCoroutine(SetAndDisplayTimeInput());
+			previewTrajectoryAndGiveRobotCommand = StartCoroutine(PreviewTrajectoryAndGiveRobotCommand());
 		}
 		else
 		{
 			movingPreviews[selectedRobotIndex].SetActive (false);
+<<<<<<< HEAD
 			StopAllCoroutines ();
 			DestroyLatestPreviewTrail();
 			cursorText.text = "";
 
+=======
+			HideCursorText();
+			DestroyPreviewTrails();
+			StopCoroutineIfNotNull(previewTrajectoryAndGiveRobotCommand);
+>>>>>>> origin/master
 		}
 	}
 
@@ -435,11 +439,17 @@ public class TurnHandlerBehaviour : MonoBehaviour
 		timeInput = 0;
 		selectedCommand = Command.AvailableCommands.None;
         
+<<<<<<< HEAD
 		
 		DestroyLatestPreviewTrail ();
 		cursorText.text = "";
         StopCoroutine(SetAndDisplayTimeInput());
         StopCoroutine(PreviewTrajectoryAndGiveRobotCommand());
+=======
+		HideCursorText();
+		DestroyPreviewTrails();
+		StopCoroutineIfNotNull(previewTrajectoryAndGiveRobotCommand);
+>>>>>>> origin/master
         if (selectedCommandWheel != null)
         {
             Destroy(selectedCommandWheel);
@@ -450,9 +460,27 @@ public class TurnHandlerBehaviour : MonoBehaviour
         }
 	}
 
+	void HideCursorText(){
+		cursorText.text = "";
+		Cursor.visible = true;
+		StopCoroutineIfNotNull(setAndDisplayTimeInput);
+	}
+
+	void StopCoroutineIfNotNull(Coroutine coroutine){
+		if (coroutine != null){
+			StopCoroutine(coroutine);
+		}
+	}
+
+	void DestroyPreviewTrails(){
+		if (latestRobotTrail != null){
+			Destroy(latestRobotTrail.TrailGameObject);
+		}
+		latestRobotTrail = null;
+	}
+
     public void Activate(bool activate)
     {
-      
         if (activate == true)
         {
             //visually indicate that this turnhandlers robots are now active
@@ -466,7 +494,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         }
         else
         {
-			THDeselectRobot ();
+			THDeselectRobot();
             RobotBehaviour.OnClick -= new RobotBehaviour.ClickedOnRobot(SelectRobot);
 
             for (int i = 0; i < robots.Count; i++)
@@ -482,9 +510,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
     }
 
     public void ReplayLastTurn()
-    {
-        //save commando lists in robots where they are longer than 0
-        //and put them in that robots oldCommands<List>
+	{ //save commando lists in robots where they are longer than 0 and put them in that robots oldCommands<List>
 		foreach (GameObject robot in robots)
         {
             if (robot.GetComponent<RobotBehaviour>().Commands.Count > 0)

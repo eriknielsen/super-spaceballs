@@ -5,7 +5,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 
     //stuff that needs to be enabled
@@ -15,6 +15,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     public GameObject robotDeselectionCollider;
     public GameObject ingameCanvas;
     public GameObject matchmakingCanvas;
+    public GameObject inGameMenuHandler;
     //only ever activate the player turnhandler
     TurnHandlerBehaviour playerTurnhandler;
     //recive commands from the server/client and give to this turnhandler
@@ -26,7 +27,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     public int matchTime;
     public int roundTime;
     public int planTime;
-
+    public int overTime;
     public bool customIsServer;
     [HideInInspector]
     public ServerBehaviour server;
@@ -34,6 +35,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     
     //number of rounds played
     int roundCount = 0;
+    
     Coroutine gameTimerCoroutine;
     Coroutine planCountDownCoroutine;
     Goal leftGoal;
@@ -41,8 +43,10 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     [SerializeField]
     Ball ball;
     GameTimer gameTimer;
+    
     Text gameTimeText;
     Text planTimeText;
+
     bool paused = true;
     
     void Start()
@@ -59,13 +63,16 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             playerTurnhandler = leftTurnhandlerInScene;
             otherTurnhandler = rightTurnhandlerInScene;
         }
-        matchmakingCanvas.SetActive(false);
+        inGameMenuHandler.SetActive(true);
         ingameCanvas.SetActive(true);
+        matchmakingCanvas.SetActive(false);
+      
         playerTurnhandler.gameObject.SetActive(true);
         playerTurnhandler.currentPlanTimeLeft = planTime;
         otherTurnhandler.gameObject.SetActive(true);
         playingField.SetActive(true);
         robotDeselectionCollider.SetActive(true);
+        
         
         ball.gameObject.SetActive(true);
         InititializeGame();
@@ -73,6 +80,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         playerTurnhandler.Activate(true);
         
         planCountDownCoroutine = StartCoroutine(CountDownPlanningTime());
+        
     }
     void InititializeGame()
     {
@@ -91,6 +99,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         if (gameTimeText == null)
         {
             gameTimeText = GameObject.Find("GameTimeText").GetComponent<Text>();
+            Debug.Log(gameTimeText);
         }
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
         if(planTimeText == null){
@@ -100,30 +109,14 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 
 
     }
-    /// <summary>
-    /// assuming the same thing happens on both clients nothing needs to be sent
-    /// over the network
-    /// </summary>
-    void OnScore()
-    {
-        //pause game
-        if(gameTimerCoroutine != null)
-            StopCoroutine(gameTimerCoroutine);
-
-        PauseGame();
-    }
-
-    IEnumerator CountDownPlanningTime(){
-        while(playerTurnhandler.currentPlanTimeLeft > 0 ){
-            yield return new WaitForSecondsRealtime(1f);
-            playerTurnhandler.currentPlanTimeLeft--;
-        }
-    }
-    // Update is called once per frame
+    
     void Update()
     {
-          gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
-          planTimeText.text = "Plan time: " + (int)playerTurnhandler.currentPlanTimeLeft;
+        if(gameTimer.IsGameOver()){
+            StartCoroutine(HandleMatchEnd());
+        }
+         UpdateTimerTexts();
+
         if(paused){
             //if time is out then
             if(playerTurnhandler.currentPlanTimeLeft <= 0){
@@ -150,10 +143,93 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             }
         }
     }
+    /// <summary>
+    /// assuming the same thing happens on both clients nothing needs to be sent
+    /// over the network
+    /// </summary>
+    void OnScore()
+    {
+        //pause game
+        if(gameTimerCoroutine != null)
+            StopCoroutine(gameTimerCoroutine);
+
+        PauseGame();
+    }
+
+    IEnumerator CountDownPlanningTime(){
+        while(playerTurnhandler.currentPlanTimeLeft > 0 ){
+            yield return new WaitForSecondsRealtime(1f);
+            playerTurnhandler.currentPlanTimeLeft--;
+        }
+    }
+      void UpdateTimerTexts()
+    {
+        if(gameTimeText != null)
+        {
+            gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
+        }
+     
+
+        if(planTimeText != null && paused == true)
+        {
+           planTimeText.text = "Plan time: " + (int)playerTurnhandler.currentPlanTimeLeft;
+        }
+
+    }
+    IEnumerator HandleMatchEnd()
+    {
+        //check if the score is tied, then add overtime (if not already overtime) and continue
+        if (leftGoal.score == rightGoal.score && gameTimer.InOvertime() == false && overTime > 0)
+        {
+            Debug.Log("show that overtime is happening!!");
+            
+            gameTimer.AddOvertime(overTime);
+            
+        }
+        //if possible, display winner!
+        else
+        {
+            PauseGame();
+            //left won!
+            if (leftGoal.score > rightGoal.score)
+            {
+               if(customIsServer){
+                    Debug.Log("local player won!!");
+                }
+                else{
+                    Debug.Log("local player lost!");
+                }
+            }
+            //right won! 
+            else if (rightGoal.score > leftGoal.score)
+            {
+                if(customIsServer){
+                    Debug.Log("local player won!!");
+                }
+                else{
+                    Debug.Log("local player lost!");
+                } 
+            }
+            else if(rightGoal.score == leftGoal.score)
+            {
+                
+                Debug.Log("match was even!");
+            }
+            //wait a bit and then change scene to mainmenu
+            yield return new WaitForSeconds(1f);
+            StopAllCoroutines();
+            SceneManager.LoadScene("MainMenu");
+        }
+    }
+    
     IEnumerator UnpauseGame()
     {
-        Debug.Log("unpausing!");
-        StopCoroutine(CountDownPlanningTime());
+        if(paused == false){
+            Debug.Log("breaking from unpause");
+            yield break;
+        }
+
+        StopCoroutine(planCountDownCoroutine);
         paused = false;
       
         playerTurnhandler.UnpauseGame();

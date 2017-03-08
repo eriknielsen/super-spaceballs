@@ -7,8 +7,7 @@ public class Goal : MonoBehaviour {
 	public int score { get; set; }
     public delegate void GoalScored();
     public static event GoalScored OnGoalScored;
-    [SerializeField]
-    Text scoreText;
+    public Text scoreText;
 
 	void Start(){
 		score = 0;
@@ -18,7 +17,7 @@ public class Goal : MonoBehaviour {
 		if (other.tag == "Ball"){
 			OnGoalScored();
 			score++;
-            scoreText.text = score.ToString();
+            scoreText.text = "" + score;
 			other.gameObject.GetComponent<Ball>().ResetPosition();
 		}
 	}

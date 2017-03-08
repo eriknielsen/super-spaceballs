@@ -34,6 +34,12 @@ public class ServerBehaviour : NetworkManager {
     MatchInfo currentMatchInfo;
     NetworkClient localClient;
     NetworkConnection remoteConnection;
+    [SerializeField]
+    GameObject findMatchButton;
+     [SerializeField]
+    GameObject createMatchButton;
+     [SerializeField]
+    GameObject backButton;
 
     int matchDomain = 0;
     //if isServer true then the networkplaybehaviour gets this set
@@ -49,6 +55,13 @@ public class ServerBehaviour : NetworkManager {
         Debug.Log("creating match");
         matchName = "";
         NetworkManager.singleton.matchMaker.CreateMatch(matchName, 4, true, "", "", "", 0, matchDomain, OnInternetMatchCreate);
+        ToggleButtons();
+
+    }
+    void ToggleButtons(){
+        
+        findMatchButton.SetActive(!findMatchButton.activeInHierarchy);
+        createMatchButton.SetActive(!createMatchButton.activeInHierarchy);
     }
 
     //this method is called when your request for creating a match is returned
@@ -57,7 +70,7 @@ public class ServerBehaviour : NetworkManager {
         if (success)
         {
             Debug.Log("Create match succeeded");
-            statusText.text = "Create match succeeded";
+            statusText.text = "Match created";
             MatchInfo hostInfo = matchInfo;
             currentMatchInfo = matchInfo;
             
@@ -78,6 +91,7 @@ public class ServerBehaviour : NetworkManager {
     public void FindInternetMatch(string matchName)
     {
         NetworkManager.singleton.matchMaker.ListMatches(0, 10, matchName, true, 0, matchDomain, OnInternetMatchList);
+        ToggleButtons();
     }
 
     //this method is called when a list of matches is returned
@@ -88,20 +102,26 @@ public class ServerBehaviour : NetworkManager {
             if (matches.Count != 0)
             {
                 Debug.Log("A list of matches was returned");
-                statusText.text = "A list of matches was returned, trying to join one";
+                statusText.text = "Matches found!";
 
-                if (matches[matches.Count - 1].currentSize < 2)
+                if (matches[matches.Count - 1].currentSize < 2 &&matches[matches.Count - 1].currentSize > 0){
                     NetworkManager.singleton.matchMaker.JoinMatch(matches[matches.Count - 1].networkId, "", "", "", 0, matchDomain, OnJoinInternetMatch);
+                }
+                else{
+                    Debug.Log("no suitable match found, try again");
+                }
+                    
             }
             else
             {
                 Debug.Log("No matches in requested room!");
-                statusText.text = "No matches in requested room!";
+                statusText.text = "No matches found, create one!";
+                ToggleButtons();
             }
         }
         else
         {
-            statusText.text = "Couldn't connect to match maker";
+            statusText.text = "Couldn't connect to server";
             Debug.LogError("Couldn't connect to match maker");
         }
     }
@@ -111,20 +131,23 @@ public class ServerBehaviour : NetworkManager {
     {
         if (success)
         {
-            Debug.Log("Able to join a match");
-            statusText.text = "Able to join a match";
+            
+            Debug.Log("Connecting...");
+            statusText.text = "Connecting...";
             MatchInfo hostInfo = matchInfo;
 
             localClient = NetworkManager.singleton.StartClient(hostInfo);
         }
         else
         {
+            statusText.text = "Connection failed, try again";
             Debug.LogError("Join match failed");
+            ToggleButtons();
         }
     }
     public override void OnClientConnect(NetworkConnection conn)
     {
-        statusText.text = "client connected!";
+        //statusText.text = "client connected!";
         Debug.Log("client connected!");
         remoteConnection = conn;
         //if we are a client connecting to a host then create the networkplayobject
@@ -159,8 +182,14 @@ public class ServerBehaviour : NetworkManager {
     }
     public override void OnClientDisconnect(NetworkConnection conn)
     {
+         
         base.OnClientDisconnect(conn);
+        Debug.Log(NetworkManager.singleton.matchMaker);
+        if(NetworkManager.singleton.matchMaker != null){
         NetworkManager.singleton.matchMaker.DropConnection(currentMatchInfo.networkId, currentMatchInfo.nodeId, matchDomain, null);
+        }
+        
+       
         SceneManager.LoadSceneAsync("MainMenu");
     }
     public override void OnServerDisconnect(NetworkConnection conn)
