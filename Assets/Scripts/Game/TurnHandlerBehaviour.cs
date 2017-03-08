@@ -174,7 +174,6 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 						selectedCommandWheel = Instantiate (commandWheelPrefab, new Vector3(robots[i].transform.position.x, robots[i].transform.position.y, robots[i].transform.position.z-1), Quaternion.identity); //Command selection buttons
 						movingPreviews[selectedRobotIndex].SetActive(false);
                         selectedRobot = robot;
-                        robot.GetComponent<ParticleSystem>().Emit(15);
                         selectedRobotIndex = i;
                         break;
                     }
