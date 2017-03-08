@@ -13,6 +13,7 @@ public class PlayFieldMainMenuButton : MonoBehaviour {
 	}
 
 	public void OnClick(){
+		
 		menuHandler.MainMenu();
 	}
 }

@@ -53,6 +53,7 @@ public class MoveCommand : Command
         force = moveCommand.Force;
         initialForce = moveCommand.InitialForce;
         lifeTimer = moveCommand.LifeDuration;
+        targetPosition = moveCommand.targetPosition;
     }
     
     public MoveCommand(GameObject r, Vector2 target, float lifetime, int turn)
@@ -63,7 +64,7 @@ public class MoveCommand : Command
             speed = 1f;
         }
         initialForceMagnitude = speed * 7;
-        initialForceTime = lifetime - lifetime / 4;
+        
         targetPosition = target;
         robot = r;
         lifeDuration = lifetime;
@@ -95,21 +96,18 @@ public class MoveCommand : Command
         if (hasStarted == false)
         {
             robot.GetComponent<RobotBehaviour>().OnAccelerate();
+            robot.GetComponent<Rigidbody2D>().AddForce(InitialForce);
             hasStarted = true;
         }
         //robot.transform.rotation = Quaternion.Lerp(robot.transform.rotation, Quaternion.Euler(0, 0, angle * Mathf.Rad2Deg), Time.deltaTime);
         if(lifeTimer > 0)
         {
             robot.GetComponent<RobotBehaviour>().UpdateAnimationAngle(force.y, force.x);
-            if(lifeTimer > initialForceTime)
-            {
-                robot.GetComponent<Rigidbody2D>().AddForce(InitialForce);
-            }
-            else
-            {
-                robot.GetComponent<Rigidbody2D>().AddForce(force);
-            }
-            lifeTimer -= Time.deltaTime;
+            robot.GetComponent<Rigidbody2D>().AddForce(force);
+          
+
+            lifeTimer -= Time.fixedDeltaTime;
+            
         }
         else
         {

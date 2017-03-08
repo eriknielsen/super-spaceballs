@@ -33,6 +33,7 @@ public class SerializableCommand {
 	public SerializableCommand(int index, Vector2 targetPos, float duration, CommandType t, int turn){
 		robotIndex = index;
 		targetPosition = new Position(targetPos);
+		
 		lifeDuration = duration;
 		this.turn = turn;
 		type = t;
