@@ -216,11 +216,8 @@ public class ServerBehaviour : NetworkManager {
     public void SendCommands(SerializableCommandList commands)
     {
         CommandMsg msg = new CommandMsg();
-    
-     
 
         byte[] result;
-        
 
         BinaryFormatter bf = new BinaryFormatter();
         System.IO.MemoryStream ms = new System.IO.MemoryStream();
@@ -258,16 +255,15 @@ public class ServerBehaviour : NetworkManager {
             bytePositions = ms.ToArray();
 
             byte[] byteVelocities;
-              SerializablePositionList robotVelocities = new SerializablePositionList();
+            SerializablePositionList robotVelocities = new SerializablePositionList();
             for(int i = 0; i < robots.Count; i++){
                 robotPositions.Add(new Position(robots[i].GetComponent<RobotBehaviour>().prevVelocity));
             }
 
-         
-
-            bf.Serialize(ms,robotVelocities);
-            byteVelocities = ms.ToArray();
-
+            BinaryFormatter bf2 = new BinaryFormatter();
+            System.IO.MemoryStream ms2 = new System.IO.MemoryStream();
+            bf2.Serialize(ms2,robotVelocities);
+            byteVelocities = ms2.ToArray();
 
             SyncStateMsg syncMsg = new SyncStateMsg();
             syncMsg.robotPositions = bytePositions;

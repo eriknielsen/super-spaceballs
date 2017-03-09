@@ -424,7 +424,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             }
             //and the remaining 3 should be put in the playerTurnhandler
             for(int i = 3; i < 6;i++){
-                 GameObject r = otherTurnhandler.Robots[i-3];
+                 GameObject r = playerTurnhandler.Robots[i-3];
                 r.transform.position =
                 deserializedPositions[i].V2();
 
