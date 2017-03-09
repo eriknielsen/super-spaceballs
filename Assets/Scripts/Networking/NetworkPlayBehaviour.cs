@@ -380,30 +380,31 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         remoteIsReady = true;
     }
     public void OnRecieveSyncState(NetworkMessage netMsg){
-        ServerBehaviour.SerializablePositionList deserializedPositions = new ServerBehaviour.SerializablePositionList();
+        if(customIsServer == false){
+            ServerBehaviour.SerializablePositionList deserializedPositions = new ServerBehaviour.SerializablePositionList();
 
-        BinaryFormatter bf = new BinaryFormatter();
-        Byte[] buffer = netMsg.ReadMessage<ServerBehaviour.SyncStateMsg>().robotPositions;
-        System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
-        deserializedPositions = bf.Deserialize(ms) as ServerBehaviour.SerializablePositionList;
+            BinaryFormatter bf = new BinaryFormatter();
+            Byte[] buffer = netMsg.ReadMessage<ServerBehaviour.SyncStateMsg>().robotPositions;
+            System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
+            deserializedPositions = bf.Deserialize(ms) as ServerBehaviour.SerializablePositionList;
 
-        Debug.Log(deserializedPositions.Count +  " positons recived!");
+            Debug.Log(deserializedPositions.Count +  " positons recived!");
 
-        
-        //put the positons into the turnhandlers robots
-        //the first robotCount(3) robots should be put in the otherTurnhandler
-        
-        for(int i = 0; i < 3;i++){
-            otherTurnhandler.Robots[i].transform.position = 
-            deserializedPositions[i].V2();
-        }
-        //and the remaining 3 should be put in the playerTurnhandler
-        for(int i = 3; i < 6;i++){
             
+            //put the positons into the turnhandlers robots
+            //the first robotCount(3) robots should be put in the otherTurnhandler
+            
+            for(int i = 0; i < 3;i++){
+                otherTurnhandler.Robots[i].transform.position = 
+                deserializedPositions[i].V2();
+            }
+            //and the remaining 3 should be put in the playerTurnhandler
+            for(int i = 3; i < 6;i++){
+                playerTurnhandler.Robots[i].transform.position =
+                deserializedPositions[i].V2();
+            }   
         }
-
-
-
+        
     }
     
     //####
