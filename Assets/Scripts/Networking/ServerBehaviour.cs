@@ -12,14 +12,22 @@ using UnityEngine.SceneManagement;
 public class ServerBehaviour : NetworkManager {
     [Serializable]
     public class SerializableCommandList : List<SerializableCommand> { }
+    public class SerializablePositionList : List<Position>{ }
     public class CommandMsg : MessageBase {
         public static short msgType = MsgType.Highest + 1;
-        public SerializableCommandList commands;
-
+      
         public byte[] serializedCommands;
     }
     public class UnpauseMsg : MessageBase {
         public static short msgType = MsgType.Highest + 2;
+    }
+    public class SyncStateMsg : MessageBase{
+        public static short msgType = MsgType.Highest + 3;
+
+        //the reciever goes through the robotPositions and sets them accordingly
+        public byte[] robotPositions;
+        //reciever checks if the score is wrong and acts accordingly
+        public byte[] scores;
     }
 
 
@@ -43,7 +51,7 @@ public class ServerBehaviour : NetworkManager {
 
     int matchDomain = 0;
     //if isServer true then the networkplaybehaviour gets this set
-    bool isServer;
+    bool isServer = false;
 
     void Start()
     {
@@ -158,6 +166,7 @@ public class ServerBehaviour : NetworkManager {
             networkedPlayInstance.server = this;
             conn.RegisterHandler(CommandMsg.msgType, networkedPlayInstance.OnRecieveCommands);
             conn.RegisterHandler(UnpauseMsg.msgType, networkedPlayInstance.OnRecieveUnpause);
+            conn.RegisterHandler(SyncStateMsg.msgType, networkedPlayInstance.OnRecieveSyncState);
         }
     }
     public override void OnServerConnect(NetworkConnection conn)
@@ -203,9 +212,8 @@ public class ServerBehaviour : NetworkManager {
     public void SendCommands(SerializableCommandList commands)
     {
         CommandMsg msg = new CommandMsg();
-        msg.commands = new SerializableCommandList();
-        msg.commands = commands;
-        //Debug.Log(commands[0].targetPosition.x + " y: " + commands[0].targetPosition.y);
+    
+     
 
         byte[] result;
         
@@ -226,6 +234,34 @@ public class ServerBehaviour : NetworkManager {
         else
         {
             Debug.Log("no remote connection to send to");
+        }
+    }
+    //AS SERVER ONLY
+    //takes a list of robots and sends their positions to the other client
+    public void SendSyncStateMsg(List<GameObject> robots){
+        if(isServer){
+            SerializablePositionList robotPositions = new SerializablePositionList();
+            for(int i = 0; i < robots.Count; i++){
+                robotPositions.Add(new Position(robots[i].transform.position));
+            }
+            Debug.Log("sending " + robots.Count + " positions");
+            byte[] bytePositions;
+
+            BinaryFormatter bf = new BinaryFormatter();
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+
+            bf.Serialize(ms,robotPositions);
+            bytePositions = ms.ToArray();
+            SyncStateMsg syncMsg = new SyncStateMsg();
+            if (remoteConnection != null)
+            {
+                remoteConnection.Send(SyncStateMsg.msgType, syncMsg);
+            }
+            else
+            {
+                Debug.Log("no remote connection to send to");
+            }
+
         }
     }
       public void f(byte[] input)
