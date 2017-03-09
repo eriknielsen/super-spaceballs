@@ -294,7 +294,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
                     latestRobotTrail.TrailGameObject.transform.parent = movingPreviews[selectedRobotIndex].transform;
                     robotMovingTrails[selectedRobotIndex].Add(latestRobotTrail);
                     latestRobotTrail = null;
-                    Debug.Log(previewCommand.targetPosition.x + " " + previewCommand.targetPosition.y);
+                    
                     GiveRobotCommand(previewCommand);
                 }
             }

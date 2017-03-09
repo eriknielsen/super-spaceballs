@@ -184,7 +184,7 @@ public class ServerBehaviour : NetworkManager {
     {
          
         base.OnClientDisconnect(conn);
-        Debug.Log(NetworkManager.singleton.matchMaker);
+       
         if(NetworkManager.singleton.matchMaker != null){
         NetworkManager.singleton.matchMaker.DropConnection(currentMatchInfo.networkId, currentMatchInfo.nodeId, matchDomain, null);
         }
@@ -218,7 +218,7 @@ public class ServerBehaviour : NetworkManager {
         CommandMsg cmdMsg = new CommandMsg();
 
         cmdMsg.serializedCommands = result;
-        f(cmdMsg.serializedCommands);
+        //f(cmdMsg.serializedCommands);
         if (remoteConnection != null)
         {
             remoteConnection.Send(CommandMsg.msgType, cmdMsg);
@@ -248,4 +248,5 @@ public class ServerBehaviour : NetworkManager {
             remoteConnection.Send(UnpauseMsg.msgType, unpMsg);
         }
     }
+    
 }
