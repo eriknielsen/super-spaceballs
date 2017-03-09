@@ -280,6 +280,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         paused = true;
         playerTurnhandler.PauseGame();
         otherTurnhandler.PauseGame();
+        ball.Pause();
         if(customIsServer){
             List<GameObject> allRobots = new List<GameObject>();
             allRobots.AddRange(playerTurnhandler.Robots);
@@ -288,7 +289,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             Debug.Log("sending sycnstate msg");
         }
 
-        ball.Pause();
+        
     }
     /// <summary>
     /// turns serializablecommands to real commmands
