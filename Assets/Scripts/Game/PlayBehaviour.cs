@@ -223,14 +223,14 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 			{
 				Debug.Log("match was a draw!");
 			}
-			//wait a bit and then change scene to mainmenu
+			//Wait a bit, then change scene to mainmenu
 			yield return new WaitForSeconds(1f);
 			StopAllCoroutines();
 			SceneManager.LoadSceneAsync("MainMenu");
 		}
 	}
 
-	//if we replayed the last turn, we dont want to do the newturn stuff
+	//If we replayed the last turn, we dont want to do the newturn stuff
 	IEnumerator UnpauseGame(){
 		Debug.Log("GAME IS UNPAUSED!");
 		paused = false;
@@ -296,9 +296,11 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		roundCount++;
 		if (roundCount % 2 == 0){
 			currentActiveTurnhandler = turnHandler1;
+			turnHandler1.CurrentPlanTimeLeft = planTime;
 		}
 		else {
 			currentActiveTurnhandler = turnHandler2;
+			turnHandler2.CurrentPlanTimeLeft = planTime;
 		}
 		turnHandler1.CurrentPlanTimeLeft = planTime;
 		isTH1Done = false;

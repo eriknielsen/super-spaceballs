@@ -46,13 +46,16 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 	{
 		get { return robots; }
 	}
+
     public int CurrentPlanTimeLeft {
         get; set;
     }
      public int Turns
+
     {
         get { return turns; }
     }
+	public int CurrentPlanTimeLeft { get; set; }
 
     void Awake(){
         //pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
@@ -73,13 +76,15 @@ public class TurnHandlerBehaviour : MonoBehaviour {
             ballMovingTrails.Add(new List<MovingTrail>());
         }
         turns = 1;
-        if(cursorText == null)
+      
+    }
+    void Start(){
+  if(cursorText == null)
         {
             cursorText = GameObject.Find("CursorText").GetComponent<Text>();
 			cursorText.text = "";
         }
     }
-
 	void FindRobots(){
 		for (int i = 0; transform.childCount > i; i++){
 			robots.Add(transform.GetChild(i).gameObject);
@@ -169,7 +174,6 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 						selectedCommandWheel = Instantiate (commandWheelPrefab, new Vector3(robots[i].transform.position.x, robots[i].transform.position.y, robots[i].transform.position.z-1), Quaternion.identity); //Command selection buttons
 						movingPreviews[selectedRobotIndex].SetActive(false);
                         selectedRobot = robot;
-                        robot.GetComponent<ParticleSystem>().Emit(15);
                         selectedRobotIndex = i;
                         break;
                     }
@@ -275,11 +279,13 @@ public class TurnHandlerBehaviour : MonoBehaviour {
                         previewRobot = selectedRobot;
                     }
                     cursorPosition = Input.mousePosition;
+                 
                     cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
-
+                   
 					if (selectedCommand == Command.AvailableCommands.Move)
                     {
                         previewCommand = new MoveCommand(previewRobot, cursorScreenPosition, timeInput, Turns);
+                        
                     }
 					else if (selectedCommand == Command.AvailableCommands.Push && timeInput <= selectedRobot.GetComponent<RobotBehaviour>().freeTime - shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime)
                     {
@@ -310,6 +316,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
                     latestRobotTrail.TrailGameObject.transform.parent = movingPreviews[selectedRobotIndex].transform;
                     robotMovingTrails[selectedRobotIndex].Add(latestRobotTrail);
                     latestRobotTrail = null;
+                    
                     GiveRobotCommand(previewCommand);
                 }
             }
@@ -398,6 +405,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
                     givenCommand = new PushCommand(selectedRobot, command as PushCommand, previewDuration);
                 }
                 selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(givenCommand);
+                Debug.Log(givenCommand.targetPosition.x + " " + givenCommand.targetPosition.y);
                 selectedRobot.GetComponent<RobotBehaviour>().freeTime -= command.LifeDuration;
             }
         }
@@ -533,7 +541,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
             if (robot.GetComponent<RobotBehaviour>().oldCommands.Count > 0)
             {
                 RobotBehaviour robotBehaviour = robot.GetComponent<RobotBehaviour>();
-				robotBehaviour.commands = robotBehaviour.oldCommands;
+				robotBehaviour.Commands = robotBehaviour.oldCommands;
 				robotBehaviour.oldCommands.Clear();
             }
         }

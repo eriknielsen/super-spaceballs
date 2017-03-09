@@ -7,6 +7,11 @@ public class PlayFieldMenu : MonoBehaviour {
 	public GameObject optionsMenu;
 
 	public void MainMenu(){
+		
+		if(SceneManager.GetActiveScene().name == "OnlinePlay")
+		{
+			Destroy(GameObject.Find("Matchmaker"));
+		}
 		SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
 	}
 

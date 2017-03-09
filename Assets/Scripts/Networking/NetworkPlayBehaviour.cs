@@ -48,6 +48,10 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     Text planTimeText;
 
     bool paused = true;
+
+    //the color when the player is actually planning
+    Color activePlanTimeColor;
+    Color otherTeamPlanColor;
     
     void Start()
     {
@@ -56,6 +60,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         {
             playerTurnhandler = rightTurnhandlerInScene;
             otherTurnhandler = leftTurnhandlerInScene;
+            
             
         }
         else
@@ -94,19 +99,27 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         else {
             Debug.Log("couldint find goals :(");
         }
-     
+        if(playerTurnhandler == rightTurnhandlerInScene){
+            activePlanTimeColor = rightGoal.scoreText.color;
+            otherTeamPlanColor = leftGoal.scoreText.color;
+        }
+        else{
+            activePlanTimeColor = leftGoal.scoreText.color;
+            otherTeamPlanColor = rightGoal.scoreText.color;
+        }
+        
         gameTimer = new GameTimer(matchTime);
         if (gameTimeText == null)
         {
             gameTimeText = GameObject.Find("GameTimeText").GetComponent<Text>();
-            Debug.Log(gameTimeText);
+            
         }
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
         if(planTimeText == null){
             planTimeText = GameObject.Find("PlanTimeText").GetComponent<Text>();
         }
-        planTimeText.text = "Plan time: " + (int)playerTurnhandler.currentPlanTimeLeft;
-
+        planTimeText.text = "" + (int)playerTurnhandler.currentPlanTimeLeft;
+        planTimeText.color = activePlanTimeColor;
 
     }
     
@@ -133,6 +146,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             {
                 SendCommands();
                 localIsReady = true;
+                //change color of the plantime to show that we are waiting for the other player
+                planTimeText.color = otherTeamPlanColor;
             }
             //if we are server, tell the other client to unpause 
             // as well as unpause the server
@@ -164,15 +179,25 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     }
       void UpdateTimerTexts()
     {
+        string zeroBeforeMin;
+		string zeroBeforeSec;
+		if (gameTimer.MinutesRemaining () < 10)
+			zeroBeforeMin = "0";
+		else
+			zeroBeforeMin = "";
+		if (gameTimer.SecondsRemaining () < 10)
+			zeroBeforeSec = "0";
+		else
+			zeroBeforeSec = "";
         if(gameTimeText != null)
         {
-            gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
+            gameTimeText.text = zeroBeforeMin + gameTimer.MinutesRemaining() + ":" + zeroBeforeSec + gameTimer.SecondsRemaining();
         }
      
 
         if(planTimeText != null && paused == true)
         {
-           planTimeText.text = "Plan time: " + (int)playerTurnhandler.currentPlanTimeLeft;
+           planTimeText.text = "" + (int)playerTurnhandler.currentPlanTimeLeft;
         }
 
     }
@@ -228,10 +253,10 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             Debug.Log("breaking from unpause");
             yield break;
         }
-
+        Debug.Log("unpausing");
         StopCoroutine(planCountDownCoroutine);
         paused = false;
-      
+        ball.Unpause();
         playerTurnhandler.UnpauseGame();
         otherTurnhandler.UnpauseGame();
         playerTurnhandler.currentPlanTimeLeft = planTime;
@@ -245,7 +270,11 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     }
     void PauseGame()
     {
+        if(paused== true){
+            return;
+        }
         playerTurnhandler.Activate(true);
+        planTimeText.color = activePlanTimeColor;
         planCountDownCoroutine = StartCoroutine(CountDownPlanningTime());
         paused = true;
         playerTurnhandler.PauseGame();
@@ -287,9 +316,16 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     //send commands to the other client
     void SendCommands()
     {
-        Debug.Log("try to convert and send commands");
+        
         Dictionary<int, List<Command>> commandDict = new Dictionary<int, List<Command>>();
         commandDict = GetCommandDict(playerTurnhandler.Robots);
+        
+        for(int i = 0; i < playerTurnhandler.Robots.Count;i++){
+            if(playerTurnhandler.Robots[i].GetComponent<RobotBehaviour>().Commands.Count > 0){
+  //Debug.Log(playerTurnhandler.Robots[i].GetComponent<RobotBehaviour>().Commands[0].targetPosition.x + " y: " +  //playerTurnhandler.Robots[i].GetComponent<RobotBehaviour>().Commands[0].targetPosition.y);
+            }
+          
+        }
         ServerBehaviour.SerializableCommandList scList = new ServerBehaviour.SerializableCommandList();
 
 
@@ -298,6 +334,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             for (int i = 0; i < pair.Value.Count; i++)
             {
                 Command c = pair.Value[i];
+            
                 Type t = c.GetType();
                 if (t == typeof(MoveCommand))
                 {
@@ -314,7 +351,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             }
         }
 
-        Debug.Log(scList.Count + " commands added to the list, asking serverbheaviour to send them!");
+        //Debug.Log(scList.Count + " commands added to the list, asking serverbheaviour to send them!");
         server.SendCommands(scList);
     }
 
@@ -322,7 +359,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     public void OnRecieveUnpause(NetworkMessage netMsg)
     {
         Debug.Log("unpause msg rec!");
-        StartCoroutine(UnpauseGame());
+        if(paused == true)
+            StartCoroutine(UnpauseGame());
     }
     /// <summary>
     /// Recieve and put the commands into the otherTurnhandler's robots
@@ -336,7 +374,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         Byte[] buffer = netMsg.ReadMessage<ServerBehaviour.CommandMsg>().serializedCommands;
         System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
         deserializedCommands = bf.Deserialize(ms) as List<SerializableCommand>;
-        Debug.Log(deserializedCommands.Count + " commands recived!");
+        //Debug.Log(deserializedCommands.Count + " commands recived!");
         PutCommandsIntoRobots(deserializedCommands);
 
         remoteIsReady = true;
@@ -353,7 +391,11 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             RobotBehaviour rb = robotList[i].GetComponent<RobotBehaviour>();
             if (rb.Commands.Count > 0)
             {
+                
                 dict.Add(i, rb.Commands);
+                //for(int j = 0; j < rb.Commands.Count;j++ ){
+                    //Debug.Log("x: " + rb.Commands[j].targetPosition.x + " y:" + rb.Commands[j].targetPosition.y);
+                //}
             }
         }
         return dict;
