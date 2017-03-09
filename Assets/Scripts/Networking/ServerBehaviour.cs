@@ -29,6 +29,7 @@ public class ServerBehaviour : NetworkManager {
         public byte[] robotPositions;
         //reciever also sets the velocites
         public byte[] robotVelocities;
+        public byte[] ballPositionAndVelocity;
         //reciever checks if the score is wrong and acts accordingly
         public byte[] scores;
     }
@@ -259,7 +260,7 @@ public class ServerBehaviour : NetworkManager {
             byte[] byteVelocities;
               SerializablePositionList robotVelocities = new SerializablePositionList();
             for(int i = 0; i < robots.Count; i++){
-                robotPositions.Add(new Position(robots[i].GetComponent<Rigidbody2D>().velocity));
+                robotPositions.Add(new Position(robots[i].GetComponent<RobotBehaviour>().prevVelocity));
             }
 
          

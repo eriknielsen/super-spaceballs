@@ -270,13 +270,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     }
     void PauseGame()
     {
-        if(customIsServer){
-            List<GameObject> allRobots = new List<GameObject>();
-            allRobots.AddRange(playerTurnhandler.Robots);
-            allRobots.AddRange(otherTurnhandler.Robots);
-            server.SendSyncStateMsg(allRobots);
-            Debug.Log("sending sycnstate msg");
-        }
+     
         if(paused== true){
             return;
         }
@@ -286,6 +280,13 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         paused = true;
         playerTurnhandler.PauseGame();
         otherTurnhandler.PauseGame();
+        if(customIsServer){
+            List<GameObject> allRobots = new List<GameObject>();
+            allRobots.AddRange(playerTurnhandler.Robots);
+            allRobots.AddRange(otherTurnhandler.Robots);
+            server.SendSyncStateMsg(allRobots);
+            Debug.Log("sending sycnstate msg");
+        }
 
         ball.Pause();
     }
@@ -409,8 +410,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                 r.transform.position = 
                 deserializedPositions[i].V2();
                 //and velocities
-                r.GetComponent<Rigidbody2D>().velocity = deserializedVelocities[i].V2();
-                //also change prevVelocity in case we are too late/early
+
+                //prevVelocity is supposed to be changed now AFTER the game has been paused
                 r.GetComponent<RobotBehaviour>().prevVelocity = deserializedVelocities[i].V2();
 
 
@@ -421,9 +422,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                 r.transform.position =
                 deserializedPositions[i].V2();
 
-                r.GetComponent<Rigidbody2D>().velocity = deserializedVelocities[i].V2();
-
-                 //also change prevVelocity in case we are too late/early
+                //prevVelocity is supposed to be changed now AFTER the game has been paused
                 r.GetComponent<RobotBehaviour>().prevVelocity = deserializedVelocities[i].V2();
 
 
