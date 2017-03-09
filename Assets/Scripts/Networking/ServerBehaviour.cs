@@ -260,7 +260,7 @@ public class ServerBehaviour : NetworkManager {
 
             //where 0 is position and 1 velocity
              SerializablePositionList ballInfo = new SerializablePositionList();
-           ballInfo.Add(new Position(ball.transform.position);
+           ballInfo.Add(new Position(ball.transform.position));
            ballInfo.Add(new Position(ball.GetComponent<Ball>().PreviousVelocity));
 
            byte[] ballInfoBytes;
