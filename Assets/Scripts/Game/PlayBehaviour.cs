@@ -100,9 +100,9 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		if (planTimeText != null && currentActiveTurnhandler != null && paused == true)
 		{
 			if (currentActiveTurnhandler == turnHandler2)
-				planTimeText.color = leftPlayerTextColor;
-			else
 				planTimeText.color = rightPlayerTextColor;
+			else
+				planTimeText.color = leftPlayerTextColor;
 			planTimeText.text = "" + (int)currentActiveTurnhandler.CurrentPlanTimeLeft;
 		}
 	}
