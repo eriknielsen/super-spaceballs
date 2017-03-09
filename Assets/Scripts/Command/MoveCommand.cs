@@ -64,7 +64,7 @@ public class MoveCommand : Command
             speed = 1f;
         }
         initialForceMagnitude = speed * 7;
-        
+
         targetPosition = target;
         robot = r;
         lifeDuration = lifetime;

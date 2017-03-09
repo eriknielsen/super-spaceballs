@@ -6,7 +6,7 @@ using System;
 public class CommandSymbols : MonoBehaviour {
 
     [System.Serializable]
-    class Symbols
+    private class Symbols
     {
         public Sprite symbolSprite;
         public Command.AvailableCommands relatedCommand;
@@ -37,17 +37,20 @@ public class CommandSymbols : MonoBehaviour {
         return null;
     }
 
-    void OnValidate()
-    { 
-        for(int i = 0; i < symbols.Length; i++)
+    void Awake()
+    {
+        if (symbols != null)
         {
-            if(symbols[i].relatedCommand == Command.AvailableCommands.Move)
+            for (int i = 0; i < symbols.Length; i++)
             {
-                symbols[i].CommandType = typeof(MoveCommand);
-            }
-            else if(symbols[i].relatedCommand == Command.AvailableCommands.Push)
-            {
-                symbols[i].CommandType = typeof(PushCommand);
+                if (symbols[i].relatedCommand == Command.AvailableCommands.Move)
+                {
+                    symbols[i].CommandType = typeof(MoveCommand);
+                }
+                else if (symbols[i].relatedCommand == Command.AvailableCommands.Push)
+                {
+                    symbols[i].CommandType = typeof(PushCommand);
+                }
             }
         }
     }

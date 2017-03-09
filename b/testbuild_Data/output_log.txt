@@ -17,218 +17,54 @@ Platform assembly: C:\Users\nordh\OneDrive\Dokument\GitHub\super-spaceballs\b\te
 Loading C:\Users\nordh\OneDrive\Dokument\GitHub\super-spaceballs\b\testbuild_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
 Platform assembly: C:\Users\nordh\OneDrive\Dokument\GitHub\super-spaceballs\b\testbuild_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll (this message is harmless)
 Loading C:\Users\nordh\OneDrive\Dokument\GitHub\super-spaceballs\b\testbuild_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll into Unity Child Domain
-- Completed reload, in  0.060 seconds
+- Completed reload, in  0.038 seconds
 Platform assembly: C:\Users\nordh\OneDrive\Dokument\GitHub\super-spaceballs\b\testbuild_Data\Managed\System.Core.dll (this message is harmless)
 Platform assembly: C:\Users\nordh\OneDrive\Dokument\GitHub\super-spaceballs\b\testbuild_Data\Managed\System.dll (this message is harmless)
 desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
 <RI> Initializing input.
 <RI> Input initialized.
 <RI> Initialized touch support.
-The referenced script on this Behaviour (Game Object 'SoundManager') is missing!
+UnloadTime: 0.935901 ms
+NullReferenceException: Object reference not set to an instance of an object
+  at System.String.memcpy4 (System.Byte* dest, System.Byte* src, Int32 size) [0x00000] in <filename unknown>:0 
+  at System.String.memcpy (System.Byte* dest, System.Byte* src, Int32 size) [0x00000] in <filename unknown>:0 
+  at MainMenuOnlinePlayButton.Awake () [0x00000] in <filename unknown>:0 
  
-(Filename:  Line: 1754)
+(Filename:  Line: -1)
 
-UnloadTime: 1.476738 ms
+NullReferenceException: Object reference not set to an instance of an object
+  at System.String.memcpy4 (System.Byte* dest, System.Byte* src, Int32 size) [0x00000] in <filename unknown>:0 
+  at System.String.memcpy (System.Byte* dest, System.Byte* src, Int32 size) [0x00000] in <filename unknown>:0 
+  at MainMenuToggleOptionsButton.Awake () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
 Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
-UnloadTime: 9.498853 ms
+UnloadTime: 6.367214 ms
 
-Unloading 3 unused Assets to reduce memory usage. Loaded Objects now: 1204.
-Total: 1.214023 ms (FindLiveObjects: 0.088098 ms CreateObjectMapping: 0.060049 ms MarkObjects: 1.052838 ms  DeleteObjects: 0.005530 ms)
+Unloading 3 unused Assets to reduce memory usage. Loaded Objects now: 1317.
+Total: 0.892840 ms (FindLiveObjects: 0.104296 ms CreateObjectMapping: 0.166321 ms MarkObjects: 0.460247 ms  DeleteObjects: 0.029234 ms)
 
-Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
-UnloadTime: 1.329776 ms
-
-Unloading 1 unused Assets to reduce memory usage. Loaded Objects now: 1204.
-Total: 0.542024 ms (FindLiveObjects: 0.068740 ms CreateObjectMapping: 0.034765 ms MarkObjects: 0.433382 ms  DeleteObjects: 0.005135 ms)
-
-Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
-UnloadTime: 0.826863 ms
-
-Unloading 1 unused Assets to reduce memory usage. Loaded Objects now: 1204.
-Total: 0.657776 ms (FindLiveObjects: 0.070320 ms CreateObjectMapping: 0.038320 ms MarkObjects: 0.543604 ms  DeleteObjects: 0.005135 ms)
-
-Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
-UnloadTime: 1.985972 ms
-
-Unloading 1 unused Assets to reduce memory usage. Loaded Objects now: 1204.
-Total: 1.656886 ms (FindLiveObjects: 0.158814 ms CreateObjectMapping: 0.103901 ms MarkObjects: 1.378763 ms  DeleteObjects: 0.014617 ms)
-
-NullReferenceException
-  at (wrapper managed-to-native) UnityEngine.MonoBehaviour:StopCoroutineViaEnumerator_Auto (System.Collections.IEnumerator)
-  at UnityEngine.MonoBehaviour.StopCoroutine (IEnumerator routine) [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.THDeselectRobot () [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.SelectRobot (UnityEngine.GameObject robot) [0x00000] in <filename unknown>:0 
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at RobotBehaviour.OnMouseDown () [0x00000] in <filename unknown>:0 
-UnityEngine.GameObject:SendMessage(String, Object, SendMessageOptions)
-UnityEngine.HitInfo:SendMessage(String)
-UnityEngine.SendMouseEvents:SendEvents(Int32, HitInfo)
-UnityEngine.SendMouseEvents:DoSendMouseEvents(Int32)
+6.074074 4.111111
  
-(Filename:  Line: -1)
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
 
-NullReferenceException
-  at (wrapper managed-to-native) UnityEngine.MonoBehaviour:StopCoroutineViaEnumerator_Auto (System.Collections.IEnumerator)
-  at UnityEngine.MonoBehaviour.StopCoroutine (IEnumerator routine) [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.THDeselectRobot () [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.SelectRobot (UnityEngine.GameObject robot) [0x00000] in <filename unknown>:0 
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at RobotBehaviour.OnMouseDown () [0x00000] in <filename unknown>:0 
-UnityEngine.GameObject:SendMessage(String, Object, SendMessageOptions)
-UnityEngine.HitInfo:SendMessage(String)
-UnityEngine.SendMouseEvents:SendEvents(Int32, HitInfo)
-UnityEngine.SendMouseEvents:DoSendMouseEvents(Int32)
+-13.37037 -3.37037
  
-(Filename:  Line: -1)
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
 
-NullReferenceException
-  at (wrapper managed-to-native) UnityEngine.MonoBehaviour:StopCoroutineViaEnumerator_Auto (System.Collections.IEnumerator)
-  at UnityEngine.MonoBehaviour.StopCoroutine (IEnumerator routine) [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.THDeselectRobot () [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.SelectRobot (UnityEngine.GameObject robot) [0x00000] in <filename unknown>:0 
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at RobotBehaviour.OnMouseDown () [0x00000] in <filename unknown>:0 
-UnityEngine.GameObject:SendMessage(String, Object, SendMessageOptions)
-UnityEngine.HitInfo:SendMessage(String)
-UnityEngine.SendMouseEvents:SendEvents(Int32, HitInfo)
-UnityEngine.SendMouseEvents:DoSendMouseEvents(Int32)
+2 is ready
  
-(Filename:  Line: -1)
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
 
-NullReferenceException
-  at (wrapper managed-to-native) UnityEngine.MonoBehaviour:StopCoroutineViaEnumerator_Auto (System.Collections.IEnumerator)
-  at UnityEngine.MonoBehaviour.StopCoroutine (IEnumerator routine) [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.THDeselectRobot () [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.SelectRobot (UnityEngine.GameObject robot) [0x00000] in <filename unknown>:0 
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at RobotBehaviour.OnMouseDown () [0x00000] in <filename unknown>:0 
-UnityEngine.GameObject:SendMessage(String, Object, SendMessageOptions)
-UnityEngine.HitInfo:SendMessage(String)
-UnityEngine.SendMouseEvents:SendEvents(Int32, HitInfo)
-UnityEngine.SendMouseEvents:DoSendMouseEvents(Int32)
+1 is ready
  
-(Filename:  Line: -1)
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
 
-NullReferenceException
-  at (wrapper managed-to-native) UnityEngine.MonoBehaviour:StopCoroutineViaEnumerator_Auto (System.Collections.IEnumerator)
-  at UnityEngine.MonoBehaviour.StopCoroutine (IEnumerator routine) [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.THDeselectRobot () [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.SelectRobot (UnityEngine.GameObject robot) [0x00000] in <filename unknown>:0 
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at RobotBehaviour.OnMouseDown () [0x00000] in <filename unknown>:0 
-UnityEngine.GameObject:SendMessage(String, Object, SendMessageOptions)
-UnityEngine.HitInfo:SendMessage(String)
-UnityEngine.SendMouseEvents:SendEvents(Int32, HitInfo)
-UnityEngine.SendMouseEvents:DoSendMouseEvents(Int32)
+GAME IS UNPAUSED!
  
-(Filename:  Line: -1)
-
-NullReferenceException
-  at (wrapper managed-to-native) UnityEngine.MonoBehaviour:StopCoroutineViaEnumerator_Auto (System.Collections.IEnumerator)
-  at UnityEngine.MonoBehaviour.StopCoroutine (IEnumerator routine) [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.THDeselectRobot () [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.SelectRobot (UnityEngine.GameObject robot) [0x00000] in <filename unknown>:0 
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at RobotBehaviour.OnMouseDown () [0x00000] in <filename unknown>:0 
-UnityEngine.GameObject:SendMessage(String, Object, SendMessageOptions)
-UnityEngine.HitInfo:SendMessage(String)
-UnityEngine.SendMouseEvents:SendEvents(Int32, HitInfo)
-UnityEngine.SendMouseEvents:DoSendMouseEvents(Int32)
- 
-(Filename:  Line: -1)
-
-NullReferenceException
-  at (wrapper managed-to-native) UnityEngine.MonoBehaviour:StopCoroutineViaEnumerator_Auto (System.Collections.IEnumerator)
-  at UnityEngine.MonoBehaviour.StopCoroutine (IEnumerator routine) [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.THDeselectRobot () [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.SelectRobot (UnityEngine.GameObject robot) [0x00000] in <filename unknown>:0 
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at RobotBehaviour.OnMouseDown () [0x00000] in <filename unknown>:0 
-UnityEngine.GameObject:SendMessage(String, Object, SendMessageOptions)
-UnityEngine.HitInfo:SendMessage(String)
-UnityEngine.SendMouseEvents:SendEvents(Int32, HitInfo)
-UnityEngine.SendMouseEvents:DoSendMouseEvents(Int32)
- 
-(Filename:  Line: -1)
-
-NullReferenceException
-  at (wrapper managed-to-native) UnityEngine.MonoBehaviour:StopCoroutineViaEnumerator_Auto (System.Collections.IEnumerator)
-  at UnityEngine.MonoBehaviour.StopCoroutine (IEnumerator routine) [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.THDeselectRobot () [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.SelectRobot (UnityEngine.GameObject robot) [0x00000] in <filename unknown>:0 
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at RobotBehaviour.OnMouseDown () [0x00000] in <filename unknown>:0 
-UnityEngine.GameObject:SendMessage(String, Object, SendMessageOptions)
-UnityEngine.HitInfo:SendMessage(String)
-UnityEngine.SendMouseEvents:SendEvents(Int32, HitInfo)
-UnityEngine.SendMouseEvents:DoSendMouseEvents(Int32)
- 
-(Filename:  Line: -1)
-
-NullReferenceException
-  at (wrapper managed-to-native) UnityEngine.MonoBehaviour:StopCoroutineViaEnumerator_Auto (System.Collections.IEnumerator)
-  at UnityEngine.MonoBehaviour.StopCoroutine (IEnumerator routine) [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.THDeselectRobot () [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.SelectRobot (UnityEngine.GameObject robot) [0x00000] in <filename unknown>:0 
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at RobotBehaviour.OnMouseDown () [0x00000] in <filename unknown>:0 
-UnityEngine.GameObject:SendMessage(String, Object, SendMessageOptions)
-UnityEngine.HitInfo:SendMessage(String)
-UnityEngine.SendMouseEvents:SendEvents(Int32, HitInfo)
-UnityEngine.SendMouseEvents:DoSendMouseEvents(Int32)
- 
-(Filename:  Line: -1)
-
-NullReferenceException
-  at (wrapper managed-to-native) UnityEngine.MonoBehaviour:StopCoroutineViaEnumerator_Auto (System.Collections.IEnumerator)
-  at UnityEngine.MonoBehaviour.StopCoroutine (IEnumerator routine) [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.THDeselectRobot () [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.SelectRobot (UnityEngine.GameObject robot) [0x00000] in <filename unknown>:0 
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at RobotBehaviour.OnMouseDown () [0x00000] in <filename unknown>:0 
-UnityEngine.GameObject:SendMessage(String, Object, SendMessageOptions)
-UnityEngine.HitInfo:SendMessage(String)
-UnityEngine.SendMouseEvents:SendEvents(Int32, HitInfo)
-UnityEngine.SendMouseEvents:DoSendMouseEvents(Int32)
- 
-(Filename:  Line: -1)
-
-NullReferenceException
-  at (wrapper managed-to-native) UnityEngine.MonoBehaviour:StopCoroutineViaEnumerator_Auto (System.Collections.IEnumerator)
-  at UnityEngine.MonoBehaviour.StopCoroutine (IEnumerator routine) [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.THDeselectRobot () [0x00000] in <filename unknown>:0 
-  at TurnHandlerBehaviour.SelectRobot (UnityEngine.GameObject robot) [0x00000] in <filename unknown>:0 
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at (wrapper delegate-invoke) RobotBehaviour/ClickedOnRobot:invoke_void__this___GameObject (UnityEngine.GameObject)
-  at RobotBehaviour.OnMouseDown () [0x00000] in <filename unknown>:0 
-UnityEngine.GameObject:SendMessage(String, Object, SendMessageOptions)
-UnityEngine.HitInfo:SendMessage(String)
-UnityEngine.SendMouseEvents:SendEvents(Int32, HitInfo)
-UnityEngine.SendMouseEvents:DoSendMouseEvents(Int32)
- 
-(Filename:  Line: -1)
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
 
 Setting up 2 worker threads for Enlighten.
-  Thread -> id: 48cc -> priority: 1 
-  Thread -> id: 3304 -> priority: 1 
+  Thread -> id: 20f4 -> priority: 1 
+  Thread -> id: 2b5c -> priority: 1 
