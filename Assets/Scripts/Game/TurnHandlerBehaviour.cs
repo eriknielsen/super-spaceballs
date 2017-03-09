@@ -39,11 +39,19 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 	List<List<MovingTrail>> ballMovingTrails;
     List<List<MovingTrail>> robotMovingTrails;
     List<GameObject> robots;
+
+    GameObject directionPointer;
+
 	public List<GameObject> Robots
 	{
 		get { return robots; }
 	}
-    public int Turns
+
+    public int CurrentPlanTimeLeft {
+        get; set;
+    }
+     public int Turns
+
     {
         get { return turns; }
     }
@@ -288,6 +296,20 @@ public class TurnHandlerBehaviour : MonoBehaviour {
                         Debug.Log("No command selected!");
                     }
                     latestRobotTrail = new MovingTrail(previewCommand, timeInput, previewRobot.GetComponent<RobotBehaviour>().prevVelocity);
+
+                    //Not done yet!
+                    //if (latestRobotTrail != null && latestRobotTrail.Node != null)
+                    //{
+                    //    directionPointer = Instantiate(Resources.Load<GameObject>("Prefabs/Prototype stuff (remove or rework)/Direction Arrow")) as GameObject;
+                    //    //directionPointer.transform.position = latestBallTrail.Node.transform.position;
+                    //    //directionPointer.transform.parent = latestBallTrail.Node.transform;
+                    //    float AngleRad = Mathf.Atan2(cursorPosition.y - directionPointer.transform.position.y, cursorPosition.x - directionPointer.transform.position.x);
+                    //    float AngleDeg = (180 / Mathf.PI) * AngleRad;
+                    //    directionPointer.transform.rotation = Quaternion.Euler(0, 0, AngleDeg);
+
+                    //    directionPointer.name = "Direction Pointer";
+
+                    //}
                 }
                 if (Input.GetMouseButtonDown(1) && latestRobotTrail != null)
                 {
@@ -417,11 +439,9 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 		else
 		{
 			movingPreviews[selectedRobotIndex].SetActive (false);
-
 			HideCursorText();
 			DestroyPreviewTrails();
 			StopCoroutineIfNotNull(previewTrajectoryAndGiveRobotCommand);
-
 		}
 	}
 
@@ -429,14 +449,10 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 	{
 		selectedRobot = null;
 		timeInput = 0;
-		selectedCommand = Command.AvailableCommands.None;
-        
-
+		selectedCommand = Command.AvailableCommands.None;       
 		HideCursorText();
 		DestroyPreviewTrails();
 		StopCoroutineIfNotNull(previewTrajectoryAndGiveRobotCommand);
-      
-
         if (selectedCommandWheel != null)
         {
             Destroy(selectedCommandWheel);

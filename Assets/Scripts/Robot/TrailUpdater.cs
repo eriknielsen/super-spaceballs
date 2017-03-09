@@ -66,7 +66,7 @@ class TrailUpdater : MonoBehaviour
             node.GetComponent<Rigidbody2D>().velocity = currentVelocity;
             timeDuration = lifeTime;
             previousLocation = node.transform.position;
-            trailMarkingSprite = Resources.Load<Sprite>("Sprites/Prototype stuff (remove or rework)/fotball2");
+            trailMarkingSprite = Resources.Load<Sprite>("Sprites/Various Sprites/Sheet_runt_fält (1)");
             if (node.GetComponent<SpriteRenderer>() == null)
             {
                 node.AddComponent<SpriteRenderer>();

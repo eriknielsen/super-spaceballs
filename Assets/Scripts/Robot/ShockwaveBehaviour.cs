@@ -64,7 +64,7 @@ public class ShockwaveBehaviour : MonoBehaviour {
             gameObject.AddComponent<Rigidbody2D>();
         }
         rb2dCompontent = GetComponent<Rigidbody2D>();
-
+        
        
     }
     void Start()
