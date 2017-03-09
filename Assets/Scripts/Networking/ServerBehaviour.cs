@@ -265,7 +265,7 @@ public class ServerBehaviour : NetworkManager {
             System.IO.MemoryStream ms2 = new System.IO.MemoryStream();
             bf2.Serialize(ms2,robotVelocities);
             byteVelocities = ms2.ToArray();
-
+            Debug.Log(byteVelocities.Length);
             SyncStateMsg syncMsg = new SyncStateMsg();
             syncMsg.robotPositions = bytePositions;
             syncMsg.robotVelocities = byteVelocities;

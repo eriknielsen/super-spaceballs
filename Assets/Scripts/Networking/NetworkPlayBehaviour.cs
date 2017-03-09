@@ -404,6 +404,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 
             BinaryFormatter bf2 = new BinaryFormatter();
             Byte[] buffer2 = msg.robotVelocities;
+            Debug.Log(buffer2.Length);
             System.IO.MemoryStream ms2 = new System.IO.MemoryStream(buffer2);
             
             deserializedVelocities = bf2.Deserialize(ms2) as ServerBehaviour.SerializablePositionList;
