@@ -426,7 +426,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             ServerBehaviour.SyncStateMsg msg = netMsg.ReadMessage<ServerBehaviour.SyncStateMsg>();
             ServerBehaviour.SerializablePositionList deserializedPositions = new ServerBehaviour.SerializablePositionList();
 
-            
+            //where 0 is ball position and 1 is it's velocity
+            ServerBehaviour.SerializablePositionList deserializedBallInfo = new ServerBehaviour.SerializablePositionList();
 
             BinaryFormatter bf = new BinaryFormatter();
             Byte[] buffer = msg.robotPositions;

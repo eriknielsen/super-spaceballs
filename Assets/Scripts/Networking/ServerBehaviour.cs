@@ -29,6 +29,8 @@ public class ServerBehaviour : NetworkManager {
         //the reciever goes through the robotPositions and sets them accordingly
         public byte[] robotPositions;
 
+        public byte[] ballInfo;
+
     }  public class SyncVelocityMsg : MessageBase{
         public static short msgType = MsgType.Highest + 4;
         public byte[] robotVelocities;
@@ -241,7 +243,7 @@ public class ServerBehaviour : NetworkManager {
     }
     //AS SERVER ONLY
     //takes a list of robots and sends their positions to the other client
-    public void SendSyncStateMsg(List<GameObject> robots){
+    public void SendSyncStateMsg(List<GameObject> robots, GameObject ball){
         if(isServer){
             SerializablePositionList robotPositions = new SerializablePositionList();
             for(int i = 0; i < robots.Count; i++){
@@ -256,13 +258,21 @@ public class ServerBehaviour : NetworkManager {
             bf.Serialize(ms,robotPositions);
             bytePositions = ms.ToArray();
 
-           
+            //where 0 is position and 1 velocity
+             SerializablePositionList ballInfo = new SerializablePositionList();
+           ballInfo.Add(new Position(ball.transform.position);
+           ballInfo.Add(new Position(ball.GetComponent<Ball>().PreviousVelocity));
+
+           byte[] ballInfoBytes;
+
+           bf.Serialize(ms,ballInfo);
+           ballInfoBytes = ms.ToArray();
 
            
 
             SyncStateMsg syncMsg = new SyncStateMsg();
             syncMsg.robotPositions = bytePositions;
-            
+            syncMsg.ballInfo = ballInfoBytes;
            
             if (remoteConnection != null)
             {
