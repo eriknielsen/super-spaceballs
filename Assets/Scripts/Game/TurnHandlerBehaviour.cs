@@ -404,7 +404,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
                     givenCommand = new PushCommand(selectedRobot, command as PushCommand, previewDuration);
                 }
                 selectedRobot.GetComponent<RobotBehaviour>().Commands.Add(givenCommand);
-                Debug.Log(givenCommand.targetPosition.x + " " + givenCommand.targetPosition.y);
+               
                 selectedRobot.GetComponent<RobotBehaviour>().freeTime -= command.LifeDuration;
             }
         }

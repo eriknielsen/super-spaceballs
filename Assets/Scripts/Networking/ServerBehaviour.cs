@@ -258,6 +258,7 @@ public class ServerBehaviour : NetworkManager {
             SerializablePositionList robotVelocities = new SerializablePositionList();
             for(int i = 0; i < robots.Count; i++){
                 robotPositions.Add(new Position(robots[i].GetComponent<RobotBehaviour>().prevVelocity));
+                Debug.Log("velocity " + i + " ");
             }
 
             BinaryFormatter bf2 = new BinaryFormatter();

@@ -296,8 +296,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     /// <param name="serializableCommands"></param>
     void PutCommandsIntoRobots(List<SerializableCommand> serializableCommands)
     {
-        Debug.Log("turning " + serializableCommands.Count + " commands into real commands");
-        foreach (SerializableCommand sc in serializableCommands)
+         foreach (SerializableCommand sc in serializableCommands)
         {
 
             switch (sc.type)
@@ -389,12 +388,14 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     }
     public void OnRecieveSyncState(NetworkMessage netMsg){
         if(customIsServer == false){
+            ServerBehaviour.SyncStateMsg msg = netMsg.ReadMessage<ServerBehaviour.SyncStateMsg>();
             ServerBehaviour.SerializablePositionList deserializedPositions = new ServerBehaviour.SerializablePositionList();
 
-             ServerBehaviour.SerializablePositionList deserializedVelocities = new ServerBehaviour.SerializablePositionList();
+            ServerBehaviour.SerializablePositionList deserializedVelocities = new ServerBehaviour.SerializablePositionList();
 
             BinaryFormatter bf = new BinaryFormatter();
-            Byte[] buffer = netMsg.ReadMessage<ServerBehaviour.SyncStateMsg>().robotPositions;
+            Byte[] buffer = msg.robotPositions;
+           
             System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
             deserializedPositions = bf.Deserialize(ms) as ServerBehaviour.SerializablePositionList;
 
@@ -402,11 +403,11 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 
 
             BinaryFormatter bf2 = new BinaryFormatter();
-            Byte[] buffer2 = netMsg.ReadMessage<ServerBehaviour.SyncStateMsg>().robotVelocities;
+            Byte[] buffer2 = msg.robotVelocities;
             System.IO.MemoryStream ms2 = new System.IO.MemoryStream(buffer2);
             
             deserializedVelocities = bf2.Deserialize(ms2) as ServerBehaviour.SerializablePositionList;
-
+            Debug.Log(deserializedVelocities.Count + " velocities recived!");
             //put the positons into the turnhandlers robots
             //the first robotCount(3) robots should be put in the otherTurnhandler
             
