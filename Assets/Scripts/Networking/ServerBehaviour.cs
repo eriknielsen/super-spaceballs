@@ -12,6 +12,7 @@ using UnityEngine.SceneManagement;
 public class ServerBehaviour : NetworkManager {
     [Serializable]
     public class SerializableCommandList : List<SerializableCommand> { }
+    [Serializable]
     public class SerializablePositionList : List<Position>{ }
     public class CommandMsg : MessageBase {
         public static short msgType = MsgType.Highest + 1;
@@ -26,6 +27,8 @@ public class ServerBehaviour : NetworkManager {
 
         //the reciever goes through the robotPositions and sets them accordingly
         public byte[] robotPositions;
+        //reciever also sets the velocites
+        public byte[] robotVelocities;
         //reciever checks if the score is wrong and acts accordingly
         public byte[] scores;
     }
@@ -252,7 +255,22 @@ public class ServerBehaviour : NetworkManager {
 
             bf.Serialize(ms,robotPositions);
             bytePositions = ms.ToArray();
+
+            byte[] byteVelocities;
+              SerializablePositionList robotVelocities = new SerializablePositionList();
+            for(int i = 0; i < robots.Count; i++){
+                robotPositions.Add(new Position(robots[i].GetComponent<Rigidbody2D>().velocity));
+            }
+
+         
+
+            bf.Serialize(ms,robotVelocities);
+            byteVelocities = ms.ToArray();
+
+
             SyncStateMsg syncMsg = new SyncStateMsg();
+            syncMsg.robotPositions = bytePositions;
+            syncMsg.robotVelocities = byteVelocities;
             if (remoteConnection != null)
             {
                 remoteConnection.Send(SyncStateMsg.msgType, syncMsg);

@@ -270,6 +270,13 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     }
     void PauseGame()
     {
+        if(customIsServer){
+            List<GameObject> allRobots = new List<GameObject>();
+            allRobots.AddRange(playerTurnhandler.Robots);
+            allRobots.AddRange(otherTurnhandler.Robots);
+            server.SendSyncStateMsg(allRobots);
+            Debug.Log("sending sycnstate msg");
+        }
         if(paused== true){
             return;
         }
@@ -383,6 +390,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         if(customIsServer == false){
             ServerBehaviour.SerializablePositionList deserializedPositions = new ServerBehaviour.SerializablePositionList();
 
+             ServerBehaviour.SerializablePositionList deserializedVelocities = new ServerBehaviour.SerializablePositionList();
+
             BinaryFormatter bf = new BinaryFormatter();
             Byte[] buffer = netMsg.ReadMessage<ServerBehaviour.SyncStateMsg>().robotPositions;
             System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
@@ -395,13 +404,30 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             //the first robotCount(3) robots should be put in the otherTurnhandler
             
             for(int i = 0; i < 3;i++){
-                otherTurnhandler.Robots[i].transform.position = 
+                GameObject r = otherTurnhandler.Robots[i];
+                //positions
+                r.transform.position = 
                 deserializedPositions[i].V2();
+                //and velocities
+                r.GetComponent<Rigidbody2D>().velocity = deserializedVelocities[i].V2();
+                //also change prevVelocity in case we are too late/early
+                r.GetComponent<RobotBehaviour>().prevVelocity = deserializedVelocities[i].V2();
+
+
             }
             //and the remaining 3 should be put in the playerTurnhandler
             for(int i = 3; i < 6;i++){
-                playerTurnhandler.Robots[i].transform.position =
+                 GameObject r = otherTurnhandler.Robots[i-3];
+                r.transform.position =
                 deserializedPositions[i].V2();
+
+                r.GetComponent<Rigidbody2D>().velocity = deserializedVelocities[i].V2();
+
+                 //also change prevVelocity in case we are too late/early
+                r.GetComponent<RobotBehaviour>().prevVelocity = deserializedVelocities[i].V2();
+
+
+
             }   
         }
         
