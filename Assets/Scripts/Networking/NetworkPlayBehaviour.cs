@@ -48,6 +48,10 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     Text planTimeText;
 
     bool paused = true;
+
+    //the color when the player is actually planning
+    Color activePlanTimeColor;
+    Color otherTeamPlanColor;
     
     void Start()
     {
@@ -56,6 +60,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         {
             playerTurnhandler = rightTurnhandlerInScene;
             otherTurnhandler = leftTurnhandlerInScene;
+            
             
         }
         else
@@ -94,19 +99,27 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         else {
             Debug.Log("couldint find goals :(");
         }
-     
+        if(playerTurnhandler == rightTurnhandlerInScene){
+            activePlanTimeColor = rightGoal.scoreText.color;
+            otherTeamPlanColor = leftGoal.scoreText.color;
+        }
+        else{
+            activePlanTimeColor = leftGoal.scoreText.color;
+            otherTeamPlanColor = rightGoal.scoreText.color;
+        }
+        
         gameTimer = new GameTimer(matchTime);
         if (gameTimeText == null)
         {
             gameTimeText = GameObject.Find("GameTimeText").GetComponent<Text>();
-            Debug.Log(gameTimeText);
+            
         }
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
         if(planTimeText == null){
             planTimeText = GameObject.Find("PlanTimeText").GetComponent<Text>();
         }
-        planTimeText.text = "Plan time: " + (int)playerTurnhandler.currentPlanTimeLeft;
-
+        planTimeText.text = "" + (int)playerTurnhandler.currentPlanTimeLeft;
+        planTimeText.color = activePlanTimeColor;
 
     }
     
@@ -133,6 +146,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             {
                 SendCommands();
                 localIsReady = true;
+                //change color of the plantime to show that we are waiting for the other player
+                planTimeText.color = otherTeamPlanColor;
             }
             //if we are server, tell the other client to unpause 
             // as well as unpause the server
@@ -182,7 +197,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 
         if(planTimeText != null && paused == true)
         {
-           planTimeText.text = "Plan time: " + (int)playerTurnhandler.currentPlanTimeLeft;
+           planTimeText.text = "" + (int)playerTurnhandler.currentPlanTimeLeft;
         }
 
     }
@@ -238,10 +253,10 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             Debug.Log("breaking from unpause");
             yield break;
         }
-
+        Debug.Log("unpausing");
         StopCoroutine(planCountDownCoroutine);
         paused = false;
-      
+        ball.Unpause();
         playerTurnhandler.UnpauseGame();
         otherTurnhandler.UnpauseGame();
         playerTurnhandler.currentPlanTimeLeft = planTime;
@@ -259,6 +274,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             return;
         }
         playerTurnhandler.Activate(true);
+        planTimeText.color = activePlanTimeColor;
         planCountDownCoroutine = StartCoroutine(CountDownPlanningTime());
         paused = true;
         playerTurnhandler.PauseGame();
@@ -335,7 +351,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             }
         }
 
-        Debug.Log(scList.Count + " commands added to the list, asking serverbheaviour to send them!");
+        //Debug.Log(scList.Count + " commands added to the list, asking serverbheaviour to send them!");
         server.SendCommands(scList);
     }
 
@@ -358,7 +374,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         Byte[] buffer = netMsg.ReadMessage<ServerBehaviour.CommandMsg>().serializedCommands;
         System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
         deserializedCommands = bf.Deserialize(ms) as List<SerializableCommand>;
-        Debug.Log(deserializedCommands.Count + " commands recived!");
+        //Debug.Log(deserializedCommands.Count + " commands recived!");
         PutCommandsIntoRobots(deserializedCommands);
 
         remoteIsReady = true;

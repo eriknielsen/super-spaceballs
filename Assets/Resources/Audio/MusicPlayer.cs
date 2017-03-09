@@ -53,15 +53,17 @@ using System.Collections;
 //		clips.Add(clip);
 //	}
 //}
-//Music playlist that works independently of update-rate (in case you want to tinker with fixed update for slow-mo or stuff like that)
 
-public class SpaceballsRadio : MonoBehaviour {
+
+//Music playlist with track-switching functionality that works independently of update-rate (in case you want to tinker with fixed update for slow-mo or stuff like that)
+
+public class MusicPlayer : MonoBehaviour {
 
 	public AudioClip[] audioClip;
 	[HideInInspector]
 	public AudioSource audioSource;
 
-	public static SpaceballsRadio Instance = null;
+	public static MusicPlayer Instance = null;
 
 	void Awake(){
 		if (Instance == null)
