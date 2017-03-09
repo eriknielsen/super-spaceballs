@@ -22,16 +22,16 @@ public class ServerBehaviour : NetworkManager {
     public class UnpauseMsg : MessageBase {
         public static short msgType = MsgType.Highest + 2;
     }
+  
     public class SyncStateMsg : MessageBase{
         public static short msgType = MsgType.Highest + 3;
 
         //the reciever goes through the robotPositions and sets them accordingly
         public byte[] robotPositions;
-        //reciever also sets the velocites
+
+    }  public class SyncVelocityMsg : MessageBase{
+        public static short msgType = MsgType.Highest + 4;
         public byte[] robotVelocities;
-        public byte[] ballPositionAndVelocity;
-        //reciever checks if the score is wrong and acts accordingly
-        public byte[] scores;
     }
 
 
@@ -171,6 +171,8 @@ public class ServerBehaviour : NetworkManager {
             conn.RegisterHandler(CommandMsg.msgType, networkedPlayInstance.OnRecieveCommands);
             conn.RegisterHandler(UnpauseMsg.msgType, networkedPlayInstance.OnRecieveUnpause);
             conn.RegisterHandler(SyncStateMsg.msgType, networkedPlayInstance.OnRecieveSyncState);
+            conn.RegisterHandler(SyncVelocityMsg.msgType, networkedPlayInstance.OnRecieveSyncVelocities);
+            
         }
     }
     public override void OnServerConnect(NetworkConnection conn)
@@ -254,24 +256,18 @@ public class ServerBehaviour : NetworkManager {
             bf.Serialize(ms,robotPositions);
             bytePositions = ms.ToArray();
 
-            byte[] byteVelocities;
-            SerializablePositionList robotVelocities = new SerializablePositionList();
-            for(int i = 0; i < robots.Count; i++){
-                robotPositions.Add(new Position(robots[i].GetComponent<RobotBehaviour>().prevVelocity));
-                Debug.Log("velocity " + i + " ");
-            }
+           
 
-            BinaryFormatter bf2 = new BinaryFormatter();
-            System.IO.MemoryStream ms2 = new System.IO.MemoryStream();
-            bf2.Serialize(ms2,robotVelocities);
-            byteVelocities = ms2.ToArray();
-            Debug.Log(byteVelocities.Length);
+           
+
             SyncStateMsg syncMsg = new SyncStateMsg();
             syncMsg.robotPositions = bytePositions;
-            syncMsg.robotVelocities = byteVelocities;
+            
+           
             if (remoteConnection != null)
             {
                 remoteConnection.Send(SyncStateMsg.msgType, syncMsg);
+                SendVelocitySyncMsg(robots);
             }
             else
             {
@@ -279,6 +275,39 @@ public class ServerBehaviour : NetworkManager {
             }
 
         }
+    }
+    void SendVelocitySyncMsg(List<GameObject> robots){
+        if(isServer){
+            
+            byte[] byteVelocities;
+            SerializablePositionList robotVelocities = new SerializablePositionList();
+            for(int i = 0; i < robots.Count; i++){
+                robotVelocities.Add(new Position(robots[i].GetComponent<RobotBehaviour>().prevVelocity));
+                Debug.Log("velocity " + i + " ");
+            }
+
+
+
+            BinaryFormatter bf2 = new BinaryFormatter();
+            System.IO.MemoryStream ms2 = new System.IO.MemoryStream();
+            bf2.Serialize(ms2,robotVelocities);
+            byteVelocities = ms2.ToArray();
+            Debug.Log(byteVelocities.Length);
+
+             SyncVelocityMsg velocityMsg = new SyncVelocityMsg();
+            velocityMsg.robotVelocities= byteVelocities;
+
+            if (remoteConnection != null)
+            {
+                
+                remoteConnection.Send(SyncVelocityMsg.msgType, velocityMsg);
+            }
+            else
+            {
+                Debug.Log("no remote connection to send to");
+            }
+        }
+           
     }
       public void f(byte[] input)
     {

@@ -386,12 +386,47 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 
         remoteIsReady = true;
     }
+    public void OnRecieveSyncVelocities(NetworkMessage netMsg){
+        if(customIsServer == false){
+             ServerBehaviour.SyncVelocityMsg msg = netMsg.ReadMessage<ServerBehaviour.SyncVelocityMsg>();
+            ServerBehaviour.SerializablePositionList deserializedVelocities = new ServerBehaviour.SerializablePositionList();
+
+            BinaryFormatter bf = new BinaryFormatter();
+            Byte[] buffer = msg.robotVelocities;
+           
+            System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
+            deserializedVelocities = bf.Deserialize(ms) as ServerBehaviour.SerializablePositionList;
+
+             Debug.Log(deserializedVelocities.Count + " velocities recived!");
+             foreach(Position p in deserializedVelocities){
+                 Debug.Log(p.x);
+             }
+             if(deserializedVelocities.Count > 0){
+                for(int i = 0; i < 3;i++){
+                    GameObject r = otherTurnhandler.Robots[i];
+                    //positions
+                    r.GetComponent<RobotBehaviour>().prevVelocity = 
+                    deserializedVelocities[i].V2();
+                }
+                //and the remaining 3 should be put in the playerTurnhandler
+                for(int i = 3; i < 6;i++){
+                    GameObject r = playerTurnhandler.Robots[i-3];
+                    r.GetComponent<RobotBehaviour>().prevVelocity =
+                    deserializedVelocities[i].V2(); 
+                } 
+             }
+             else{
+                 Debug.Log("deserialzed velocity count was 0");
+             }
+              
+        }
+    }
     public void OnRecieveSyncState(NetworkMessage netMsg){
         if(customIsServer == false){
             ServerBehaviour.SyncStateMsg msg = netMsg.ReadMessage<ServerBehaviour.SyncStateMsg>();
             ServerBehaviour.SerializablePositionList deserializedPositions = new ServerBehaviour.SerializablePositionList();
 
-            ServerBehaviour.SerializablePositionList deserializedVelocities = new ServerBehaviour.SerializablePositionList();
+            
 
             BinaryFormatter bf = new BinaryFormatter();
             Byte[] buffer = msg.robotPositions;
@@ -400,15 +435,11 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             deserializedPositions = bf.Deserialize(ms) as ServerBehaviour.SerializablePositionList;
 
             Debug.Log(deserializedPositions.Count +  " positions recived!");
+             foreach(Position p in deserializedPositions){
+                 Debug.Log(p.x);
+             }
 
-
-            BinaryFormatter bf2 = new BinaryFormatter();
-            Byte[] buffer2 = msg.robotVelocities;
-            Debug.Log(buffer2.Length);
-            System.IO.MemoryStream ms2 = new System.IO.MemoryStream(buffer2);
-            
-            deserializedVelocities = bf2.Deserialize(ms2) as ServerBehaviour.SerializablePositionList;
-            Debug.Log(deserializedVelocities.Count + " velocities recived!");
+      
             //put the positons into the turnhandlers robots
             //the first robotCount(3) robots should be put in the otherTurnhandler
             
@@ -417,12 +448,6 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                 //positions
                 r.transform.position = 
                 deserializedPositions[i].V2();
-                //and velocities
-
-                //prevVelocity is supposed to be changed now AFTER the game has been paused
-                r.GetComponent<RobotBehaviour>().prevVelocity = deserializedVelocities[i].V2();
-
-
             }
             //and the remaining 3 should be put in the playerTurnhandler
             for(int i = 3; i < 6;i++){
@@ -430,9 +455,6 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                 r.transform.position =
                 deserializedPositions[i].V2();
 
-                //prevVelocity is supposed to be changed now AFTER the game has been paused
-                r.GetComponent<RobotBehaviour>().prevVelocity = deserializedVelocities[i].V2();
-                
             }   
             Debug.Log(deserializedPositions[0].x + " y: " + deserializedPositions[0].y);
         }
