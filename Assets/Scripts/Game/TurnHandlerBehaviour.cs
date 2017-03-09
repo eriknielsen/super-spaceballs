@@ -55,7 +55,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
     {
         get { return turns; }
     }
-	public int CurrentPlanTimeLeft { get; set; }
+	
 
     void Awake(){
         //pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
