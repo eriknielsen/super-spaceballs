@@ -16,6 +16,7 @@ public class Ball : MonoBehaviour {
     public Vector2 PreviousVelocity
     {
         get { return prevVelocity; }
+        set{ prevVelocity = value;}
     }
 
 	void Awake(){

@@ -284,7 +284,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             List<GameObject> allRobots = new List<GameObject>();
             allRobots.AddRange(playerTurnhandler.Robots);
             allRobots.AddRange(otherTurnhandler.Robots);
-            server.SendSyncStateMsg(allRobots);
+            server.SendSyncStateMsg(allRobots, ball.gameObject);
             Debug.Log("sending sycnstate msg");
         }
 
@@ -458,6 +458,19 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 
             }   
             Debug.Log(deserializedPositions[0].x + " y: " + deserializedPositions[0].y);
+
+
+            //put the ballinfo in the ball
+
+            Byte[] ballinfobuffer = msg.ballInfo;
+            System.IO.MemoryStream ms2 = new System.IO.MemoryStream(ballinfobuffer);
+
+            deserializedBallInfo = bf.Deserialize(ms2) as ServerBehaviour.SerializablePositionList;
+
+            Debug.Log(deserializedBallInfo[0].x);
+            ball.transform.position = deserializedBallInfo[0].V2();
+            ball.GetComponent<Ball>().PreviousVelocity = deserializedBallInfo[1].V2();
+
         }
         
     }
