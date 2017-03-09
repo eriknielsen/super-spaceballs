@@ -406,7 +406,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             System.IO.MemoryStream ms2 = new System.IO.MemoryStream(buffer2);
             
             deserializedVelocities = bf2.Deserialize(ms2) as ServerBehaviour.SerializablePositionList;
-            
+
             //put the positons into the turnhandlers robots
             //the first robotCount(3) robots should be put in the otherTurnhandler
             
@@ -431,9 +431,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                 //prevVelocity is supposed to be changed now AFTER the game has been paused
                 r.GetComponent<RobotBehaviour>().prevVelocity = deserializedVelocities[i].V2();
                 
-
-
             }   
+            Debug.Log(deserializedPositions[0].x + " y: " + deserializedPositions[0].y);
         }
         
     }

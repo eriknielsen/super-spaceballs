@@ -248,7 +248,7 @@ public class ServerBehaviour : NetworkManager {
             for(int i = 0; i < robots.Count; i++){
                 robotPositions.Add(new Position(robots[i].transform.position));
             }
-            Debug.Log("sending " + robots.Count + " positions");
+            Debug.Log(robotPositions[0].x + " y: " + robotPositions[0].y);
             byte[] bytePositions;
 
             BinaryFormatter bf = new BinaryFormatter();
