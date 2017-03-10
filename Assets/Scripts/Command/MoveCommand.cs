@@ -109,7 +109,10 @@ public class MoveCommand : Command
            robotScript.OnAccelerate();
             robotRb2d.AddForce(InitialForce);
             hasStarted = true;
-            Debug.Log("starting at x: " + startPosition.x + " y: " + startPosition.y);
+            if(robotScript.isPreview == false){
+                 Debug.Log("starting at x: " + startPosition.x + " y: " + startPosition.y);
+            }
+           
 
            if(robotScript.isPreview == false){
                Debug.Log(startPosition.x);
