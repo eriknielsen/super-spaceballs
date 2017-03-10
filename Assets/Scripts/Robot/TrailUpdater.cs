@@ -33,9 +33,9 @@ class TrailUpdater : MonoBehaviour
 
     public void Initialize(Command command, float lifeTime, Vector2 currentVelocity)
     {
-        if (command != null && command.robot != null)
+        if (command != null && command.Robot != null)
         {
-            node = Instantiate(command.robot, transform) as GameObject;
+            node = Instantiate(command.Robot, transform) as GameObject;
             startPosition = node.transform.position;
 
             commandType = command.GetType();

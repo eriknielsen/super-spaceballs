@@ -331,25 +331,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
         DestroyLatestPreviewTrail();
     }
 
-    bool RevertCommand()
-    {
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            if (robotMovingTrails[selectedRobotIndex].Count > 0)
-            {
-                robotMovingTrails[selectedRobotIndex].Last().DestroyTrail();
-                robotMovingTrails[selectedRobotIndex].RemoveAt(robotMovingTrails[selectedRobotIndex].Count - 1);
-            }
-            RobotBehaviour selectedRobotBehaviour = robots[selectedRobotIndex].GetComponent<RobotBehaviour>();
-            if(selectedRobotBehaviour.Commands.Count > 0)
-            {
-                selectedRobotBehaviour.freeTime += selectedRobotBehaviour.Commands.Last().lifeDuration;
-                selectedRobotBehaviour.Commands.RemoveAt(selectedRobotBehaviour.Commands.Count - 1);
-            }
-            return true;
-        }
-        return false;
-    }
+    
 
     IEnumerator PreviewBallTrajectory()
     {
@@ -378,14 +360,6 @@ public class TurnHandlerBehaviour : MonoBehaviour {
         }
     }
 
-	void DestroyLatestPreviewTrail(){
-		if (latestRobotTrail != null)
-		{
-			Destroy(latestRobotTrail.TrailGameObject);
-		}
-		latestRobotTrail = null;
-	}
-
     void GiveRobotCommand(Command command)
     {
         Command givenCommand = null;
@@ -409,7 +383,33 @@ public class TurnHandlerBehaviour : MonoBehaviour {
             }
         }
     }
-		
+    
+	void DestroyLatestPreviewTrail(){
+		if (latestRobotTrail != null)
+		{
+			Destroy(latestRobotTrail.TrailGameObject);
+		}
+		latestRobotTrail = null;
+	}
+	bool RevertCommand()
+    {
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            if (robotMovingTrails[selectedRobotIndex].Count > 0)
+            {
+                robotMovingTrails[selectedRobotIndex].Last().DestroyTrail();
+                robotMovingTrails[selectedRobotIndex].RemoveAt(robotMovingTrails[selectedRobotIndex].Count - 1);
+            }
+            RobotBehaviour selectedRobotBehaviour = robots[selectedRobotIndex].GetComponent<RobotBehaviour>();
+            if(selectedRobotBehaviour.Commands.Count > 0)
+            {
+                selectedRobotBehaviour.freeTime += selectedRobotBehaviour.Commands.Last().lifeDuration;
+                selectedRobotBehaviour.Commands.RemoveAt(selectedRobotBehaviour.Commands.Count - 1);
+            }
+            return true;
+        }
+        return false;
+    }
     void Update()
     {
 		if (Input.GetKeyDown(KeyCode.Z))

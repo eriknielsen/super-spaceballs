@@ -40,23 +40,20 @@ public class MoveCommand : Command
         }
     }
 
-    public Vector2 StartSpeed
-    {
-        get
-        {
-            return startSpeed;
-        }
-    }
+  
 
     public MoveCommand(GameObject r, MoveCommand moveCommand)
     {
-        robot = r;
+        robot = moveCommand.Robot;
+        robotScript = robot.GetComponent<RobotBehaviour>();
+        float speed = robotScript.moveCommandAcceleration;
         lifeDuration = moveCommand.lifeDuration;
         force = moveCommand.Force;
+        
         initialForce = moveCommand.InitialForce;
         lifeTimer = moveCommand.LifeDuration;
         targetPosition = moveCommand.targetPosition;
-        robotScript = robot.GetComponent<RobotBehaviour>();
+        
         robotRb2d = robot.GetComponent<Rigidbody2D>();
         startPosition = r.transform.position;
 
@@ -77,7 +74,7 @@ public class MoveCommand : Command
         lifeTimer = lifetime;
         this.turn = turn;
         startPosition = r.transform.position;
-        startSpeed = r.GetComponent<Rigidbody2D>().velocity;
+    
      
         force = CaluculateForce(speed);
         initialForce = CaluculateForce(initialForceMagnitude);
@@ -110,13 +107,10 @@ public class MoveCommand : Command
             robotRb2d.AddForce(InitialForce);
             hasStarted = true;
             if(robotScript.isPreview == false){
-                 Debug.Log("starting at x: " + startPosition.x + " y: " + startPosition.y);
+                 //Debug.Log("starting at x: " + startPosition.x + " y: " + startPosition.y);
             }
-           
+        
 
-           if(robotScript.isPreview == false){
-               Debug.Log(startPosition.x);
-           }
 
         }
         //robot.transform.rotation = Quaternion.Lerp(robot.transform.rotation, Quaternion.Euler(0, 0, angle * Mathf.Rad2Deg), Time.deltaTime);
@@ -128,7 +122,7 @@ public class MoveCommand : Command
 
             lifeTimer -= Time.fixedDeltaTime;
             if(robotScript.isPreview == false){
-                Debug.Log(force.x);
+                //Debug.Log(force.x);
             }
             
         }

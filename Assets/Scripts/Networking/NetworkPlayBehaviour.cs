@@ -253,9 +253,10 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             Debug.Log("breaking from unpause");
             yield break;
         }
+        paused = false;
         Debug.Log("unpausing");
         StopCoroutine(planCountDownCoroutine);
-        paused = false;
+        
         ball.Unpause();
         playerTurnhandler.UnpauseGame();
         otherTurnhandler.UnpauseGame();
