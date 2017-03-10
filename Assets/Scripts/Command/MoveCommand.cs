@@ -12,6 +12,8 @@ public class MoveCommand : Command
     Vector2 startPosition;
     Vector2 startSpeed;
     bool hasStarted = false;
+    RobotBehaviour robotScript;
+    Rigidbody2D robotRb2d;
     public Vector2 Force
     {
         get
@@ -54,6 +56,7 @@ public class MoveCommand : Command
         initialForce = moveCommand.InitialForce;
         lifeTimer = moveCommand.LifeDuration;
         targetPosition = moveCommand.targetPosition;
+        robotScript = robot.GetComponent<RobotBehaviour>();
     }
     
     public MoveCommand(GameObject r, Vector2 target, float lifetime, int turn)
@@ -75,10 +78,13 @@ public class MoveCommand : Command
      
         force = CaluculateForce(speed);
         initialForce = CaluculateForce(initialForceMagnitude);
+
+        robotScript = robot.GetComponent<RobotBehaviour>();
     }
 
     Vector2 CaluculateForce(float forceMagnitude)
     {
+        robotRb2d = robot.GetComponent<Rigidbody2D>();
         Vector2 positionDifference = targetPosition - startPosition;
         angle = Mathf.Atan2(positionDifference.y, positionDifference.x);
         if (angle < 0)
@@ -95,32 +101,31 @@ public class MoveCommand : Command
         //on the first execute, do this
         if (hasStarted == false)
         {
-            robot.GetComponent<RobotBehaviour>().OnAccelerate();
-            robot.GetComponent<Rigidbody2D>().AddForce(InitialForce);
+           robotScript.OnAccelerate();
+            robotRb2d.AddForce(InitialForce);
             hasStarted = true;
+
+            Debug.Log("movecommand is x: " + targetPosition.x + " y: " + targetPosition.y + " time is: " + lifeDuration);
+
         }
         //robot.transform.rotation = Quaternion.Lerp(robot.transform.rotation, Quaternion.Euler(0, 0, angle * Mathf.Rad2Deg), Time.deltaTime);
         if(lifeTimer > 0)
         {
-            robot.GetComponent<RobotBehaviour>().UpdateAnimationAngle(force.y, force.x);
-            robot.GetComponent<Rigidbody2D>().AddForce(force);
+            robotScript.UpdateAnimationAngle(force.y, force.x);
+            robotRb2d.AddForce(force);
           
 
             lifeTimer -= Time.fixedDeltaTime;
-            
+            Debug.Log(targetPosition.x);
         }
         else
         {
             isFinished = true;
             //if ending, call deaccelerate on the robot
-            robot.GetComponent<RobotBehaviour>().OnDeaccelerate();
+            robotScript.OnDeaccelerate();
         }
         
     }
 
-    public IEnumerator FinishedCoroutine()
-    {
-        yield return new WaitForSeconds(lifeDuration);
-        isFinished = true;
-    }
+
 }

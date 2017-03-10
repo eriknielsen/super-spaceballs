@@ -286,7 +286,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             allRobots.AddRange(playerTurnhandler.Robots);
             allRobots.AddRange(otherTurnhandler.Robots);
             server.SendSyncStateMsg(allRobots, ball.gameObject);
-            Debug.Log("sending sycnstate msg");
+           
         }
 
         
@@ -383,6 +383,11 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
         deserializedCommands = bf.Deserialize(ms) as List<SerializableCommand>;
         //Debug.Log(deserializedCommands.Count + " commands recived!");
+        if(deserializedCommands.Count > 1){
+              Debug.Log("Command one is x: " + deserializedCommands[0].targetPosition.x + " y: " + deserializedCommands[0].targetPosition.y + " time:" + deserializedCommands[0].lifeDuration);
+        Debug.Log("Command two is x: " + deserializedCommands[1].targetPosition.x + " y: " + deserializedCommands[1].targetPosition.y);
+        }
+      
         PutCommandsIntoRobots(deserializedCommands);
 
         remoteIsReady = true;
@@ -397,11 +402,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
            
             System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
             deserializedVelocities = bf.Deserialize(ms) as ServerBehaviour.SerializablePositionList;
-
-             Debug.Log(deserializedVelocities.Count + " velocities recived!");
-             foreach(Position p in deserializedVelocities){
-                 Debug.Log(p.x);
-             }
+     
              if(deserializedVelocities.Count > 0){
                 for(int i = 0; i < 3;i++){
                     GameObject r = otherTurnhandler.Robots[i];
@@ -436,10 +437,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
             deserializedPositions = bf.Deserialize(ms) as ServerBehaviour.SerializablePositionList;
 
-            Debug.Log(deserializedPositions.Count +  " positions recived!");
-             foreach(Position p in deserializedPositions){
-                 Debug.Log(p.x);
-             }
+        
 
       
             //put the positons into the turnhandlers robots
@@ -458,7 +456,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                 deserializedPositions[i].V2();
 
             }   
-            Debug.Log(deserializedPositions[0].x + " y: " + deserializedPositions[0].y);
+            //Debug.Log(deserializedPositions[0].x + " y: " + deserializedPositions[0].y);
 
 
             //put the ballinfo in the ball

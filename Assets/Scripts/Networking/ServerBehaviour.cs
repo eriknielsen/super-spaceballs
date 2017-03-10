@@ -249,7 +249,7 @@ public class ServerBehaviour : NetworkManager {
             for(int i = 0; i < robots.Count; i++){
                 robotPositions.Add(new Position(robots[i].transform.position));
             }
-            Debug.Log(robotPositions[0].x + " y: " + robotPositions[0].y);
+         
             byte[] bytePositions;
 
             BinaryFormatter bf = new BinaryFormatter();
@@ -293,7 +293,7 @@ public class ServerBehaviour : NetworkManager {
             SerializablePositionList robotVelocities = new SerializablePositionList();
             for(int i = 0; i < robots.Count; i++){
                 robotVelocities.Add(new Position(robots[i].GetComponent<RobotBehaviour>().prevVelocity));
-                Debug.Log("velocity " + i + " ");
+                //Debug.Log("velocity " + i + " ");
             }
 
 
@@ -302,7 +302,7 @@ public class ServerBehaviour : NetworkManager {
             System.IO.MemoryStream ms2 = new System.IO.MemoryStream();
             bf2.Serialize(ms2,robotVelocities);
             byteVelocities = ms2.ToArray();
-            Debug.Log(byteVelocities.Length);
+            //Debug.Log(byteVelocities.Length);
 
              SyncVelocityMsg velocityMsg = new SyncVelocityMsg();
             velocityMsg.robotVelocities= byteVelocities;
