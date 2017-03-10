@@ -12,8 +12,9 @@ public class MoveCommand : Command
     Vector2 startPosition;
     Vector2 startSpeed;
     bool hasStarted = false;
+
     RobotBehaviour robotScript;
-    Rigidbody2D robotRb2d;
+    Rigidbody2D rb2d;
     public Vector2 Force
     {
         get
@@ -40,28 +41,32 @@ public class MoveCommand : Command
         }
     }
 
-  
+    public Vector2 StartSpeed
+    {
+        get
+        {
+            return startSpeed;
+        }
+    }
 
     public MoveCommand(GameObject r, MoveCommand moveCommand)
     {
-        robot = moveCommand.Robot;
-        robotScript = robot.GetComponent<RobotBehaviour>();
-        float speed = robotScript.moveCommandAcceleration;
+        robot = r;
         lifeDuration = moveCommand.lifeDuration;
         force = moveCommand.Force;
-        
         initialForce = moveCommand.InitialForce;
         lifeTimer = moveCommand.LifeDuration;
         targetPosition = moveCommand.targetPosition;
-        
-        robotRb2d = robot.GetComponent<Rigidbody2D>();
+        rb2d = robot.GetComponent<Rigidbody2D>();
+        robotScript = r.GetComponent<RobotBehaviour>();
         startPosition = r.transform.position;
-
     }
     
     public MoveCommand(GameObject r, Vector2 target, float lifetime, int turn)
     {
-        float speed = r.GetComponent<RobotBehaviour>().moveCommandAcceleration;
+        robotScript = r.GetComponent<RobotBehaviour>();
+        rb2d = r.GetComponent<Rigidbody2D>();
+        float speed = robotScript.moveCommandAcceleration;
         if (speed <= 0)
         {
             speed = 1f;
@@ -74,18 +79,14 @@ public class MoveCommand : Command
         lifeTimer = lifetime;
         this.turn = turn;
         startPosition = r.transform.position;
-    
+        startSpeed = rb2d.velocity;
      
         force = CaluculateForce(speed);
         initialForce = CaluculateForce(initialForceMagnitude);
-
-        robotScript = robot.GetComponent<RobotBehaviour>();
-        robotRb2d = robot.GetComponent<Rigidbody2D>();
     }
 
     Vector2 CaluculateForce(float forceMagnitude)
     {
-        
         Vector2 positionDifference = targetPosition - startPosition;
         angle = Mathf.Atan2(positionDifference.y, positionDifference.x);
         if (angle < 0)
@@ -99,42 +100,30 @@ public class MoveCommand : Command
 
     public override void Execute()
     {
-        
         //on the first execute, do this
         if (hasStarted == false)
         {
-           robotScript.OnAccelerate();
-            robotRb2d.AddForce(InitialForce);
+            robotScript.OnAccelerate();
+            rb2d.AddForce(InitialForce);
             hasStarted = true;
-            if(robotScript.isPreview == false){
-                 //Debug.Log("starting at x: " + startPosition.x + " y: " + startPosition.y);
-            }
-        
-
-
         }
         //robot.transform.rotation = Quaternion.Lerp(robot.transform.rotation, Quaternion.Euler(0, 0, angle * Mathf.Rad2Deg), Time.deltaTime);
         if(lifeTimer > 0)
         {
             robotScript.UpdateAnimationAngle(force.y, force.x);
-            robotRb2d.AddForce(force);
+            rb2d.AddForce(force);
           
 
             lifeTimer -= Time.fixedDeltaTime;
-            if(robotScript.isPreview == false){
-                //Debug.Log(force.x);
-            }
             
         }
         else
         {
-            
             isFinished = true;
             //if ending, call deaccelerate on the robot
             robotScript.OnDeaccelerate();
         }
         
     }
-
 
 }
