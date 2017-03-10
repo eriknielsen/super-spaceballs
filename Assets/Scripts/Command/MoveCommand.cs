@@ -98,6 +98,7 @@ public class MoveCommand : Command
 
     public override void Execute()
     {
+        int count = 0;
         //on the first execute, do this
         if (hasStarted == false)
         {
@@ -116,10 +117,12 @@ public class MoveCommand : Command
           
 
             lifeTimer -= Time.fixedDeltaTime;
-            Debug.Log(targetPosition.x);
+            count++;
+            Debug.Log(force.x);
         }
         else
         {
+            Debug.Log("addforce executed: " + count + " times");
             isFinished = true;
             //if ending, call deaccelerate on the robot
             robotScript.OnDeaccelerate();
