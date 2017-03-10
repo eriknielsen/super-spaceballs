@@ -58,6 +58,8 @@ public class MoveCommand : Command
         targetPosition = moveCommand.targetPosition;
         robotScript = robot.GetComponent<RobotBehaviour>();
         robotRb2d = robot.GetComponent<Rigidbody2D>();
+        startPosition = r.transform.position;
+
     }
     
     public MoveCommand(GameObject r, Vector2 target, float lifetime, int turn)
@@ -100,15 +102,18 @@ public class MoveCommand : Command
 
     public override void Execute()
     {
-        int count = 0;
+        
         //on the first execute, do this
         if (hasStarted == false)
         {
            robotScript.OnAccelerate();
             robotRb2d.AddForce(InitialForce);
             hasStarted = true;
+            Debug.Log("starting at x: " + startPosition.x + " y: " + startPosition.y);
 
-            Debug.Log("movecommand is x: " + targetPosition.x + " y: " + targetPosition.y + " time is: " + lifeDuration);
+           if(robotScript.isPreview == false){
+               Debug.Log(startPosition.x);
+           }
 
         }
         //robot.transform.rotation = Quaternion.Lerp(robot.transform.rotation, Quaternion.Euler(0, 0, angle * Mathf.Rad2Deg), Time.deltaTime);
@@ -119,12 +124,14 @@ public class MoveCommand : Command
           
 
             lifeTimer -= Time.fixedDeltaTime;
-            count++;
-            Debug.Log(force.x);
+            if(robotScript.isPreview == false){
+                Debug.Log(force.x);
+            }
+            
         }
         else
         {
-            Debug.Log("addforce executed: " + count + " times");
+            
             isFinished = true;
             //if ending, call deaccelerate on the robot
             robotScript.OnDeaccelerate();
