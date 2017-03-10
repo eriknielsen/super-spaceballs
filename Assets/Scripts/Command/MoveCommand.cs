@@ -83,10 +83,13 @@ public class MoveCommand : Command
      
         force = CaluculateForce(speed);
         initialForce = CaluculateForce(initialForceMagnitude);
+
+        //Debug.Log("x: " + targetPosition.x + " y: " + targetPosition.y);
     }
 
     Vector2 CaluculateForce(float forceMagnitude)
     {
+
         Vector2 positionDifference = targetPosition - startPosition;
         angle = Mathf.Atan2(positionDifference.y, positionDifference.x);
         if (angle < 0)
@@ -106,6 +109,9 @@ public class MoveCommand : Command
             robotScript.OnAccelerate();
             rb2d.AddForce(InitialForce);
             hasStarted = true;
+            if(robotScript.isPreview == false){
+                Debug.Log("starting at x: " + startPosition.x +  "y :" + startPosition.y);
+            }
         }
         //robot.transform.rotation = Quaternion.Lerp(robot.transform.rotation, Quaternion.Euler(0, 0, angle * Mathf.Rad2Deg), Time.deltaTime);
         if(lifeTimer > 0)
@@ -115,6 +121,9 @@ public class MoveCommand : Command
           
 
             lifeTimer -= Time.fixedDeltaTime;
+            if(robotScript.isPreview == false){
+                Debug.Log(force.x);
+            }
             
         }
         else

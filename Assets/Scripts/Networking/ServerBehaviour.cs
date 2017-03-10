@@ -27,21 +27,15 @@ public class ServerBehaviour : NetworkManager {
         public static short msgType = MsgType.Highest + 3;
 
         //the reciever goes through the robotPositions and sets them accordingly
-        public byte[] robotPositions;
+        public byte[] info;
 
-        public byte[] ballInfo;
-
-    }  public class SyncVelocityMsg : MessageBase{
+    }  
+    public class SyncVelocityMsg : MessageBase{
         public static short msgType = MsgType.Highest + 4;
         public byte[] robotVelocities;
     }
 
-
-
-
     //Gameobjects that need to start unenabled
-
-
     public NetworkPlayBehaviour networkedPlayInstance;
 
     public Text statusText;
@@ -173,7 +167,7 @@ public class ServerBehaviour : NetworkManager {
             conn.RegisterHandler(CommandMsg.msgType, networkedPlayInstance.OnRecieveCommands);
             conn.RegisterHandler(UnpauseMsg.msgType, networkedPlayInstance.OnRecieveUnpause);
             conn.RegisterHandler(SyncStateMsg.msgType, networkedPlayInstance.OnRecieveSyncState);
-            conn.RegisterHandler(SyncVelocityMsg.msgType, networkedPlayInstance.OnRecieveSyncVelocities);
+            //conn.RegisterHandler(SyncVelocityMsg.msgType, //networkedPlayInstance.OnRecieveSyncVelocities);
             
         }
     }
@@ -245,34 +239,27 @@ public class ServerBehaviour : NetworkManager {
     //takes a list of robots and sends their positions to the other client
     public void SendSyncStateMsg(List<GameObject> robots, GameObject ball){
         if(isServer){
-            SerializablePositionList robotPositions = new SerializablePositionList();
+
+            SerializablePositionList infoBuffer = new SerializablePositionList();
             for(int i = 0; i < robots.Count; i++){
-                robotPositions.Add(new Position(robots[i].transform.position));
+                infoBuffer.Add(new Position(robots[i].transform.position));
+                infoBuffer.Add(new Position(robots[i].GetComponent<RobotBehaviour>().prevVelocity));
             }
-         
+
+            //where length - 2 is position and length - 1 velocity
+            infoBuffer.Add(new Position(ball.transform.position));
+            infoBuffer.Add(new Position(ball.GetComponent<Ball>().PreviousVelocity));
+
             byte[] bytePositions;
 
             BinaryFormatter bf = new BinaryFormatter();
             System.IO.MemoryStream ms = new System.IO.MemoryStream();
 
-            bf.Serialize(ms,robotPositions);
+            bf.Serialize(ms,infoBuffer);
             bytePositions = ms.ToArray();
 
-            //where 0 is position and 1 velocity
-             SerializablePositionList ballInfo = new SerializablePositionList();
-           ballInfo.Add(new Position(ball.transform.position));
-           ballInfo.Add(new Position(ball.GetComponent<Ball>().PreviousVelocity));
-
-           byte[] ballInfoBytes;
-
-           bf.Serialize(ms,ballInfo);
-           ballInfoBytes = ms.ToArray();
-
-           
-
             SyncStateMsg syncMsg = new SyncStateMsg();
-            syncMsg.robotPositions = bytePositions;
-            syncMsg.ballInfo = ballInfoBytes;
+            syncMsg.info = bytePositions;
            
             if (remoteConnection != null)
             {
@@ -319,18 +306,7 @@ public class ServerBehaviour : NetworkManager {
         }
            
     }
-      public void f(byte[] input)
-    {
-        List<SerializableCommand> deserializedCommands = new List<SerializableCommand>();
-        BinaryFormatter bf = new BinaryFormatter();
-        Byte[] buffer = input;
-        System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
-        deserializedCommands = bf.Deserialize(ms) as List<SerializableCommand>;
-        //Debug.Log(deserializedCommands[0].targetPosition.x + " y: " + deserializedCommands[0]//.targetPosition.y);
-        
 
-        
-    }
     public void SendUnpauseGame()
     {
         UnpauseMsg unpMsg = new UnpauseMsg();

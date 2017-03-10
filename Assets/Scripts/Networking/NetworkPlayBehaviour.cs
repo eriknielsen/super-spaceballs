@@ -253,10 +253,9 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             Debug.Log("breaking from unpause");
             yield break;
         }
-        paused = false;
         Debug.Log("unpausing");
         StopCoroutine(planCountDownCoroutine);
-        
+        paused = false;
         ball.Unpause();
         playerTurnhandler.UnpauseGame();
         otherTurnhandler.UnpauseGame();
@@ -427,50 +426,67 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     public void OnRecieveSyncState(NetworkMessage netMsg){
         if(customIsServer == false){
             ServerBehaviour.SyncStateMsg msg = netMsg.ReadMessage<ServerBehaviour.SyncStateMsg>();
-            ServerBehaviour.SerializablePositionList deserializedPositions = new ServerBehaviour.SerializablePositionList();
+            //the buffer msg consists of
+            //3 pairs of positions and a velocity (both type of Position)
+            //followed by the ball's position and velocity
+            ServerBehaviour.SerializablePositionList deserializedBuffer = new ServerBehaviour.SerializablePositionList();
 
-            //where 0 is ball position and 1 is it's velocity
-            ServerBehaviour.SerializablePositionList deserializedBallInfo = new ServerBehaviour.SerializablePositionList();
-
+          
             BinaryFormatter bf = new BinaryFormatter();
-            Byte[] buffer = msg.robotPositions;
+            Byte[] buffer = msg.info;
            
             System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
-            deserializedPositions = bf.Deserialize(ms) as ServerBehaviour.SerializablePositionList;
+            deserializedBuffer = bf.Deserialize(ms) as ServerBehaviour.SerializablePositionList;
 
-        
+            int counter = 0;
+            int index = 0;
+            foreach(Position p in deserializedBuffer){
+                GameObject r = otherTurnhandler.Robots[index];
+                if(counter+2 < deserializedBuffer.Count){
 
-      
-            //put the positons into the turnhandlers robots
-            //the first robotCount(3) robots should be put in the otherTurnhandler
-            
-            for(int i = 0; i < 3;i++){
+                    if(counter % 2 == 0){
+                        r.transform.position = p.V2();
+                        counter++;
+                    }
+                    else{
+                        r.GetComponent<RobotBehaviour>().prevVelocity = p.V2();
+                        index++;
+                    }
+                    
+                }
+                else{
+
+                    ball.transform.position = p.V2();
+                    ball.GetComponent<Ball>().PreviousVelocity = p.V2();
+                    break;
+                }
+            }
+            /* 
+            //position and velocity from robots 
+            for(int i = 0; i < 3;i +=2){
                 GameObject r = otherTurnhandler.Robots[i];
                 //positions
                 r.transform.position = 
-                deserializedPositions[i].V2();
+                deserializedBuffer[i].V2();
+            }
+            for(int i = 3;i < 6;i++){
+                GameObject r = otherTurnhandler.Robots[i-3];
+                r.GetComponent<RobotBehaviour>().prevVelocity = deserializedBuffer[i].V2();
             }
             //and the remaining 3 should be put in the playerTurnhandler
-            for(int i = 3; i < 6;i++){
-                 GameObject r = playerTurnhandler.Robots[i-3];
-                r.transform.position =
-                deserializedPositions[i].V2();
-
+            for(int i = 6; i < 9;i++){
+                 GameObject r = playerTurnhandler.Robots[i-6];
+                r.transform.position = deserializedBuffer[i].V2();
             }   
-            //Debug.Log(deserializedPositions[0].x + " y: " + deserializedPositions[0].y);
-
-
-            //put the ballinfo in the ball
-
-            Byte[] ballinfobuffer = msg.ballInfo;
-            System.IO.MemoryStream ms2 = new System.IO.MemoryStream(ballinfobuffer);
-
-            deserializedBallInfo = bf.Deserialize(ms2) as ServerBehaviour.SerializablePositionList;
-
-            Debug.Log(deserializedBallInfo[0].x);
-            ball.transform.position = deserializedBallInfo[0].V2();
-            ball.GetComponent<Ball>().PreviousVelocity = deserializedBallInfo[1].V2();
-
+            for(int i = 9; i < 12;i++){
+                GameObject r = playerTurnhandler.Robots[i-6];
+                r.GetComponent<RobotBehaviour>().prevVelocity = deserializedBuffer[i].V2();
+            }
+            
+            ball.transform.position = deserializedBuffer[deserializedBuffer.Count-2].V2();
+            ball.GetComponent<Ball>().PreviousVelocity = deserializedBuffer
+            [deserializedBuffer.Count-1].V2();
+            */
         }
         
     }
