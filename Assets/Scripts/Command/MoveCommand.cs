@@ -57,6 +57,7 @@ public class MoveCommand : Command
         lifeTimer = moveCommand.LifeDuration;
         targetPosition = moveCommand.targetPosition;
         robotScript = robot.GetComponent<RobotBehaviour>();
+        robotRb2d = robot.GetComponent<Rigidbody2D>();
     }
     
     public MoveCommand(GameObject r, Vector2 target, float lifetime, int turn)
@@ -80,11 +81,12 @@ public class MoveCommand : Command
         initialForce = CaluculateForce(initialForceMagnitude);
 
         robotScript = robot.GetComponent<RobotBehaviour>();
+        robotRb2d = robot.GetComponent<Rigidbody2D>();
     }
 
     Vector2 CaluculateForce(float forceMagnitude)
     {
-        robotRb2d = robot.GetComponent<Rigidbody2D>();
+        
         Vector2 positionDifference = targetPosition - startPosition;
         angle = Mathf.Atan2(positionDifference.y, positionDifference.x);
         if (angle < 0)
