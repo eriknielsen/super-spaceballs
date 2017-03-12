@@ -215,8 +215,23 @@ public class ServerBehaviour : NetworkManager {
         NetworkManager.singleton.matchMaker.DropConnection(currentMatchInfo.networkId,currentMatchInfo.nodeId, matchDomain, null);
         SceneManager.LoadSceneAsync("MainMenu");
     }
-    
+    public void LeaveToMainMenu(){
+         if(NetworkManager.singleton.matchMaker != null){
+            NetworkManager.singleton.matchMaker.DropConnection(currentMatchInfo.networkId, currentMatchInfo.nodeId, matchDomain, null);
+        } 
+        if(isServer){
+            NetworkManager.singleton.StopHost();
+        }   
+        else{
+            NetworkManager.singleton.StopClient();
+
+        }
+       
+        NetworkManager.singleton.StopMatchMaker();
+    }
+    //********************** 
     //functions called by the networkplaybehaviour
+    //**********************  
     public void SendCommands(SerializableCommandList commands)
     {
         CommandMsg msg = new CommandMsg();
