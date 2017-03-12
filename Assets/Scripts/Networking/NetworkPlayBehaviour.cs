@@ -416,6 +416,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             
             int robotIndex = 0;
             for(int i = 0; i < deserializedBuffer.Count;i++){
+              
                 //for the first 6 robots, put info in the otherTurnhandler
                 if(i < 6){
                     GameObject r = otherTurnhandler.Robots[robotIndex];
@@ -434,7 +435,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                 }
                 //for the next 6 things, put in playerTurnhandler
                 else if(i < 12){
-                    GameObject r = playerTurnhandler.Robots[robotIndex];
+                    GameObject r = playerTurnhandler.Robots[robotIndex-3];
                     //even for position
                     if(i % 2 == 0){
                         r.transform.position = deserializedBuffer[i].V2();
