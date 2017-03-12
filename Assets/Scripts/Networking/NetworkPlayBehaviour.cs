@@ -304,7 +304,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             {
                 case SerializableCommand.CommandType.Move:
                     otherTurnhandler.Robots[sc.robotIndex].GetComponent<RobotBehaviour>().Commands.Add(
-                        new MoveCommand(otherTurnhandler.Robots[sc.robotIndex], sc.targetPosition.V2(), sc.lifeDuration, 0));
+                        new MoveCommand(otherTurnhandler.Robots[sc.robotIndex], sc.initialForce.V2(), sc.force.V2(),sc.lifeDuration));
 
                     break;
                 case SerializableCommand.CommandType.Push:
@@ -346,13 +346,17 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                 Type t = c.GetType();
                 if (t == typeof(MoveCommand))
                 {
-                    SerializableCommand sc = new SerializableCommand(pair.Key, c.targetPosition, c.lifeDuration, SerializableCommand.CommandType.Move, 0);
+                    MoveCommand mc = c as MoveCommand;
+                    SerializableCommand sc = new SerializableCommand(pair.Key, c.targetPosition, c.lifeDuration, SerializableCommand.CommandType.Move, 0,
+                    mc.Force, mc.InitialForce);
+                    Debug.Log("mc x is: " + mc.Force.x + " y " + mc.Force.y);
                     scList.Add(sc);
 
                 }
                 else if (t == typeof(PushCommand))
                 {
-                    SerializableCommand sc = new SerializableCommand(pair.Key, c.targetPosition, c.lifeDuration, SerializableCommand.CommandType.Push, 0);
+                    SerializableCommand sc = new SerializableCommand(pair.Key, c.targetPosition, c.lifeDuration, SerializableCommand.CommandType.Push, 0,
+                    Vector2.zero,Vector2.zero);
                     scList.Add(sc);
                 }
 
@@ -393,6 +397,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         remoteIsReady = true;
     }
     
+    //ASSUMES THERE IS EXACTLY 3 ROBOTS PER TEAM + ONE BALL
     public void OnRecieveSyncState(NetworkMessage netMsg){
         if(customIsServer == false){
             ServerBehaviour.SyncStateMsg msg = netMsg.ReadMessage<ServerBehaviour.SyncStateMsg>();

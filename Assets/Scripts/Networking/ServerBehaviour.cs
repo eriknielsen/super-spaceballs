@@ -236,6 +236,7 @@ public class ServerBehaviour : NetworkManager {
         }
     }
     //AS SERVER ONLY
+    //ASSUMES THERE IS EXACTLY 3 ROBOTS PER TEAM + ONE BALL
     //takes a list of robots and sends their positions to the other client
     public void SendSyncStateMsg(List<GameObject> robots, GameObject ball){
         if(isServer){

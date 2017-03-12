@@ -48,6 +48,16 @@ public class MoveCommand : Command
             return startSpeed;
         }
     }
+    // also takes a force already calculated on the other online client
+    public MoveCommand(GameObject r, Vector2 inputIntialForce, Vector2 inputForce, float duration){
+        robot = r;
+        this.initialForce = inputIntialForce;
+        this.force = inputForce;
+        Debug.Log(this.force.x);
+        this.lifeDuration = duration;
+        rb2d = robot.GetComponent<Rigidbody2D>();
+        robotScript = r.GetComponent<RobotBehaviour>();
+    }
 
     public MoveCommand(GameObject r, MoveCommand moveCommand)
     {

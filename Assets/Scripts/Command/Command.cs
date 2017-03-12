@@ -30,10 +30,13 @@ public class SerializableCommand {
 	public Position targetPosition;
 	public float lifeDuration;
 	public int turn;
-	public SerializableCommand(int index, Vector2 targetPos, float duration, CommandType t, int turn){
+	public Position force;
+	public Position initialForce;
+	public SerializableCommand(int index, Vector2 targetPos, float duration, CommandType t, int turn, Vector2 force, Vector2 initialForce){
 		robotIndex = index;
 		targetPosition = new Position(targetPos);
-		
+		this.force = new Position(force);
+		this.initialForce = new Position(initialForce);
 		lifeDuration = duration;
 		this.turn = turn;
 		type = t;
