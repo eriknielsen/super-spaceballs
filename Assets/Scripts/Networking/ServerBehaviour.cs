@@ -49,6 +49,12 @@ public class ServerBehaviour : NetworkManager {
      [SerializeField]
     GameObject backButton;
 
+    //a bool to make sure we recieve the commands of the other player
+    //before unpausing the game
+    //and since the only case where this might not happen is for the server
+    //only the server needs  to use this bool
+    public bool recivedCommands = false;
+
     int matchDomain = 0;
     //if isServer true then the networkplaybehaviour gets this set
     bool isServer = false;

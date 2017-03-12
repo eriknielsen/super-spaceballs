@@ -59,9 +59,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         if (customIsServer)
         {
             playerTurnhandler = rightTurnhandlerInScene;
-            otherTurnhandler = leftTurnhandlerInScene;
-            
-            
+            otherTurnhandler = leftTurnhandlerInScene;   
         }
         else
         {
@@ -122,7 +120,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         planTimeText.color = activePlanTimeColor;
 
     }
-    
+    public bool commandsSent = false;
     void Update()
     {
         if(gameTimer.IsGameOver()){
@@ -132,14 +130,26 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 
         if(paused){
             //if time is out then
-            if(playerTurnhandler.currentPlanTimeLeft <= 0){
-                    SendCommands();
-                    localIsReady = true;
+            if(playerTurnhandler.currentPlanTimeLeft < 1){
+                Debug.Log("timeout!!");
+                    //only do this part once since we will go in here again
+                    //while waiting for server.recivedCommands to be set to true
+                    if(commandsSent == false){
+                        Debug.Log("Send those commands!");
+                        SendCommands();
+                        localIsReady = true;
+                    } 
                     //if we are the server, tell the other client to start as well since the time has run out
-                    if(customIsServer){
+
+                    //here we have to wait first for the commands to arrive before
+                    //unpausing the clients
+                    if(customIsServer && server.recivedCommands){
+                        server.recivedCommands = false;
                         server.SendUnpauseGame();
                         StartCoroutine(UnpauseGame());
-                        paused = true;
+                        
+                        Debug.Log("unpausing since time ran out");
+                        
                     }
             }
             if (Input.GetKeyDown(KeyCode.Return) && paused == true && localIsReady == false)
@@ -151,7 +161,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             }
             //if we are server, tell the other client to unpause 
             // as well as unpause the server
-            if (remoteIsReady && localIsReady && customIsServer)
+            if (remoteIsReady && localIsReady && customIsServer && paused == false)
             {
                 server.SendUnpauseGame();
                 StartCoroutine(UnpauseGame());
@@ -253,19 +263,21 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             Debug.Log("breaking from unpause");
             yield break;
         }
-        Debug.Log("unpausing");
-        StopCoroutine(planCountDownCoroutine);
         paused = false;
+        StopCoroutine(planCountDownCoroutine);
+       
         ball.Unpause();
         playerTurnhandler.UnpauseGame();
         otherTurnhandler.UnpauseGame();
-        playerTurnhandler.currentPlanTimeLeft = planTime;
+        
         playerTurnhandler.Activate(false);
         gameTimerCoroutine = StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
-       
-        yield return new WaitForSeconds(roundTime);
+        playerTurnhandler.currentPlanTimeLeft = planTime;
         localIsReady = false;
         remoteIsReady = false;
+        yield return new WaitForSeconds(roundTime);
+        
+      
         PauseGame();
     }
     void PauseGame()
@@ -274,13 +286,17 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         if(paused== true){
             return;
         }
+        paused = true;
+        commandsSent = false;
+        server.recivedCommands = false;
         playerTurnhandler.Activate(true);
         planTimeText.color = activePlanTimeColor;
-        planCountDownCoroutine = StartCoroutine(CountDownPlanningTime());
-        paused = true;
-        playerTurnhandler.PauseGame();
+         playerTurnhandler.PauseGame();
         otherTurnhandler.PauseGame();
         ball.Pause();
+        planCountDownCoroutine = StartCoroutine(CountDownPlanningTime());
+        
+       
         if(customIsServer){
             List<GameObject> allRobots = new List<GameObject>();
             allRobots.AddRange(playerTurnhandler.Robots);
@@ -316,6 +332,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                     break;
             }
         }
+        server.recivedCommands = true;
     }
     //#####
     // país mágico
@@ -324,7 +341,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     //send commands to the other client
     void SendCommands()
     {
-        
+        commandsSent = true;
         Dictionary<int, List<Command>> commandDict = new Dictionary<int, List<Command>>();
         commandDict = GetCommandDict(playerTurnhandler.Robots);
         
@@ -349,7 +366,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                     MoveCommand mc = c as MoveCommand;
                     SerializableCommand sc = new SerializableCommand(pair.Key, c.targetPosition, c.lifeDuration, SerializableCommand.CommandType.Move, 0,
                     mc.Force, mc.InitialForce);
-                    Debug.Log("mc x is: " + mc.Force.x + " y " + mc.Force.y);
+                  
                     scList.Add(sc);
 
                 }
@@ -381,20 +398,28 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     /// <param name="netMsg"></param>
     public void OnRecieveCommands(NetworkMessage netMsg)
     {
-        List<SerializableCommand> deserializedCommands = new List<SerializableCommand>();
-        BinaryFormatter bf = new BinaryFormatter();
-        Byte[] buffer = netMsg.ReadMessage<ServerBehaviour.CommandMsg>().serializedCommands;
-        System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
-        deserializedCommands = bf.Deserialize(ms) as List<SerializableCommand>;
-        //Debug.Log(deserializedCommands.Count + " commands recived!");
-        if(deserializedCommands.Count > 1){
-              Debug.Log("Command one is x: " + deserializedCommands[0].targetPosition.x + " y: " + deserializedCommands[0].targetPosition.y + " time:" + deserializedCommands[0].lifeDuration);
-        Debug.Log("Command two is x: " + deserializedCommands[1].targetPosition.x + " y: " + deserializedCommands[1].targetPosition.y);
-        }
-      
-        PutCommandsIntoRobots(deserializedCommands);
+        if(paused && server.recivedCommands == false){
+            List<SerializableCommand> deserializedCommands = new List<SerializableCommand>();
+            BinaryFormatter bf = new BinaryFormatter();
+            Byte[] buffer = netMsg.ReadMessage<ServerBehaviour.CommandMsg>().serializedCommands;
+            System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
+            deserializedCommands = bf.Deserialize(ms) as List<SerializableCommand>;
+            //Debug.Log(deserializedCommands.Count + " commands recived!");
+            if(deserializedCommands.Count > 1){
+                    Debug.Log(server.recivedCommands);          Debug.Log("Command one is x: " + deserializedCommands[0].targetPosition.x + " y: " + deserializedCommands[0].targetPosition.y + " time:" + deserializedCommands[0].lifeDuration);
+            Debug.Log("Command two is x: " + deserializedCommands[1].targetPosition.x + " y: " + deserializedCommands[1].targetPosition.y);
+            }
+        
+            PutCommandsIntoRobots(deserializedCommands);
 
-        remoteIsReady = true;
+            remoteIsReady = true;
+            
+        }
+        else{
+            Debug.Log("game is paused: " + paused);
+        }
+        
+        
     }
     
     //ASSUMES THERE IS EXACTLY 3 ROBOTS PER TEAM + ONE BALL

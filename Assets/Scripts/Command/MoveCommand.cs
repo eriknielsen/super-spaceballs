@@ -53,7 +53,7 @@ public class MoveCommand : Command
         robot = r;
         this.initialForce = inputIntialForce;
         this.force = inputForce;
-        Debug.Log(this.force.x);
+
         this.lifeDuration = duration;
         rb2d = robot.GetComponent<Rigidbody2D>();
         robotScript = r.GetComponent<RobotBehaviour>();
@@ -119,9 +119,7 @@ public class MoveCommand : Command
             robotScript.OnAccelerate();
             rb2d.AddForce(InitialForce);
             hasStarted = true;
-            if(robotScript.isPreview == false){
-                Debug.Log("starting at x: " + startPosition.x +  "y :" + startPosition.y);
-            }
+
         }
         //robot.transform.rotation = Quaternion.Lerp(robot.transform.rotation, Quaternion.Euler(0, 0, angle * Mathf.Rad2Deg), Time.deltaTime);
         if(lifeTimer > 0)
@@ -131,9 +129,7 @@ public class MoveCommand : Command
           
 
             lifeTimer -= Time.fixedDeltaTime;
-            if(robotScript.isPreview == false){
-                Debug.Log(force.x);
-            }
+ 
             
         }
         else

@@ -1,1 +1,6 @@
-startposition är samma för varje kommando
+startposition är samma för varje kommando - KANSKE INE SPELA RROLL
+linerenderer efter syncmessage - VIKTIGT
+skicka också goal message - VIKTIGT
+och kanske end of game message
+
+kommandon hinner inte fram om man väntar på att planeringstiden ska ta slut?
