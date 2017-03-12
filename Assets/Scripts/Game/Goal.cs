@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+
 
 public class Goal : MonoBehaviour {
 
@@ -15,10 +15,11 @@ public class Goal : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other){ //When ball enters goal ballposition is reset and score is increased
 		if (other.tag == "Ball"){
+			other.gameObject.GetComponent<Ball>().ResetPosition();
 			OnGoalScored();
 			score++;
             scoreText.text = "" + score;
-			other.gameObject.GetComponent<Ball>().ResetPosition();
+			
 		}
 	}
 }

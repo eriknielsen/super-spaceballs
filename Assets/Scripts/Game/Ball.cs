@@ -65,6 +65,9 @@ public class Ball : MonoBehaviour {
     void OnCollisionEnter2D(Collision2D other)
     {
 
+        if (other.collider.tag == "Goal"){
+            ResetPosition();
+        }
         if (other.collider.tag == "Wall")
         {
             AudioManager.instance.PlayAudioWithRandomPitch(
