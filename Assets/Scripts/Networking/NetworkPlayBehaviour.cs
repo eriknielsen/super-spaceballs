@@ -392,37 +392,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 
         remoteIsReady = true;
     }
-    public void OnRecieveSyncVelocities(NetworkMessage netMsg){
-        if(customIsServer == false){
-             ServerBehaviour.SyncVelocityMsg msg = netMsg.ReadMessage<ServerBehaviour.SyncVelocityMsg>();
-            ServerBehaviour.SerializablePositionList deserializedVelocities = new ServerBehaviour.SerializablePositionList();
-
-            BinaryFormatter bf = new BinaryFormatter();
-            Byte[] buffer = msg.robotVelocities;
-           
-            System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
-            deserializedVelocities = bf.Deserialize(ms) as ServerBehaviour.SerializablePositionList;
-     
-             if(deserializedVelocities.Count > 0){
-                for(int i = 0; i < 3;i++){
-                    GameObject r = otherTurnhandler.Robots[i];
-                    //positions
-                    r.GetComponent<RobotBehaviour>().prevVelocity = 
-                    deserializedVelocities[i].V2();
-                }
-                //and the remaining 3 should be put in the playerTurnhandler
-                for(int i = 3; i < 6;i++){
-                    GameObject r = playerTurnhandler.Robots[i-3];
-                    r.GetComponent<RobotBehaviour>().prevVelocity =
-                    deserializedVelocities[i].V2(); 
-                } 
-             }
-             else{
-                 Debug.Log("deserialzed velocity count was 0");
-             }
-              
-        }
-    }
+    
     public void OnRecieveSyncState(NetworkMessage netMsg){
         if(customIsServer == false){
             ServerBehaviour.SyncStateMsg msg = netMsg.ReadMessage<ServerBehaviour.SyncStateMsg>();
@@ -438,55 +408,48 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
             deserializedBuffer = bf.Deserialize(ms) as ServerBehaviour.SerializablePositionList;
 
-            int counter = 0;
-            int index = 0;
-            foreach(Position p in deserializedBuffer){
-                GameObject r = otherTurnhandler.Robots[index];
-                if(counter+2 < deserializedBuffer.Count){
-
-                    if(counter % 2 == 0){
-                        r.transform.position = p.V2();
-                        counter++;
-                    }
-                    else{
-                        r.GetComponent<RobotBehaviour>().prevVelocity = p.V2();
-                        index++;
-                    }
-                    
+            
+            int robotIndex = 0;
+            for(int i = 0; i < deserializedBuffer.Count;i++){
+                //for the first 6 robots, put info in the otherTurnhandler
+                if(i < 6){
+                    GameObject r = otherTurnhandler.Robots[robotIndex];
+                    //even for position
+                     if(i % 2 == 0){
+                         
+                        r.transform.position = deserializedBuffer[i].V2();
+                        //Debug.Log(r.transform.position.x);
+                     }
+                     //odd for velocity
+                     else{
+                         r.GetComponent<RobotBehaviour>().prevVelocity = deserializedBuffer[i].V2();
+                         //next robot
+                        robotIndex++;
+                     }
                 }
-                else{
-
-                    ball.transform.position = p.V2();
-                    ball.GetComponent<Ball>().PreviousVelocity = p.V2();
+                //for the next 6 things, put in playerTurnhandler
+                else if(i < 12){
+                    GameObject r = playerTurnhandler.Robots[robotIndex];
+                    //even for position
+                    if(i % 2 == 0){
+                        r.transform.position = deserializedBuffer[i].V2();
+                    }
+                    //odd for velocity
+                    else{
+                        r.GetComponent<RobotBehaviour>().prevVelocity = deserializedBuffer[i].V2();
+                        //next robot
+                        robotIndex++;
+                    }
+                }
+                //the last two things are the ball
+                else {
+                    ball.transform.position = deserializedBuffer[i].V2();
+                    ball.GetComponent<Ball>().PreviousVelocity = deserializedBuffer[i+1].V2();
                     break;
                 }
-            }
-            /* 
-            //position and velocity from robots 
-            for(int i = 0; i < 3;i +=2){
-                GameObject r = otherTurnhandler.Robots[i];
-                //positions
-                r.transform.position = 
-                deserializedBuffer[i].V2();
-            }
-            for(int i = 3;i < 6;i++){
-                GameObject r = otherTurnhandler.Robots[i-3];
-                r.GetComponent<RobotBehaviour>().prevVelocity = deserializedBuffer[i].V2();
-            }
-            //and the remaining 3 should be put in the playerTurnhandler
-            for(int i = 6; i < 9;i++){
-                 GameObject r = playerTurnhandler.Robots[i-6];
-                r.transform.position = deserializedBuffer[i].V2();
-            }   
-            for(int i = 9; i < 12;i++){
-                GameObject r = playerTurnhandler.Robots[i-6];
-                r.GetComponent<RobotBehaviour>().prevVelocity = deserializedBuffer[i].V2();
+               
             }
             
-            ball.transform.position = deserializedBuffer[deserializedBuffer.Count-2].V2();
-            ball.GetComponent<Ball>().PreviousVelocity = deserializedBuffer
-            [deserializedBuffer.Count-1].V2();
-            */
         }
         
     }

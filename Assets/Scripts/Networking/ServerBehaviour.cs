@@ -240,9 +240,16 @@ public class ServerBehaviour : NetworkManager {
     public void SendSyncStateMsg(List<GameObject> robots, GameObject ball){
         if(isServer){
 
+            //the robots list is the player's robots first 
+            //followed by the otherTurnhandler's robots
+
             SerializablePositionList infoBuffer = new SerializablePositionList();
             for(int i = 0; i < robots.Count; i++){
+                //add a pair of positions for each robot
+
+                //one for its position
                 infoBuffer.Add(new Position(robots[i].transform.position));
+                //and one  for the velocity
                 infoBuffer.Add(new Position(robots[i].GetComponent<RobotBehaviour>().prevVelocity));
             }
 
@@ -264,7 +271,7 @@ public class ServerBehaviour : NetworkManager {
             if (remoteConnection != null)
             {
                 remoteConnection.Send(SyncStateMsg.msgType, syncMsg);
-                SendVelocitySyncMsg(robots);
+             
             }
             else
             {
@@ -273,40 +280,7 @@ public class ServerBehaviour : NetworkManager {
 
         }
     }
-    void SendVelocitySyncMsg(List<GameObject> robots){
-        if(isServer){
-            
-            byte[] byteVelocities;
-            SerializablePositionList robotVelocities = new SerializablePositionList();
-            for(int i = 0; i < robots.Count; i++){
-                robotVelocities.Add(new Position(robots[i].GetComponent<RobotBehaviour>().prevVelocity));
-                //Debug.Log("velocity " + i + " ");
-            }
-
-
-
-            BinaryFormatter bf2 = new BinaryFormatter();
-            System.IO.MemoryStream ms2 = new System.IO.MemoryStream();
-            bf2.Serialize(ms2,robotVelocities);
-            byteVelocities = ms2.ToArray();
-            //Debug.Log(byteVelocities.Length);
-
-             SyncVelocityMsg velocityMsg = new SyncVelocityMsg();
-            velocityMsg.robotVelocities= byteVelocities;
-
-            if (remoteConnection != null)
-            {
-                
-                remoteConnection.Send(SyncVelocityMsg.msgType, velocityMsg);
-            }
-            else
-            {
-                Debug.Log("no remote connection to send to");
-            }
-        }
-           
-    }
-
+   
     public void SendUnpauseGame()
     {
         UnpauseMsg unpMsg = new UnpauseMsg();
