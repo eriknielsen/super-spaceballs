@@ -37,6 +37,13 @@ public class Ball : MonoBehaviour {
         localLineRenderer.enabled = false;
         
 	}
+    public void DrawTrajectory(){
+          if(prevVelocity.x != 0 && prevVelocity.y != 0)
+        {
+            localLineRenderer.enabled = true;
+            pm.showBallDirection(transform.position, prevVelocity, localLineRenderer);
+        } 
+    }
     public void Pause()
     {
         prevVelocity = rb.velocity;
@@ -44,11 +51,7 @@ public class Ball : MonoBehaviour {
        
         rb.freezeRotation = true;
         //if ball has a velocity, show it to the player
-        if(prevVelocity.x != 0 && prevVelocity.y != 0)
-        {
-            localLineRenderer.enabled = true;
-            pm.showBallDirection(transform.position, prevVelocity, localLineRenderer);
-        }    
+         DrawTrajectory();
     }
     public void Unpause()
     {

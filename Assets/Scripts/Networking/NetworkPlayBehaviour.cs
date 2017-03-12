@@ -152,7 +152,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                         
                     }
             }
-            if (Input.GetKeyDown(KeyCode.Return) && paused == true && localIsReady == false)
+            
+            else if (Input.GetKeyDown(KeyCode.Return) && paused == true && localIsReady == false)
             {
                 SendCommands();
                 localIsReady = true;
@@ -161,7 +162,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             }
             //if we are server, tell the other client to unpause 
             // as well as unpause the server
-            if (remoteIsReady && localIsReady && customIsServer && paused == false)
+            else if (remoteIsReady && localIsReady && customIsServer && paused == true)
             {
                 server.SendUnpauseGame();
                 StartCoroutine(UnpauseGame());
@@ -291,7 +292,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         server.recivedCommands = false;
         playerTurnhandler.Activate(true);
         planTimeText.color = activePlanTimeColor;
-         playerTurnhandler.PauseGame();
+        playerTurnhandler.PauseGame();
         otherTurnhandler.PauseGame();
         ball.Pause();
         planCountDownCoroutine = StartCoroutine(CountDownPlanningTime());
@@ -404,12 +405,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             Byte[] buffer = netMsg.ReadMessage<ServerBehaviour.CommandMsg>().serializedCommands;
             System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
             deserializedCommands = bf.Deserialize(ms) as List<SerializableCommand>;
-            //Debug.Log(deserializedCommands.Count + " commands recived!");
-            if(deserializedCommands.Count > 1){
-                    Debug.Log(server.recivedCommands);          Debug.Log("Command one is x: " + deserializedCommands[0].targetPosition.x + " y: " + deserializedCommands[0].targetPosition.y + " time:" + deserializedCommands[0].lifeDuration);
-            Debug.Log("Command two is x: " + deserializedCommands[1].targetPosition.x + " y: " + deserializedCommands[1].targetPosition.y);
-            }
-        
+
             PutCommandsIntoRobots(deserializedCommands);
 
             remoteIsReady = true;
@@ -476,6 +472,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                 else {
                     ball.transform.position = deserializedBuffer[i].V2();
                     ball.GetComponent<Ball>().PreviousVelocity = deserializedBuffer[i+1].V2();
+                    //tell ball to redraw it's linerenderthingy
+                    ball.DrawTrajectory();
                     break;
                 }
                
