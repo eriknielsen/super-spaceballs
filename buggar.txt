@@ -3,4 +3,4 @@ linerenderer efter syncmessage - FIXAT
 skicka också goal message - VIKTIGT
 och kanske end of game message
 
-målgrejer buggad i online play
+shockvåg inte helt samma på datorerna

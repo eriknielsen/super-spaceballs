@@ -77,7 +77,7 @@ public class ShockwaveBehaviour : MonoBehaviour {
         float rot_z = (Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg);
         rb2dCompontent.rotation = rot_z;
         realRotation = rot_z;
-        //make sure the shockwave dissapears
+       
         
       }
 
