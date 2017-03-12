@@ -232,8 +232,14 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 
 	//If we replayed the last turn, we dont want to do the newturn stuff
 	IEnumerator UnpauseGame(){
+		if(paused == false){
+			Debug.Log("game was already unpaused, breaking");
+			yield break;
+		}
 		Debug.Log("GAME IS UNPAUSED!");
+
 		paused = false;
+		Time.timeScale = 1;
 		ball.Unpause();
 
 		ActivateTurnHandler(false);
@@ -253,6 +259,10 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	}
 
 	void PauseGame(){
+		if(paused== true){
+            Debug.Log("game already paused, returning");
+            return;
+        }
 		ball.Pause();
 		planTimeText.enabled = true;
 		turnHandler1.PauseGame();

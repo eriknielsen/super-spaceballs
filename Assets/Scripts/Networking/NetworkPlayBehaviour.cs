@@ -264,6 +264,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             Debug.Log("breaking from unpause");
             yield break;
         }
+        Time.timeScale = 1;
         paused = false;
         StopCoroutine(planCountDownCoroutine);
        
@@ -285,6 +286,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     {
      
         if(paused== true){
+            Debug.Log("game already paused, returning");
             return;
         }
         paused = true;
