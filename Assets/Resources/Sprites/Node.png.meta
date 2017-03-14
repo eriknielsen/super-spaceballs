@@ -1,13 +1,17 @@
 fileFormatVersion: 2
-guid: ee3691d6da576e74a967c5b8d28413d3
-timeCreated: 1488984659
-licenseType: Free
+guid: 51b0e0567d9bae34f8dc427fb83a806f
+timeCreated: 1489496831
+licenseType: Pro
 TextureImporter:
   fileIDToRecycleName:
     21300000: Round field 3
     21300002: Round field 1
     21300004: Round field 2
     21300006: Round field 4
+    21300008: Node_0
+    21300010: Node_1
+    21300012: Node_2
+    21300014: Node_3
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -130,54 +134,54 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Round field 3
+      name: Node_0
       rect:
         serializedVersion: 2
-        x: 1067
-        y: 35
-        width: 411
-        height: 435
+        x: 0
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Round field 1
+      name: Node_1
       rect:
         serializedVersion: 2
-        x: 51
-        y: 35
-        width: 411
-        height: 435
+        x: 512
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Round field 2
+      name: Node_2
       rect:
         serializedVersion: 2
-        x: 562
-        y: 35
-        width: 411
-        height: 436
+        x: 1024
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Round field 4
+      name: Node_3
       rect:
         serializedVersion: 2
-        x: 1581
-        y: 38
-        width: 410
-        height: 436
+        x: 1536
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0

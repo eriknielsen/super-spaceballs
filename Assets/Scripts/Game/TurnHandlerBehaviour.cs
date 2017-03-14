@@ -28,9 +28,11 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 
 	int turns;
     float timeInput;
+	bool previewBallTrajectory = true;
 	GameObject ball;
 	PreviewMarker pm;
-	Coroutine previewBallTrajectory;
+	Vector3 cursorPosition;
+	Vector3 prevCursorPosition = Vector3.zero;
 	Coroutine setAndDisplayTimeInput;
 	Coroutine previewTrajectoryAndGiveRobotCommand;
 	List<GameObject> movingPreviews;
@@ -124,7 +126,6 @@ public class TurnHandlerBehaviour : MonoBehaviour {
             }
             robotMovingTrails[i].Clear();
         }
-
         for (int i = 0; i < ballMovingTrails.Count; i++)
         {
             for (int j = 0; j < ballMovingTrails[i].Count; j++)
@@ -135,10 +136,8 @@ public class TurnHandlerBehaviour : MonoBehaviour {
         }
     }
 
-    void DisableMovingPreviews()
-    {
-        for (int i = 0; i < robots.Count; i++)
-        {
+    void DisableMovingPreviews(){
+        for (int i = 0; i < robots.Count; i++){
             movingPreviews[i].SetActive(false);
         }
     }
@@ -189,7 +188,6 @@ public class TurnHandlerBehaviour : MonoBehaviour {
         Vector3 cursorScreenPosition;
         Vector3 deltaPosition;
         float deltaDistance;
-        float remainingTimeForRobot;
         float previewInputTime, maxInputTime;
         float shockwaveLife = shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime;
 
@@ -203,7 +201,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 
             if (robotMovingTrails[selectedRobotIndex].Count > 0)
             {
-                deltaPosition = cursorScreenPosition - robotMovingTrails[selectedRobotIndex].Last().Node.transform.position;
+                deltaPosition = cursorScreenPosition - robotMovingTrails[selectedRobotIndex].Last().PreviewRobot.transform.position;
             }
             else
             {
@@ -212,7 +210,6 @@ public class TurnHandlerBehaviour : MonoBehaviour {
             deltaDistance = Mathf.Sqrt(Mathf.Pow(deltaPosition.x, 2) + Mathf.Pow(deltaPosition.y, 2));
 
             previewInputTime = secondsPerDistance * deltaDistance;
-            remainingTimeForRobot = selectedRB.freeTime;
 
             if (selectedCommand == Command.AvailableCommands.Push)
             {
@@ -271,7 +268,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 					DestroyLatestPreviewTrail();
                     if (robotMovingTrails[selectedRobotIndex].Count > 0)
                     {
-                        previewRobot = robotMovingTrails[selectedRobotIndex].Last().Node;
+                        previewRobot = robotMovingTrails[selectedRobotIndex].Last().PreviewRobot;
                     }
                     else
                     {
@@ -351,33 +348,6 @@ public class TurnHandlerBehaviour : MonoBehaviour {
         return false;
     }
 
-    IEnumerator PreviewBallTrajectory()
-    {
-        Vector3 prevCursorPosition = Vector3.zero;
-        Vector3 cursorPosition;
-        Vector3 cursorScreenPosition;
-        
-        while (selectedRobot != null && ball != null)
-        {
-            cursorPosition = Input.mousePosition;
-            cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
-            if (prevCursorPosition != cursorPosition)
-            {
-
-                if (ballMovingTrails != null && ballMovingTrails[selectedRobotIndex].Count > 0)
-                {
-                    Destroy(ballMovingTrails[selectedRobotIndex].First().TrailGameObject);
-                    ballMovingTrails[selectedRobotIndex].Clear();
-                }
-                MoveCommand emptyMoveCommand = new MoveCommand(ball, Vector2.zero, 0, turns);
-                latestBallTrail = new MovingTrail(emptyMoveCommand, timeInput, ball.GetComponent<Ball>().PreviousVelocity);
-                ballMovingTrails[selectedRobotIndex].Add(latestBallTrail);
-            }
-            prevCursorPosition = cursorPosition;
-            yield return new WaitForSeconds(0.005f);
-        }
-    }
-
 	void DestroyLatestPreviewTrail(){
 		if (latestRobotTrail != null)
 		{
@@ -410,54 +380,61 @@ public class TurnHandlerBehaviour : MonoBehaviour {
         }
     }
 		
-    void Update()
-    {
-		if (Input.GetKeyDown(KeyCode.Z))
-		{
+    void Update(){
+		if (Input.GetKeyDown(KeyCode.Z)){
 			THSelectCommand(Command.AvailableCommands.Move);
 		}
-		if (Input.GetKeyDown(KeyCode.X))
-		{
+		if (Input.GetKeyDown(KeyCode.X)){
 			THSelectCommand(Command.AvailableCommands.Push);
 		}
-		if (Input.GetKeyDown(KeyCode.Escape))
-		{
+		if (Input.GetKeyDown(KeyCode.Escape)){
 			THDeselectRobot();
+		}
+
+		if (previewBallTrajectory){ //Lots of dead code here
+			while (selectedRobot != null && ball != null){
+				cursorPosition = Input.mousePosition;
+				if (prevCursorPosition != cursorPosition){
+
+					if (ballMovingTrails != null && ballMovingTrails [selectedRobotIndex].Count > 0){
+						Destroy (ballMovingTrails[selectedRobotIndex].First().TrailGameObject);
+						ballMovingTrails [selectedRobotIndex].Clear();
+					}
+					MoveCommand emptyMoveCommand = new MoveCommand (ball, Vector2.zero, 0, turns);
+					latestBallTrail = new MovingTrail (emptyMoveCommand, timeInput, ball.GetComponent<Ball>().PreviousVelocity);
+					ballMovingTrails [selectedRobotIndex].Add (latestBallTrail);
+				}
+				prevCursorPosition = cursorPosition;
+			}
 		}
     }
 	//TH prefix to indicate that these are passed through PlayBehaviour
-	public void THSelectCommand(Command.AvailableCommands command)
-	{
+	public void THSelectCommand(Command.AvailableCommands command){
 		selectedCommand = command;
-		if (selectedCommand != Command.AvailableCommands.None) //StartCoroutine(PreviewBallTrajectory());?
-		{
-			movingPreviews[selectedRobotIndex].SetActive (true);
+		if (selectedCommand != Command.AvailableCommands.None){ //StartCoroutine(PreviewBallTrajectory());?
+			movingPreviews[selectedRobotIndex].SetActive(true);
 			setAndDisplayTimeInput = StartCoroutine(SetAndDisplayTimeInput());
 			previewTrajectoryAndGiveRobotCommand = StartCoroutine(PreviewTrajectoryAndGiveRobotCommand());
 		}
-		else
-		{
-			movingPreviews[selectedRobotIndex].SetActive (false);
+		else {
+			movingPreviews[selectedRobotIndex].SetActive(false);
 			HideCursorText();
 			DestroyPreviewTrails();
 			StopCoroutineIfNotNull(previewTrajectoryAndGiveRobotCommand);
 		}
 	}
 
-	public void THDeselectRobot()
-	{
+	public void THDeselectRobot(){
 		selectedRobot = null;
 		timeInput = 0;
 		selectedCommand = Command.AvailableCommands.None;       
 		HideCursorText();
 		DestroyPreviewTrails();
 		StopCoroutineIfNotNull(previewTrajectoryAndGiveRobotCommand);
-        if (selectedCommandWheel != null)
-        {
+        if (selectedCommandWheel != null){
             Destroy(selectedCommandWheel);
         }
-        if (movingPreviews.Count > 0)
-        {
+        if (movingPreviews.Count > 0){
             movingPreviews[selectedRobotIndex].SetActive(false);
         }
 	}
