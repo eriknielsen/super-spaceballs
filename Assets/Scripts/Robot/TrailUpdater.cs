@@ -33,6 +33,7 @@ class TrailUpdater : MonoBehaviour
 
     public void Initialize(Command command, float lifeTime, Vector2 currentVelocity)
     {
+        UnityEngine.Debug.Log(command.GetType());
         if (command != null && command.robot != null)
         {
             node = Instantiate(command.robot, transform) as GameObject;
@@ -42,6 +43,9 @@ class TrailUpdater : MonoBehaviour
             if (commandType == typeof(MoveCommand))
             {
                 this.command = new MoveCommand(node, command as MoveCommand);
+            }
+            else{
+                this.command = command;
             }
 
             foreach (Transform c in node.transform)
@@ -96,9 +100,11 @@ class TrailUpdater : MonoBehaviour
     {
         if (isInitialized && !isFinished)
         {
+           
             if (node != null)
             {
                 float sizeFactorTrailMarking = trailMarkingWidth / trailMarkingSprite.bounds.size.x;
+
                 if (elapsedTime < timeDuration && !isFinished)
                 {
                     float deltaDistance = Vector3.Distance(node.transform.position, previousLocation);
@@ -144,6 +150,17 @@ class TrailUpdater : MonoBehaviour
                     }
                     isFinished = true;
                     Time.timeScale = 1.0f;
+                    UnityEngine.Debug.Log(command);
+                    if(command.GetType() == typeof(PushCommand)){
+
+                        
+                        if(trailMarkings.Count > 0){
+                            GameObject.Find("ShockwaveCone").GetComponent<ShockwaveConeScript>().SetConePosition(trailMarkings.Last().transform.position);
+                        }
+                        else{
+                            GameObject.Find("ShockwaveCone").GetComponent<ShockwaveConeScript>().SetConePosition(Vector2.zero);
+                        }
+                    }
                 }
 
             }

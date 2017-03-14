@@ -41,6 +41,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
     List<GameObject> robots;
 
     GameObject directionPointer;
+    ShockwaveConeScript swcs;
 
 	public List<GameObject> Robots
 	{
@@ -57,6 +58,8 @@ public class TurnHandlerBehaviour : MonoBehaviour {
     }
 
     void Awake(){
+
+        swcs = GameObject.Find("ShockwaveCone").GetComponent<ShockwaveConeScript>();
         //pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
         //ball = FindObjectOfType<Ball>().gameObject;
 		selectedCommand = Command.AvailableCommands.Move;
@@ -289,12 +292,18 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 					else if (selectedCommand == Command.AvailableCommands.Push && timeInput <= selectedRobot.GetComponent<RobotBehaviour>().freeTime - shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime)
                     {
                         previewCommand = new PushCommand(previewRobot, cursorScreenPosition, timeInput, Turns);
+                     
+                       
                     }
                     else
                     {
                         Debug.Log("No command selected!");
                     }
                     latestRobotTrail = new MovingTrail(previewCommand, timeInput, previewRobot.GetComponent<RobotBehaviour>().prevVelocity);
+                    if(previewCommand.GetType() == typeof(PushCommand)){
+                         //GameObject.Find("ShockwaveCone").GetComponent<ShockwaveConeScript>().f//(cursorScreenPosition, previewRobot);
+                         swcs.SetPositions(cursorScreenPosition, previewRobot.transform.position);
+                    }
 
                     //Not done yet!
                     //if (latestRobotTrail != null && latestRobotTrail.Node != null)
@@ -432,8 +441,12 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 		if (selectedCommand != Command.AvailableCommands.None) //StartCoroutine(PreviewBallTrajectory());?
 		{
 			movingPreviews[selectedRobotIndex].SetActive (true);
+            if(selectedCommand != Command.AvailableCommands.Push){
+                swcs.DeActivateSprite();
+            }
 			setAndDisplayTimeInput = StartCoroutine(SetAndDisplayTimeInput());
 			previewTrajectoryAndGiveRobotCommand = StartCoroutine(PreviewTrajectoryAndGiveRobotCommand());
+           
 		}
 		else
 		{
@@ -491,6 +504,8 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 			foreach (GameObject robot in robots)
             {
                 robot.GetComponent<RobotBehaviour>().shouldSendEvent = true;
+                robot.GetComponent<HaloScript>().enabled = true;
+            
             }
             
         }
@@ -498,10 +513,11 @@ public class TurnHandlerBehaviour : MonoBehaviour {
         {
 			THDeselectRobot();
             RobotBehaviour.OnClick -= new RobotBehaviour.ClickedOnRobot(SelectRobot);
-
+            GameObject.Find("ShockwaveCone").GetComponent<ShockwaveConeScript>().DeActivateSprite();
             for (int i = 0; i < robots.Count; i++)
             {
                 robots[i].GetComponent<RobotBehaviour>().shouldSendEvent = false;
+                 robots[i].GetComponent<HaloScript>().enabled = false;
             }
 
             for (int i = 0; i < movingPreviews.Count; i++)

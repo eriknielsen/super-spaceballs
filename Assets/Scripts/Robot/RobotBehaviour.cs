@@ -37,7 +37,7 @@ public class RobotBehaviour : MonoBehaviour {
     /// the acceleration used by movecommand to move the robot
     /// </summary>
     public float moveCommandAcceleration;
-    [HideInInspector]
+
     public bool isPreview;
 	
 
