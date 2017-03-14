@@ -33,6 +33,7 @@ public class PreviewMarker : MonoBehaviour {
         //simulatePath();
     }
 
+//	//http://answers.unity3d.com/questions/747795/trajectory-projectile-with-collision-detection.html
 //	// Reference to the LineRenderer we will use to display the simulated path
 //	public LineRenderer sightLine;
 //

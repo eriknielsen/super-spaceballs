@@ -6,6 +6,8 @@ public class PlayState : IRobotState {
 	
     private GameObject robot;
     private RobotBehaviour robotScript;
+   
+    
 
     Vector2 zeroVector;
     Animator anim;
@@ -18,6 +20,7 @@ public class PlayState : IRobotState {
 
     public void EnterPauseState(){
         robotScript.CurrentState = robotScript.pauseState;
+        
         //empty the command list
         robotScript.Commands.Clear();
         robotScript.prevVelocity = robotScript.rb.velocity;

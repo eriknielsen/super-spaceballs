@@ -14,6 +14,10 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 	[SerializeField]
 	GameObject commandWheelPrefab;  //Command selection buttons
 
+	public int CurrentPlanTimeLeft { get; set; }
+	public int Turns { get { return turns; } }
+	public List<GameObject> Robots { get { return robots; }	}
+
     [HideInInspector]
     public float roundTime;
     [HideInInspector]
@@ -41,27 +45,14 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 	List<List<MovingTrail>> ballMovingTrails;
     List<List<MovingTrail>> robotMovingTrails;
     List<GameObject> robots;
-
     GameObject directionPointer;
-
-	public List<GameObject> Robots
-	{
-		get { return robots; }
-	}
-
-    public int CurrentPlanTimeLeft {
-        get; set;
-    }
-     public int Turns
-
-    {
-        get { return turns; }
-    }
+    ShockwaveConeScript swcs;
 
     void Awake(){
+        swcs = GameObject.Find("ShockwaveCone").GetComponent<ShockwaveConeScript>();
         //pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
         //ball = FindObjectOfType<Ball>().gameObject;
-		selectedCommand = Command.AvailableCommands.Move;
+		selectedCommand = Command.AvailableCommands.None;
 		moves = new List<Move>();
 		robots = new List<GameObject>();
         FindRobots();
@@ -292,6 +283,10 @@ public class TurnHandlerBehaviour : MonoBehaviour {
                         Debug.Log("No command selected!");
                     }
                     latestRobotTrail = new MovingTrail(previewCommand, timeInput, previewRobot.GetComponent<RobotBehaviour>().prevVelocity);
+                    if(previewCommand.GetType() == typeof(PushCommand)){
+                         //GameObject.Find("ShockwaveCone").GetComponent<ShockwaveConeScript>().f//(cursorScreenPosition, previewRobot);
+                         swcs.SetPositions(cursorScreenPosition, previewRobot.transform.position);
+                    }
 
                     //Not done yet!
                     //if (latestRobotTrail != null && latestRobotTrail.Node != null)
@@ -302,9 +297,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
                     //    float AngleRad = Mathf.Atan2(cursorPosition.y - directionPointer.transform.position.y, cursorPosition.x - directionPointer.transform.position.x);
                     //    float AngleDeg = (180 / Mathf.PI) * AngleRad;
                     //    directionPointer.transform.rotation = Quaternion.Euler(0, 0, AngleDeg);
-
                     //    directionPointer.name = "Direction Pointer";
-
                     //}
                 }
                 if (Input.GetMouseButtonDown(1) && latestRobotTrail != null)
@@ -316,7 +309,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
                     GiveRobotCommand(previewCommand);
                 }
             }
-            if(selectedRobot != lastRobot)
+            if (selectedRobot != lastRobot)
             {
                 DestroyLatestPreviewTrail();
             }
@@ -413,8 +406,12 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 		selectedCommand = command;
 		if (selectedCommand != Command.AvailableCommands.None){ //StartCoroutine(PreviewBallTrajectory());?
 			movingPreviews[selectedRobotIndex].SetActive(true);
+            if(selectedCommand != Command.AvailableCommands.Push){
+                swcs.DeActivateSprite();
+            }
 			setAndDisplayTimeInput = StartCoroutine(SetAndDisplayTimeInput());
 			previewTrajectoryAndGiveRobotCommand = StartCoroutine(PreviewTrajectoryAndGiveRobotCommand());
+           
 		}
 		else {
 			movingPreviews[selectedRobotIndex].SetActive(false);
@@ -468,6 +465,8 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 			foreach (GameObject robot in robots)
             {
                 robot.GetComponent<RobotBehaviour>().shouldSendEvent = true;
+                robot.GetComponent<HaloScript>().enabled = true;
+            
             }
             
         }
@@ -475,10 +474,11 @@ public class TurnHandlerBehaviour : MonoBehaviour {
         {
 			THDeselectRobot();
             RobotBehaviour.OnClick -= new RobotBehaviour.ClickedOnRobot(SelectRobot);
-
+            GameObject.Find("ShockwaveCone").GetComponent<ShockwaveConeScript>().DeActivateSprite();
             for (int i = 0; i < robots.Count; i++)
             {
                 robots[i].GetComponent<RobotBehaviour>().shouldSendEvent = false;
+                 robots[i].GetComponent<HaloScript>().enabled = false;
             }
 
             for (int i = 0; i < movingPreviews.Count; i++)
