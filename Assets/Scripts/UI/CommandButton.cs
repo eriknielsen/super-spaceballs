@@ -11,10 +11,9 @@ public class CommandButton : MonoBehaviour {
 	[SerializeField]
 	private ToggleObjects commandWheelHandler;
 
-    public IPlayBehaviour playBehaviour;
+    IPlayBehaviour playBehaviour;
 
-    void Start()
-    {
+    void Start(){
        playBehaviour = GameObject.FindGameObjectWithTag("PlayController").GetComponent<IPlayBehaviour>();
     }
 
@@ -28,15 +27,15 @@ public class CommandButton : MonoBehaviour {
 		//AnimateButtonClick
 	}
 
-//	void OnMouseEnter(){	//For animation
-//		//Make brighter?
-//	}
-//
-//	void OnMouseOver(){
-//		//Do backflips?
-//	}
-//
-//	void OnMouseExit(){
-//		//Make normal
-//	}
+	void OnMouseEnter(){	//For animation
+		//Make brighter?
+	}
+
+	void OnMouseOver(){
+		//Do backflips?
+	}
+
+	void OnMouseExit(){
+		//Make normal
+	}
 }

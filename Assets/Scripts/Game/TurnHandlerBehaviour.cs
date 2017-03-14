@@ -192,7 +192,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 
             if (robotMovingTrails[selectedRobotIndex].Count > 0)
             {
-                deltaPosition = cursorScreenPosition - robotMovingTrails[selectedRobotIndex].Last().PreviewRobot.transform.position;
+				deltaPosition = cursorScreenPosition - robotMovingTrails[selectedRobotIndex].Last().Node.transform.position;
             }
             else
             {
@@ -259,7 +259,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 					DestroyLatestPreviewTrail();
                     if (robotMovingTrails[selectedRobotIndex].Count > 0)
                     {
-                        previewRobot = robotMovingTrails[selectedRobotIndex].Last().PreviewRobot;
+                        previewRobot = robotMovingTrails[selectedRobotIndex].Last().Node;
                     }
                     else
                     {

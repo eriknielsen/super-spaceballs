@@ -5,74 +5,82 @@ using System.Linq;
 using System.Diagnostics;
 using System;
 
-class TrailUpdater : MonoBehaviour {
-	public GameObject previewRobot;
-	public bool isFinished = false;
-	[SerializeField]
-	float nodeOpacity = 0.8f;
-
-
-	float velocity;
-	float nodeWidth = 0.5f;
-	float elapsedTime = 0;
-	float timeDuration;
-	float physicsSteps;
-	float bounceDamping;
-	float distanceBetweenMarkings = 1.0f;
+class TrailUpdater : MonoBehaviour
+{
 	bool isInitialized = false;
-
-	Type commandType;
+	public bool isFinished = false;
+	Sprite nodeSprite, trailMarkingSprite;
+	float trailMarkingWidth = 0.5f;
+	Vector3 previousLocation;
+	float distanceBetweenMarkings = 1.0f;
+	public GameObject node;
+	SpriteRenderer nodeSpriteRenderer;
+	List<GameObject> trailMarkings;
 	Command command;
-	CommandSymbols commandSymbols;
-	Sprite nodeSprite;
+	Type commandType;
 	Vector3 startPosition;
-	Vector3 previousNodeLocation;
-	SpriteRenderer nodeRenderer;
-	SpriteRenderer previewRobotRenderer;
-	List<GameObject> nodes;
+	float timeDuration;
+	float elapsedTime = 0;
+	CommandSymbols commandSymbols;
 
-	void Awake(){
-		nodes = new List<GameObject>();
+	void Awake()
+	{
+		nodeSprite = Resources.Load<Sprite>("Sprites/fotball2");
+		trailMarkingSprite = Resources.Load<Sprite>("Sprites/fotball2");
+		trailMarkings = new List<GameObject>();
 		commandSymbols = FindObjectOfType<CommandSymbols>();
 	}
 
-	public void Initialize(Command command, float lifeTime, Vector2 currentVelocity){
+	public void Initialize(Command command, float lifeTime, Vector2 currentVelocity)
+	{
 		UnityEngine.Debug.Log(command.GetType());
-		if (command != null && command.robot != null){
-			previewRobot = Instantiate(command.robot, transform) as GameObject;
-			startPosition = previewRobot.transform.position;
+		if (command != null && command.robot != null)
+		{
+			node = Instantiate(command.robot, transform) as GameObject;
+			startPosition = node.transform.position;
 
 			commandType = command.GetType();
-			if (commandType == typeof(MoveCommand)){
-				this.command = new MoveCommand(previewRobot, command as MoveCommand);
+			if (commandType == typeof(MoveCommand))
+			{
+				this.command = new MoveCommand(node, command as MoveCommand);
 			}
-			else {
+			else{
 				this.command = command;
 			}
 
-			foreach (Transform c in previewRobot.transform)
+			foreach (Transform c in node.transform)
 			{
 				c.gameObject.layer = LayerMask.NameToLayer("No Collision With Robot");
 			}
-			previewRobot.gameObject.layer = LayerMask.NameToLayer("No Collision With Robot");
-			previewRobotRenderer = previewRobot.GetComponent<SpriteRenderer>();
-			if(previewRobotRenderer != null)
+			node.gameObject.layer = LayerMask.NameToLayer("No Collision With Robot");
+			nodeSpriteRenderer = node.GetComponent<SpriteRenderer>();
+			if(nodeSpriteRenderer != null)
 			{
-				previewRobotRenderer.enabled = false;
+				nodeSpriteRenderer.enabled = false;
 			}
 
-			if (previewRobot.GetComponent<RobotBehaviour>() == true)
+			if (node.GetComponent<RobotBehaviour>() == true)
 			{
-				previewRobot.GetComponent<RobotBehaviour>().isPreview = true;
-				previewRobot.GetComponent<RobotBehaviour>().Commands.Add(this.command);
-				previewRobot.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
+				node.GetComponent<RobotBehaviour>().isPreview = true;
+				node.GetComponent<RobotBehaviour>().Commands.Add(this.command);
+				node.GetComponent<RobotBehaviour>().CurrentState.EnterPlayState();
 			}
 
-			previewRobot.name = "PreviewRobot";
-			previewRobot.GetComponent<Rigidbody2D>().velocity = currentVelocity;
+			node.name = "Node";
+			node.GetComponent<Rigidbody2D>().velocity = currentVelocity;
 			timeDuration = lifeTime;
-			previousNodeLocation = previewRobot.transform.position;
-			nodeSprite = Resources.Load<Sprite>("Sprites/Node");
+			previousLocation = node.transform.position;
+			trailMarkingSprite = Resources.Load<Sprite>("Sprites/Sprites/Sheet_runt_fält (1)");
+			if (node.GetComponent<SpriteRenderer>() == null)
+			{
+				node.AddComponent<SpriteRenderer>();
+			}
+			node.GetComponent<SpriteRenderer>().sprite = nodeSprite;
+			float red, green, blue;
+			red = node.GetComponent<SpriteRenderer>().color.r;
+			green = node.GetComponent<SpriteRenderer>().color.g;
+			blue = node.GetComponent<SpriteRenderer>().color.b;
+			node.GetComponent<SpriteRenderer>().color = new Color(red, green, blue, 0.5f);
 
 			Time.timeScale = 100;
 			isInitialized = true;
@@ -83,79 +91,98 @@ class TrailUpdater : MonoBehaviour {
 		}
 	}
 
-	void FixedUpdate(){
-		if (isInitialized && !isFinished){
-			if (previewRobot != null){
-				float sizeFactorTrailMarking = nodeWidth / nodeSprite.bounds.size.x;
-					if (elapsedTime < timeDuration && !isFinished){
-						float deltaDistance = Vector3.Distance(previewRobot.transform.position, previousNodeLocation);
-						if (deltaDistance > distanceBetweenMarkings){
-							GameObject node = new GameObject();
-							node.transform.SetParent(transform);
-							node.name = "Node";
-							nodeRenderer = node.AddComponent<SpriteRenderer>();
-							nodeRenderer.sprite = nodeSprite;
-							nodeRenderer.enabled = false;
-							Color originalColor = nodeRenderer.color;
-							nodeRenderer.color = new Color(nodeRenderer.color.r, nodeRenderer.color.g, nodeRenderer.color.b, nodeOpacity);
+	void FixedUpdate()
+	{
+		MakeTrail();
+	}
 
-							nodes.Add(node);
-							previousNodeLocation = previewRobot.transform.position;
-							node.transform.position = previousNodeLocation;
-							sizeFactorTrailMarking = nodeWidth / nodeSprite.bounds.size.x;
-							node.transform.localScale = new Vector3(sizeFactorTrailMarking, sizeFactorTrailMarking);
-						}
-						elapsedTime += Time.fixedDeltaTime;
+	void MakeTrail()
+	{
+		if (isInitialized && !isFinished)
+		{
+
+			if (node != null)
+			{
+				float sizeFactorTrailMarking = trailMarkingWidth / trailMarkingSprite.bounds.size.x;
+
+				if (elapsedTime < timeDuration && !isFinished)
+				{
+					float deltaDistance = Vector3.Distance(node.transform.position, previousLocation);
+					if (deltaDistance > distanceBetweenMarkings)
+					{
+						GameObject trailMarking = new GameObject();
+						trailMarking.transform.SetParent(transform);
+						trailMarking.name = "Trailmarking";
+						trailMarking.AddComponent<SpriteRenderer>();
+						trailMarking.GetComponent<SpriteRenderer>().sprite = trailMarkingSprite;
+						trailMarking.GetComponent<SpriteRenderer>().enabled = false;
+
+						trailMarkings.Add(trailMarking);
+						previousLocation = node.transform.position;
+						trailMarking.transform.position = previousLocation;
+						sizeFactorTrailMarking = trailMarkingWidth / trailMarkingSprite.bounds.size.x;
+						trailMarking.transform.localScale = new Vector3(sizeFactorTrailMarking, sizeFactorTrailMarking);
 					}
-					else {
-						for(int i = 0; i < nodes.Count; i++){
-							nodes[i].GetComponent<SpriteRenderer>().enabled = true;
-						}
-						if (previewRobot.GetComponent<RobotBehaviour>() != null){
-							previewRobot.GetComponent<RobotBehaviour>().CurrentState.EnterPauseState();
-						}
-						if(commandSymbols != null){
-							GameObject commandSymbol = new GameObject();
-							commandSymbol.AddComponent<SpriteRenderer>();
-							commandSymbol.GetComponent<SpriteRenderer>().sprite = commandSymbols.GetSymbolSprite(commandType);
-							commandSymbol.transform.position = previewRobot.transform.position;
-							commandSymbol.transform.parent = transform;
-							commandSymbol.GetComponent<SpriteRenderer>().sortingOrder = previewRobot.GetComponent<SpriteRenderer>().sortingOrder + 1;
-						}
-						isFinished = true;
-						Time.timeScale = 1.0f;
-						UnityEngine.Debug.Log(command);
-						if(command.GetType() == typeof(PushCommand)){
-							if(nodes.Count > 0){
-							GameObject.Find("ShockwaveCone").GetComponent<ShockwaveConeScript>().SetConePosition(nodes.Last().transform.position);
-							}
-							else{
-								GameObject.Find("ShockwaveCone").GetComponent<ShockwaveConeScript>().SetConePosition(Vector2.zero);
-							}
-						}
-					}
+					elapsedTime += Time.fixedDeltaTime;
 				}
 				else
 				{
-					UnityEngine.Debug.Log("The node is soooo null");
-				}
-			}
-		}
+					if(nodeSpriteRenderer != null && node.transform.position != startPosition)
+					{
+						//nodeSpriteRenderer.enabled = true;
+					}
+					for(int i = 0; i < trailMarkings.Count; i++)
+					{
+						trailMarkings[i].GetComponent<SpriteRenderer>().enabled = true;
+					}
+					if (node.GetComponent<RobotBehaviour>() != null)
+					{
+						node.GetComponent<RobotBehaviour>().CurrentState.EnterPauseState();
+					}
+					if(commandSymbols != null)
+					{
+						GameObject commandSymbol = new GameObject();
+						commandSymbol.AddComponent<SpriteRenderer>();
+						commandSymbol.GetComponent<SpriteRenderer>().sprite = commandSymbols.GetSymbolSprite(commandType);
+						commandSymbol.transform.position = node.transform.position;
+						commandSymbol.transform.parent = transform;
+						commandSymbol.GetComponent<SpriteRenderer>().sortingOrder = node.GetComponent<SpriteRenderer>().sortingOrder + 1;
+					}
+					isFinished = true;
+					Time.timeScale = 1.0f;
+					UnityEngine.Debug.Log(command);
+					if(command.GetType() == typeof(PushCommand)){
 
-		public void DestroyTrail()
-		{
-			Destroy(gameObject);
+
+						if(trailMarkings.Count > 0){
+							GameObject.Find("ShockwaveCone").GetComponent<ShockwaveConeScript>().SetConePosition(trailMarkings.Last().transform.position);
+						}
+						else{
+							GameObject.Find("ShockwaveCone").GetComponent<ShockwaveConeScript>().SetConePosition(Vector2.zero);
+						}
+					}
+				}
+
+			}
+			else
+			{
+				UnityEngine.Debug.Log("The node is soooo null");
+			}
 		}
 	}
 
-public class MovingTrail {
-	public bool IsFinished { get { return trailUpdater.isFinished; } }
-	public GameObject PreviewRobot { get { return trailUpdater.previewRobot; } }
-	public GameObject TrailGameObject { get { return trailUpdater.gameObject; } }
+	public void DestroyTrail()
+	{
+		Destroy(gameObject);
+	}
+}
 
+public class MovingTrail
+{
 	TrailUpdater trailUpdater;
 
-	public MovingTrail(Command command, float timeDuration, Vector2 currentVelocity){
+	public MovingTrail(Command command, float timeDuration, Vector2 currentVelocity)
+	{
 		GameObject g = new GameObject();
 		g.AddComponent<TrailUpdater>();
 		g.name = "MovingTrail";
@@ -163,7 +190,23 @@ public class MovingTrail {
 		trailUpdater.Initialize(command, timeDuration, currentVelocity);
 	}
 
-	public void DestroyTrail(){
+	public void DestroyTrail()
+	{
 		trailUpdater.DestroyTrail();
+	}
+
+	public GameObject TrailGameObject
+	{
+		get { return trailUpdater.gameObject; }
+	}
+
+	public GameObject Node
+	{
+		get { return trailUpdater.node; }
+	}
+
+	public bool IsFinished
+	{
+		get { return trailUpdater.isFinished; }
 	}
 }
