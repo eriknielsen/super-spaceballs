@@ -5,30 +5,57 @@ using UnityEngine;
 public class CommandButton : MonoBehaviour {
 
 	[SerializeField]
-	private Command.AvailableCommands selectedCommand;
+	bool bounce = false;
 	[SerializeField]
-	private float buttonAnimationDelay;
+	float animationTime;
 	[SerializeField]
-	private ToggleObjects commandWheelHandler;
+	Command.AvailableCommands selectedCommand;
+	[SerializeField]
+	ToggleObjects commandWheelHandler;
+	[SerializeField]
+	Sprite onMouseEnterSprite, onMouseClickSprite;
 
+	bool animate = false;
+	bool firstUpdateSinceAnimationStart = false;
+	float lerp;
+	float timeSinceAnimationStart;
+	Sprite normalSprite;
     IPlayBehaviour playBehaviour;
 
     void Start(){
-       playBehaviour = GameObject.FindGameObjectWithTag("PlayController").GetComponent<IPlayBehaviour>();
+		normalSprite = GetComponent<SpriteRenderer>().sprite;
+		playBehaviour = GameObject.FindGameObjectWithTag("PlayController").GetComponent<IPlayBehaviour>();
     }
 
+	void Update(){
+//		if (animate) {
+//			if (firstUpdateSinceAnimationStart) {
+//				firstUpdateSinceAnimationStart = false;
+//			}
+//			if (bounce) {
+//
+//			} else {
+//				timeSinceAnimationStart += Time.deltaTime;
+//				lerp = Mathf.Lerp(0, animationTime, timeSinceAnimationStart);
+//				transform.localScale = new Vector3(lerp, lerp, 1);
+//			}
+//		}
+	}
+
 	void OnMouseDown(){
-    
 		playBehaviour.SelectCommand(selectedCommand);
 		if (selectedCommand == Command.AvailableCommands.None)
-			commandWheelHandler.Toggle();
+			commandWheelHandler.ToggleWithDelay(animationTime, animationTime);
 		else
-			commandWheelHandler.ToggleWithDelay(buttonAnimationDelay, 0);
-		//AnimateButtonClick
+			commandWheelHandler.ToggleWithDelay(animationTime, animationTime);
+		
+		GetComponent<SpriteRenderer>().sprite = onMouseClickSprite;
+//		animate = true;
+//		firstUpdateSinceAnimationStart = true;
 	}
 
 	void OnMouseEnter(){	//For animation
-		//Make brighter?
+		GetComponent<SpriteRenderer>().sprite = onMouseEnterSprite;
 	}
 
 	void OnMouseOver(){
@@ -36,6 +63,6 @@ public class CommandButton : MonoBehaviour {
 	}
 
 	void OnMouseExit(){
-		//Make normal
+		GetComponent<SpriteRenderer>().sprite = normalSprite;
 	}
 }

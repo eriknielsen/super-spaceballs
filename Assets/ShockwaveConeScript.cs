@@ -5,7 +5,7 @@ using UnityEngine;
 public class ShockwaveConeScript : MonoBehaviour {
 
 	Rigidbody2D rb;
-	Vector2 lastNodePosition;
+	Vector2 lastPreviewPosition;
 	Vector2 point;
 	Vector2 pointToCompareWith;
 
@@ -13,7 +13,7 @@ public class ShockwaveConeScript : MonoBehaviour {
 
 	void Awake () {
 		rb = GetComponent<Rigidbody2D>();
-		lastNodePosition = Vector2.zero;
+		lastPreviewPosition = Vector2.zero;
 		sp = GetComponent<SpriteRenderer>();
 	}
 	
@@ -41,10 +41,10 @@ public class ShockwaveConeScript : MonoBehaviour {
 	*/
 	void g(){
 		sp.enabled = true;
-		if(lastNodePosition == Vector2.zero){
-			lastNodePosition = pointToCompareWith;
+		if(lastPreviewPosition == Vector2.zero){
+			lastPreviewPosition = pointToCompareWith;
 		}
-		transform.position = lastNodePosition;
+		transform.position = lastPreviewPosition;
 		Vector3 diff = point - pointToCompareWith; 
 
         float rot_z = (Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg);
@@ -55,7 +55,7 @@ public class ShockwaveConeScript : MonoBehaviour {
 		point = cursorTextPoint;
 	}
 	public void SetConePosition(Vector2 pos){
-		lastNodePosition = pos;
+		lastPreviewPosition = pos;
 		g();
 	}
 	public void DeActivateSprite(){

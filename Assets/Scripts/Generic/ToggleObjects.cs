@@ -10,7 +10,7 @@ public class ToggleObjects : MonoBehaviour {
 	private GameObject object2;
 
 	public void ToggleWithDelay(float delay1, float delay2){
-		Invoke ("Toggle1", delay1); //FixedUpdate time problem? Divide by Time.fixedDeltaTime?
+		Invoke ("Toggle1", delay1); //FixedUpdate time problem? Divide by timescale?
 		Invoke ("Toggle2", delay2);
 	}
 

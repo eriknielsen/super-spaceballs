@@ -99,7 +99,6 @@ public class MoveCommand : Command
 
     Vector2 CaluculateForce(float forceMagnitude)
     {
-
         Vector2 positionDifference = targetPosition - startPosition;
         angle = Mathf.Atan2(positionDifference.y, positionDifference.x);
         if (angle < 0)
@@ -119,18 +118,14 @@ public class MoveCommand : Command
             robotScript.OnAccelerate();
             rb2d.AddForce(InitialForce);
             hasStarted = true;
-
         }
         //robot.transform.rotation = Quaternion.Lerp(robot.transform.rotation, Quaternion.Euler(0, 0, angle * Mathf.Rad2Deg), Time.deltaTime);
         if(lifeTimer > 0)
         {
             robotScript.UpdateAnimationAngle(force.y, force.x);
             rb2d.AddForce(force);
-          
 
             lifeTimer -= Time.fixedDeltaTime;
- 
-            
         }
         else
         {
@@ -138,7 +133,5 @@ public class MoveCommand : Command
             //if ending, call deaccelerate on the robot
             robotScript.OnDeaccelerate();
         }
-        
     }
-
 }

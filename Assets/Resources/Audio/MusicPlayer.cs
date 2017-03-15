@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-//using System.Collections.Generic;
+//using System.Collections.Generic; //Incomplete
 //using System.IO;
 //
 //public class SoundPlayer : MonoBehaviour {
@@ -68,9 +68,8 @@ public class MusicPlayer : MonoBehaviour {
 	void Awake(){
 		if (Instance == null)
 			Instance = this;
-		else if (Instance != this){ //Makes sure there's only one instance of the script
+		else if (Instance != this) //Makes sure there's only one instance of the script
 			Destroy(gameObject); //Goes nuclear
-		}
 		DontDestroyOnLoad(gameObject);
 	}
 
@@ -79,7 +78,6 @@ public class MusicPlayer : MonoBehaviour {
 	bool paused = false;
 	bool repeat = false;
 	bool switchTrack = false;
-	bool fadeStarted = false;
 	bool firstUpdateSinceTrackSwitch = false;
 	[SerializeField]
 	float fadeTime;
@@ -142,7 +140,7 @@ public class MusicPlayer : MonoBehaviour {
 	}
 
 	public void PreviousTrack(){
-		if (audioClip.Length > 2){ //If only two files the other file is already selected automatically in RepeatCheck
+		if (audioClip.Length > 2){ //If only two files the other file is already selected automatically
 			nextTrackToPlay -= 2;
 			if (nextTrackToPlay < 0){
 				if (nextTrackToPlay < -1)
