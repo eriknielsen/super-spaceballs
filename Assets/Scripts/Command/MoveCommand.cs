@@ -122,7 +122,7 @@ public class MoveCommand : Command
         //robot.transform.rotation = Quaternion.Lerp(robot.transform.rotation, Quaternion.Euler(0, 0, angle * Mathf.Rad2Deg), Time.deltaTime);
         if(lifeTimer > 0)
         {
-            robotScript.UpdateAnimationAngle(force.y, force.x);
+            
             rb2d.AddForce(force);
 
             lifeTimer -= Time.fixedDeltaTime;

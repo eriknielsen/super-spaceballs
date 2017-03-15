@@ -6,6 +6,8 @@ public class PlayState : IRobotState {
 	
     private GameObject robot;
     private RobotBehaviour robotScript;
+
+    Rigidbody2D robotrb;
    
     
 
@@ -16,6 +18,7 @@ public class PlayState : IRobotState {
         robot = r;
         robotScript = robot.GetComponent<RobotBehaviour>();
         anim = robot.GetComponent<Animator>();
+        robotrb = r.GetComponent<Rigidbody2D>();
     }
 
     public void EnterPauseState(){
@@ -26,10 +29,17 @@ public class PlayState : IRobotState {
         robotScript.prevVelocity = robotScript.rb.velocity;
         robot.GetComponent<Rigidbody2D>().velocity = zeroVector;
 
-        anim.enabled = false;
+        
         robotScript.GetComponent<AudioSource>().Stop();
         //set the speed of the current anim clip to 0
         //and then set it to 1 in pauseState's enterplaystate()
+
+        robotScript.UpdateAnimationAngle(robotScript.prevVelocity.y,robotScript.prevVelocity.x);
+        
+        robotScript.angleAtPause = anim.GetFloat("DirectionAngle");
+        
+        //anim.Play("IdleAnims",0);
+        anim.enabled = false;
     }
     
     public void EnterPlayState(){
@@ -39,6 +49,8 @@ public class PlayState : IRobotState {
     public void UpdateState(){
         
         robotScript.ExecuteRobotCommand();
+        robotScript.UpdateAnimationAngle(robotrb.velocity.y, robotrb.velocity.x);
+       
         
     }
     public void OnAccelerate()

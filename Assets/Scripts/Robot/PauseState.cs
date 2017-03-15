@@ -22,12 +22,18 @@ public class PauseState : IRobotState {
         robotScript.CurrentState = robotScript.playState;
         
         robot.GetComponent<RobotBehaviour>().anim.enabled = true;
+        robotScript.UpdateAnimationAngle(robotScript.prevVelocity.y, robotScript.prevVelocity.x);
         robotScript.DecideCommand();
         robot.GetComponent<Rigidbody2D>().velocity = robotScript.prevVelocity;
+        //hack to make it go to the flying animation faster
+        if(robotScript.Commands.Count > 0 && robotScript.Commands[0].GetType() == typeof(MoveCommand))
+            robotScript.anim.SetBool("Accelerating", true);
+        
+        
     }
 
     public void UpdateState(){
-
+        
     }
     public void OnAccelerate()
     {
