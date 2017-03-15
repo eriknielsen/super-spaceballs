@@ -1,6 +1,7 @@
-startposition är samma för varje kommando - KANSKE INE SPELA RROLL
+﻿startposition är samma för varje kommando - KANSKE INE SPELA RROLL
 linerenderer efter syncmessage - FIXAT
 skicka också goal message - VIKTIGT
 och kanske end of game message
 
 shockvåg inte helt samma på datorerna
+test
