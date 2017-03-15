@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: a7237ed633dcf854d9d99e202aebc9b5
-timeCreated: 1489556761
+timeCreated: 1489581089
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -21,6 +21,7 @@ TextureImporter:
     21300028: GoalRightBottomC
     21300030: HorizontalLine
     21300032: VerticalLine
+    21300034: HorizontalLineThin
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -311,13 +312,13 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: VerticalLine
+      name: HorizontalLineThin
       rect:
         serializedVersion: 2
         x: 2
-        y: 385
+        y: 343
         width: 512
-        height: 29
+        height: 66
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
