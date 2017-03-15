@@ -14,6 +14,7 @@ class TrailUpdater : MonoBehaviour {
 	bool initialized = false;
 	float timeDuration;
 	float elapsedTime = 0;
+	float commandSymbolScale = 1.5f;
 	float nodeScale = 0.8f;
 	float nodeOpacity = 0.8f;
 	float distanceBetweenNodes = 1.0f;
@@ -135,6 +136,7 @@ class TrailUpdater : MonoBehaviour {
 		}
 		commandSymbol.transform.position = previewRobot.transform.position;
 		commandSymbol.transform.parent = transform;
+		commandSymbol.transform.localScale = commandSymbol.transform.localScale * commandSymbolScale;
 		commandSymbol.GetComponent<SpriteRenderer>().sortingOrder = previewRobot.GetComponent<SpriteRenderer>().sortingOrder + 2;
 		nodes.Add(commandSymbol);
 	}
