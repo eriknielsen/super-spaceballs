@@ -330,6 +330,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
             if (selectedRobot != lastRobot)
             {
                 DestroyLatestPreviewTrail();
+                commmandDirectionPointer.SetPosition(0, commmandDirectionPointer.GetPosition(1));
             }
             prevCursorPosition = cursorPosition;
             prevSelectedCommand = selectedCommand;
