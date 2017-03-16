@@ -494,7 +494,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
             foreach (GameObject robot in robots)
             {
                 robot.GetComponent<RobotBehaviour>().shouldSendEvent = true;
-                //robot.GetComponent<HaloScript>().enabled = true;
+                robot.GetComponent<HaloScript>().enabled = true;
 
             }
 
@@ -502,7 +502,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         else
         {
             THDeselectRobot();
-            RobotBehaviour.OnClick -= new RobotBehaviour.ClickedOnRobot(SelectRobot);
+            RobotBehaviour.OnClick -= SelectRobot;
             GameObject.Find("ShockwaveCone").GetComponent<ShockwaveConeScript>().DeActivateSprite();
             for (int i = 0; i < robots.Count; i++)
             {

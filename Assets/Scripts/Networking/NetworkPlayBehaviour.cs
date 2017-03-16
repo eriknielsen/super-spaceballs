@@ -82,7 +82,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         InititializeGame();
         //activate the playeturnhandler only
         playerTurnhandler.Activate(true);
-        
+        otherTurnhandler.Activate(false);
         planCountDownCoroutine = StartCoroutine(CountDownPlanningTime());
         
     }
@@ -267,6 +267,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             Debug.Log("breaking from unpause");
             yield break;
         }
+        playerTurnhandler.Activate(false);
         Time.timeScale = 1;
         paused = false;
         StopCoroutine(planCountDownCoroutine);
@@ -276,7 +277,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         otherTurnhandler.UnpauseGame();
         localIsReady = false;
         remoteIsReady = false;
-        playerTurnhandler.Activate(false);
+       
         gameTimerCoroutine = StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
         playerTurnhandler.currentPlanTimeLeft = planTime;
         
