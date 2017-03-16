@@ -182,6 +182,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         if(gameTimerCoroutine != null)
             StopCoroutine(gameTimerCoroutine);
 
+        //if it was because we were descyned then idk, do something!
+        
         PauseGame();
     }
 
@@ -309,7 +311,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             List<GameObject> allRobots = new List<GameObject>();
             allRobots.AddRange(playerTurnhandler.Robots);
             allRobots.AddRange(otherTurnhandler.Robots);
-            server.SendSyncStateMsg(allRobots, ball.gameObject);
+            server.SendSyncStateMsg(allRobots, ball.gameObject, new Position(leftGoal.score,rightGoal.score));
            
         }
 
@@ -488,12 +490,19 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                         robotIndex++;
                     }
                 }
-                //the last two things are the ball
+                //the last two things are the ball and score!
                 else {
                     ball.transform.position = deserializedBuffer[i].V2();
                     ball.GetComponent<Ball>().PreviousVelocity = deserializedBuffer[i+1].V2();
                     //tell ball to redraw it's linerenderthingy
                     ball.DrawTrajectory();
+
+                    if(leftGoal.score != deserializedBuffer[i+2].x || rightGoal.score != deserializedBuffer[i+2].y){
+                        leftGoal.score = (int)deserializedBuffer[i+2].x;
+                        rightGoal.score = (int)deserializedBuffer[i+2].y;
+                        OnScore();
+                    }
+
                     break;
                 }
                

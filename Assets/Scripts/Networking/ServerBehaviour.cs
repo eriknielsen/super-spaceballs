@@ -259,7 +259,7 @@ public class ServerBehaviour : NetworkManager {
     //AS SERVER ONLY
     //ASSUMES THERE IS EXACTLY 3 ROBOTS PER TEAM + ONE BALL
     //takes a list of robots and sends their positions to the other client
-    public void SendSyncStateMsg(List<GameObject> robots, GameObject ball){
+    public void SendSyncStateMsg(List<GameObject> robots, GameObject ball, Position score){
         if(isServer){
 
             //the robots list is the player's robots first 
@@ -278,6 +278,11 @@ public class ServerBehaviour : NetworkManager {
             //where length - 2 is position and length - 1 velocity
             infoBuffer.Add(new Position(ball.transform.position));
             infoBuffer.Add(new Position(ball.GetComponent<Ball>().PreviousVelocity));
+
+            //next two is the score
+            //left goal is x and right goal is y
+            infoBuffer.Add(score);
+      
 
             byte[] bytePositions;
 
