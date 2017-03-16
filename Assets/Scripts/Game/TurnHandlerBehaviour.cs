@@ -462,6 +462,9 @@ public class TurnHandlerBehaviour : MonoBehaviour
 
     void HideCursorText()
     {
+        if (cursorText == null){
+			cursorText = GameObject.Find("CursorText").GetComponent<Text>();
+		}
         cursorText.text = "";
         Cursor.visible = true;
         StopCoroutineIfNotNull(setAndDisplayTimeInput);
