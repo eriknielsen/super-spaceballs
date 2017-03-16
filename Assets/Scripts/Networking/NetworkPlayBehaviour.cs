@@ -425,11 +425,12 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         
     }
     public IEnumerator OnRecieveSyncStateCoroutine(NetworkMessage  netMsg){
+        NetworkMessage message = netMsg;
         //if game is not paused, then wait untill it is and then call the "real" OnRecieveSyncState
         while(paused == false){
             yield return new WaitForFixedUpdate();
         }
-        OnRecieveSyncState(netMsg);
+        OnRecieveSyncState(message);
     }
     //ASSUMES THERE IS EXACTLY 3 ROBOTS PER TEAM + ONE BALL
     public void OnRecieveSyncState(NetworkMessage netMsg){
