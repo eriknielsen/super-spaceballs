@@ -494,7 +494,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
             foreach (GameObject robot in robots)
             {
                 robot.GetComponent<RobotBehaviour>().shouldSendEvent = true;
-                robot.GetComponent<HaloScript>().enabled = true;
+                //robot.GetComponent<HaloScript>().enabled = true;
 
             }
 

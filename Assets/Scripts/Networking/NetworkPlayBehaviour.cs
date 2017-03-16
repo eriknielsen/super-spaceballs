@@ -66,6 +66,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             playerTurnhandler = leftTurnhandlerInScene;
             otherTurnhandler = rightTurnhandlerInScene;
         }
+        
         inGameMenuHandler.SetActive(true);
         ingameCanvas.SetActive(true);
         matchmakingCanvas.SetActive(false);
@@ -90,7 +91,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         leftGoal = GameObject.Find("LeftGoal").GetComponent<Goal>();
         rightGoal = GameObject.Find("RightGoal").GetComponent<Goal>();
         //event callbacks for scoring
-        if (leftGoal != null || rightGoal != null)
+        if (leftGoal != null && rightGoal != null)
         {
             Goal.OnGoalScored += new Goal.GoalScored(OnScore);
         }
@@ -102,6 +103,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             otherTeamPlanColor = leftGoal.scoreText.color;
         }
         else{
+            Debug.Log(leftGoal+ " rightGoal " + rightGoal);
             activePlanTimeColor = leftGoal.scoreText.color;
             otherTeamPlanColor = rightGoal.scoreText.color;
         }
@@ -123,6 +125,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     public bool commandsSent = false;
     void Update()
     {
+       
         if(gameTimer.IsGameOver()){
             StartCoroutine(HandleMatchEnd());
         }
@@ -271,12 +274,12 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         ball.Unpause();
         playerTurnhandler.UnpauseGame();
         otherTurnhandler.UnpauseGame();
-        
+        localIsReady = false;
+        remoteIsReady = false;
         playerTurnhandler.Activate(false);
         gameTimerCoroutine = StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
         playerTurnhandler.currentPlanTimeLeft = planTime;
-        localIsReady = false;
-        remoteIsReady = false;
+        
         yield return new WaitForSeconds(roundTime);
         
       
@@ -289,6 +292,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             Debug.Log("game already paused, returning");
             return;
         }
+        StopCoroutine(gameTimerCoroutine);
         paused = true;
         commandsSent = false;
         server.recivedCommands = false;
@@ -419,9 +423,21 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         
         
     }
-    
+    public IEnumerator OnRecieveSyncStateCoroutine(NetworkMessage  netMsg){
+        //if game is not paused, then wait untill it is and then call the "real" OnRecieveSyncState
+        while(paused == false){
+            yield return new WaitForFixedUpdate();
+        }
+        OnRecieveSyncState(netMsg);
+    }
     //ASSUMES THERE IS EXACTLY 3 ROBOTS PER TEAM + ONE BALL
     public void OnRecieveSyncState(NetworkMessage netMsg){
+        if(!paused){
+            Debug.Log("OnRecieveSyncStatecouroutiney");
+            StartCoroutine(OnRecieveSyncStateCoroutine(netMsg));
+            
+            return;
+        }
         if(customIsServer == false){
             ServerBehaviour.SyncStateMsg msg = netMsg.ReadMessage<ServerBehaviour.SyncStateMsg>();
             //the buffer msg consists of
