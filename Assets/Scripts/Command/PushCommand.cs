@@ -17,6 +17,17 @@ public class PushCommand : Command {
     public float Speed { get { return speed; } }
     public float ChargeTime { get { return chargeTime; } }
 
+    //server constructor
+    public PushCommand(GameObject robot, Vector2 target, Vector2 velocity, float lifetime){
+        base.robot = robot;
+        targetPosition = target;
+        this.velocity = velocity;
+        lifeDuration = lifetime;
+        lifeTimer = lifetime;
+        chargeTime = 0.1f;
+        shockwavePrefab = Resources.Load("Prefabs/ShockWave") as GameObject;
+    }
+
     public PushCommand(GameObject robot, Vector2 target, float lifetime, int turn){
         this.turn = turn;
         float angle = AngleBetweenPoints(target, robot.transform.position);
@@ -31,7 +42,7 @@ public class PushCommand : Command {
         base.robot = robot;
         shockwavePrefab = Resources.Load("Prefabs/ShockWave") as GameObject;
     }
-
+    
     public PushCommand(GameObject shockwaveUser, PushCommand original, float time){
         velocity = original.Velocity;
         chargeTime = original.ChargeTime;
@@ -40,7 +51,7 @@ public class PushCommand : Command {
         lifeDuration = time;
         lifeTimer = time;
         targetPosition = original.targetPosition;
-
+        chargeTime = 0.1f;
 
     }
 

@@ -335,7 +335,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                     break;
                 case SerializableCommand.CommandType.Push:
                     otherTurnhandler.Robots[sc.robotIndex].GetComponent<RobotBehaviour>().Commands.Add(
-                        new PushCommand(otherTurnhandler.Robots[sc.robotIndex], sc.targetPosition.V2(), sc.lifeDuration, 0));
+                        new PushCommand(otherTurnhandler.Robots[sc.robotIndex], sc.targetPosition.V2(), sc.force.V2(),sc.lifeDuration));
                     break;
                 default:
                     Debug.Log("no case for that commandtype: " + sc.type);
@@ -382,8 +382,10 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                 }
                 else if (t == typeof(PushCommand))
                 {
+                    PushCommand pc = c as PushCommand;
+                   
                     SerializableCommand sc = new SerializableCommand(pair.Key, c.targetPosition, c.lifeDuration, SerializableCommand.CommandType.Push, 0,
-                    Vector2.zero,Vector2.zero);
+                    pc.Velocity,Vector2.zero);
                     scList.Add(sc);
                 }
 
