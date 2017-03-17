@@ -55,7 +55,6 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     
     void Start()
     {
-        
         if (customIsServer)
         {
             playerTurnhandler = rightTurnhandlerInScene;
@@ -84,8 +83,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         playerTurnhandler.Activate(true);
         otherTurnhandler.Activate(false);
         planCountDownCoroutine = StartCoroutine(CountDownPlanningTime());
-        
     }
+
     void InititializeGame()
     {
         leftGoal = GameObject.Find("LeftGoal").GetComponent<Goal>();
@@ -98,14 +97,14 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         else {
             Debug.Log("couldint find goals :(");
         }
-        if(playerTurnhandler == rightTurnhandlerInScene){
-            activePlanTimeColor = rightGoal.scoreText.color;
-            otherTeamPlanColor = leftGoal.scoreText.color;
+        if (playerTurnhandler == rightTurnhandlerInScene){
+			activePlanTimeColor = ToolBox.Instance.rightTeamColor;
+			otherTeamPlanColor = ToolBox.Instance.leftTeamColor;
         }
-        else{
+        else {
             Debug.Log(leftGoal+ " rightGoal " + rightGoal);
-            activePlanTimeColor = leftGoal.scoreText.color;
-            otherTeamPlanColor = rightGoal.scoreText.color;
+			activePlanTimeColor = ToolBox.Instance.leftTeamColor;
+			otherTeamPlanColor = ToolBox.Instance.rightTeamColor;
         }
         
         gameTimer = new GameTimer(matchTime);
@@ -120,12 +119,11 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         }
         planTimeText.text = "" + (int)playerTurnhandler.currentPlanTimeLeft;
         planTimeText.color = activePlanTimeColor;
-
     }
+
     public bool commandsSent = false;
     void Update()
     {
-       
         if(gameTimer.IsGameOver()){
             StartCoroutine(HandleMatchEnd());
         }
@@ -152,7 +150,6 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                         StartCoroutine(UnpauseGame());
                         
                         Debug.Log("unpausing since time ran out");
-                        
                     }
             }
             

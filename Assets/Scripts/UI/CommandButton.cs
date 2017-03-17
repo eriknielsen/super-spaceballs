@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class CommandButton : MonoBehaviour {
 
-	[SerializeField]
-	bool bounce = false;
+//	[SerializeField]
+//	bool bounce = false;
 	[SerializeField]
 	float animationTime;
 	[SerializeField]
@@ -13,12 +13,14 @@ public class CommandButton : MonoBehaviour {
 	[SerializeField]
 	ToggleObjects commandWheelHandler;
 	[SerializeField]
-	Sprite onMouseEnterSprite, onMouseClickSprite;
+	Sprite onMouseEnterSprite;
+	[SerializeField]
+	Sprite onMouseClickSprite;
 
-	bool animate = false;
-	bool firstUpdateSinceAnimationStart = false;
-	float lerp;
-	float timeSinceAnimationStart;
+//	bool animate = false;
+//	bool firstUpdateSinceAnimationStart = false;
+//	float lerp;
+//	float timeSinceAnimationStart;
 	Sprite normalSprite;
     IPlayBehaviour playBehaviour;
 

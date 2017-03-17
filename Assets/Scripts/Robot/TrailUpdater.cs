@@ -21,7 +21,6 @@ class TrailUpdater : MonoBehaviour {
 	Vector3 previousLocation;
 	Type commandType;
 	Command command;
-	CommandSymbols commandSymbols;
 	Sprite nodeSprite, moveSprite, pushSprite;
 	SpriteRenderer nodeSR;
 	List<GameObject> nodes;

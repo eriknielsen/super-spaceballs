@@ -8,16 +8,15 @@ public class TurnHandlerBehaviour : MonoBehaviour
 {
 
     public List<Move> moves;
+	public int Turns { get { return turns; } }
+	public int CurrentPlanTimeLeft { get; set; }
+	public List<GameObject> Robots { get { return robots; } }
 
     GameObject selectedCommandWheel;
     [SerializeField]
     GameObject shockWavePrefab;
     [SerializeField]
     GameObject commandWheelPrefab;  //Command selection buttons
-
-    public int CurrentPlanTimeLeft { get; set; }
-    public int Turns { get { return turns; } }
-    public List<GameObject> Robots { get { return robots; } }
 
     [HideInInspector]
     public float roundTime;

@@ -7,9 +7,17 @@ public class Goal : MonoBehaviour {
 	public int score { get; set; }
     public delegate void GoalScored();
     public static event GoalScored OnGoalScored;
-    public Text scoreText;
+
+	[SerializeField]
+	bool Left;
+
+	Text scoreText;
 
 	void Start(){
+		if (Left)
+			scoreText = GameObject.Find("RightScore").GetComponent<Text>();
+		else
+			scoreText = GameObject.Find("LeftScore").GetComponent<Text>();
 		score = 0;
 	}
 
@@ -19,7 +27,6 @@ public class Goal : MonoBehaviour {
 			OnGoalScored();
 			score++;
             scoreText.text = "" + score;
-			
 		}
 	}
 }
