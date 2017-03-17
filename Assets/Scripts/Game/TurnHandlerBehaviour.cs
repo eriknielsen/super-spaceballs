@@ -504,7 +504,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         else
         {
             THDeselectRobot();
-            RobotBehaviour.OnClick -= SelectRobot;
+            RobotBehaviour.OnClick -= new RobotBehaviour.ClickedOnRobot(SelectRobot);
             GameObject.Find("ShockwaveCone").GetComponent<ShockwaveConeScript>().DeActivateSprite();
             for (int i = 0; i < robots.Count; i++)
             {
