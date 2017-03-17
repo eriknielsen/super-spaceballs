@@ -40,6 +40,8 @@ public class PushCommand : Command {
         lifeDuration = time;
         lifeTimer = time;
         targetPosition = original.targetPosition;
+
+
     }
 
     public override void Execute(){
@@ -49,6 +51,7 @@ public class PushCommand : Command {
         }
         else {
             isFinished = true;
+           
         }
         if (isFinished){
             ShockwaveBehaviour shockWave = ShockwaveBehaviour.InstantiateShockWave(shockwavePrefab.GetComponent<ShockwaveBehaviour>());
