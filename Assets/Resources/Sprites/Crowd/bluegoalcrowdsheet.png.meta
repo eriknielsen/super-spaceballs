@@ -1,17 +1,17 @@
 fileFormatVersion: 2
-guid: 21f149816d435b2479915caee95f6827
-timeCreated: 1489711090
+guid: 2123b9040de91db408e1fb031bb60936
+timeCreated: 1489682773
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: Crowd_Blue_0
-    21300002: Crowd_Blue_1
-    21300004: Crowd_Blue_2
-    21300006: Crowd_Blue_3
-    21300008: Crowd_Blue_4
-    21300010: Crowd_Blue_5
-    21300012: Crowd_Blue_6
-    21300014: Crowd_Blue_7
+    21300000: blugoal_0
+    21300002: blugoal_1
+    21300004: blugoal_2
+    21300006: blugoal_3
+    21300008: blugoal_4
+    21300010: blugoal_5
+    21300012: blugoal_6
+    21300014: blugoal_7
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -35,7 +35,7 @@ TextureImporter:
   textureFormat: 1
   maxTextureSize: 2048
   textureSettings:
-    filterMode: -1
+    filterMode: 1
     aniso: -1
     mipBias: -1
     wrapMode: 1
@@ -48,7 +48,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spritePixelsToUnits: 64
+  spritePixelsToUnits: 30
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
@@ -59,7 +59,7 @@ TextureImporter:
   textureFormatSet: 0
   platformSettings:
   - buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 8192
     textureFormat: -1
     textureCompression: 1
     compressionQuality: 50
@@ -67,6 +67,30 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
   - buildTarget: Standalone
+    maxTextureSize: 8192
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: WebGL
+    maxTextureSize: 8192
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: iPhone
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: tvOS
     maxTextureSize: 2048
     textureFormat: -1
     textureCompression: 1
@@ -82,7 +106,23 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
-  - buildTarget: WebGL
+  - buildTarget: Tizen
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: Windows Store Apps
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: Samsung TV
     maxTextureSize: 2048
     textureFormat: -1
     textureCompression: 1
@@ -94,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Crowd_Blue_0
+      name: blugoal_0
       rect:
         serializedVersion: 2
         x: 0
@@ -107,7 +147,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Crowd_Blue_1
+      name: blugoal_1
       rect:
         serializedVersion: 2
         x: 512
@@ -120,7 +160,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Crowd_Blue_2
+      name: blugoal_2
       rect:
         serializedVersion: 2
         x: 1024
@@ -133,7 +173,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Crowd_Blue_3
+      name: blugoal_3
       rect:
         serializedVersion: 2
         x: 1536
@@ -146,7 +186,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Crowd_Blue_4
+      name: blugoal_4
       rect:
         serializedVersion: 2
         x: 2048
@@ -159,7 +199,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Crowd_Blue_5
+      name: blugoal_5
       rect:
         serializedVersion: 2
         x: 2560
@@ -172,7 +212,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Crowd_Blue_6
+      name: blugoal_6
       rect:
         serializedVersion: 2
         x: 3072
@@ -185,7 +225,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Crowd_Blue_7
+      name: blugoal_7
       rect:
         serializedVersion: 2
         x: 3584
