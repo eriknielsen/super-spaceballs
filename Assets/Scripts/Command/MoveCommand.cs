@@ -93,7 +93,7 @@ public class MoveCommand : Command
      
         force = CaluculateForce(speed);
         initialForce = CaluculateForce(initialForceMagnitude);
-
+        robotScript.UpdateAnimationAngle(force.y,force.x);
         //Debug.Log("x: " + targetPosition.x + " y: " + targetPosition.y);
     }
 
@@ -122,7 +122,7 @@ public class MoveCommand : Command
         //robot.transform.rotation = Quaternion.Lerp(robot.transform.rotation, Quaternion.Euler(0, 0, angle * Mathf.Rad2Deg), Time.deltaTime);
         if(lifeTimer > 0)
         {
-            robotScript.UpdateAnimationAngle(force.y, force.x);
+            robotScript.UpdateAnimationAngle(force.y,force.x);
             rb2d.AddForce(force);
 
             lifeTimer -= Time.fixedDeltaTime;

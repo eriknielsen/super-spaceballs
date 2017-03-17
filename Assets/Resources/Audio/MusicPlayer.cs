@@ -63,6 +63,9 @@ public class MusicPlayer : MonoBehaviour {
 	[HideInInspector]
 	public AudioSource audioSource;
 
+	[SerializeField]
+	float fadeTime;
+
 	public static MusicPlayer Instance = null;
 
 	void Awake(){
@@ -73,14 +76,11 @@ public class MusicPlayer : MonoBehaviour {
 		DontDestroyOnLoad(gameObject);
 	}
 
-
 	int nextTrackToPlay = 0;
 	bool paused = false;
 	bool repeat = false;
 	bool switchTrack = false;
 	bool firstUpdateSinceTrackSwitch = false;
-	[SerializeField]
-	float fadeTime;
 	float timeSinceFadeStart = 0;
 	float startVolume;
 

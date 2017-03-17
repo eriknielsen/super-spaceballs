@@ -1,13 +1,13 @@
 fileFormatVersion: 2
 guid: 8a35eda298d0ee347a87e83faa147fa5
-timeCreated: 1489056120
+timeCreated: 1489717652
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: Left
     21300002: LeftMid
     21300004: Mid
-    21300006: Right
+    21300006: Scoreboard
     21300008: RightMid
   serializedVersion: 4
   mipmaps:
@@ -32,7 +32,7 @@ TextureImporter:
   textureFormat: 1
   maxTextureSize: 2048
   textureSettings:
-    filterMode: 0
+    filterMode: 1
     aniso: -1
     mipBias: -1
     wrapMode: 1
@@ -45,7 +45,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spritePixelsToUnits: 32
+  spritePixelsToUnits: 230
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
@@ -131,16 +131,16 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Right
+      name: Scoreboard
       rect:
         serializedVersion: 2
-        x: 29
+        x: 10
         y: 424
-        width: 979
+        width: 990
         height: 600
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 200, y: 183, z: 400, w: 351}
       outline: []
       tessellationDetail: 0
     outline: []

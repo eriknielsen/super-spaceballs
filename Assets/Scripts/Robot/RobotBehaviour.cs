@@ -21,6 +21,7 @@ public class RobotBehaviour : MonoBehaviour {
     public Vector2 prevVelocity;
     [HideInInspector]
     public Animator anim;
+    public float angleAtPause;
 
     //the robot goes through each commando and checks each update if the latest commando is finished or not
     //if it is finished then the robot starts the next commando
@@ -76,23 +77,32 @@ public class RobotBehaviour : MonoBehaviour {
     {
         if (animatorComponent.runtimeAnimatorController != null)
         {
-
-            float directionAngle = Mathf.Atan2(y, x);
-
-            directionAngle = directionAngle * Mathf.Rad2Deg;
-            if (directionAngle < 0.0f)
-            {
-                directionAngle += 360.0f;
-            }
-
-            string animationVariable = "DirectionAngle";
-            if(directionAngle >= 345 || directionAngle <= 15)
-            {
-                directionAngle = 359;
-            }
             
-            animatorComponent.SetFloat(animationVariable, directionAngle);
-        }
+            if(y <= 0.2f && y >= -0.2f && x <= 0.2f && x >= -0.2f){
+                //if we are not moving, set it to downwards
+                animatorComponent.SetFloat("DirectionAngle", 256f);
+                animatorComponent.SetBool("Still", true);
+                
+            }
+            else{
+                animatorComponent.SetBool("Still", false);
+                float directionAngle = Mathf.Atan2(y, x);
+
+                directionAngle = directionAngle * Mathf.Rad2Deg;
+                if (directionAngle < 0.0f)
+                {
+                    directionAngle += 360.0f;
+                }
+
+                string animationVariable = "DirectionAngle";
+                if(directionAngle >= 345 || directionAngle <= 15)
+                {
+                    directionAngle = 359;
+                }
+               
+                animatorComponent.SetFloat(animationVariable, directionAngle);
+                }
+            }
     }
 
     void Awake()
@@ -122,7 +132,7 @@ public class RobotBehaviour : MonoBehaviour {
     void ResetRobotAfterScore()
     {
         anim.SetBool("Accelerating", false);
-        anim.Play("Idle", 0);
+        //anim.Play("Idle", 0);
         transform.position = startPosition;
 		rb.velocity = Vector2.zero;
 		prevVelocity = Vector2.zero;
@@ -134,7 +144,7 @@ public class RobotBehaviour : MonoBehaviour {
     {
         startPosition = transform.position;
 
-        
+        //UpdateAnimationAngle(0f,0f); 
         anim.enabled = false;
 
     }

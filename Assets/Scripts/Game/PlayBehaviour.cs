@@ -33,9 +33,6 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	bool isTH1Done = false;
 	bool isTH2Done = false;
 
-	Color leftPlayerTextColor;
-	Color rightPlayerTextColor;
-
 	Text gameTimeText;
 	Text planTimeText;
 
@@ -57,8 +54,6 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		ball = GameObject.Find("Ball").GetComponent<Ball>();
 		leftGoalScript = GameObject.Find("LeftGoal").GetComponent<Goal>();
 		rightGoalScript = GameObject.Find("RightGoal").GetComponent<Goal>();
-		leftPlayerTextColor = leftGoalScript.scoreText.color;
-		rightPlayerTextColor = rightGoalScript.scoreText.color;
 
 		//event callbacks for scoring
 		if (leftGoalScript != null || rightGoalScript != null){
@@ -68,12 +63,10 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 			Debug.Log("couldint find goals :(");
 		}
 		gameTimer = new GameTimer(matchTime);
-		if (gameTimeText == null)
-		{
+		if (gameTimeText == null){
 			gameTimeText = GameObject.Find("GameTimeText").GetComponent<Text>();
 		}
-		if (planTimeText == null)
-		{
+		if (planTimeText == null){
 			planTimeText = GameObject.Find("PlanTimeText").GetComponent<Text>();
 		}
 		UpdateTimerTexts();
@@ -84,11 +77,11 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	{
 		string zeroBeforeMin;
 		string zeroBeforeSec;
-		if (gameTimer.MinutesRemaining () < 10)
+		if (gameTimer.MinutesRemaining() < 10)
 			zeroBeforeMin = "0";
 		else
 			zeroBeforeMin = "";
-		if (gameTimer.SecondsRemaining () < 10)
+		if (gameTimer.SecondsRemaining() < 10)
 			zeroBeforeSec = "0";
 		else
 			zeroBeforeSec = "";
@@ -99,10 +92,10 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		}
 		if (planTimeText != null && currentActiveTurnhandler != null && paused == true)
 		{
-			if (currentActiveTurnhandler == turnHandler1)
-				planTimeText.color = rightPlayerTextColor;
+			if (currentActiveTurnhandler == turnHandler2)
+				planTimeText.color = ToolBox.Instance.rightTeamColor;
 			else
-				planTimeText.color = leftPlayerTextColor;
+				planTimeText.color = ToolBox.Instance.leftTeamColor;
 			planTimeText.text = "" + (int)currentActiveTurnhandler.CurrentPlanTimeLeft;
 		}
 	}
@@ -115,7 +108,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		currentActiveTurnhandler = null;
 		NewTurn();
 		PauseGame();
-		//robots reset their position by themselves
+		//robots reset their position by listening to the same event
 	}
 
 	/// <summary>

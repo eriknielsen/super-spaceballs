@@ -55,7 +55,6 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     
     void Start()
     {
-        
         if (customIsServer)
         {
             playerTurnhandler = rightTurnhandlerInScene;
@@ -66,6 +65,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             playerTurnhandler = leftTurnhandlerInScene;
             otherTurnhandler = rightTurnhandlerInScene;
         }
+        
         inGameMenuHandler.SetActive(true);
         ingameCanvas.SetActive(true);
         matchmakingCanvas.SetActive(false);
@@ -81,29 +81,30 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         InititializeGame();
         //activate the playeturnhandler only
         playerTurnhandler.Activate(true);
-        
+        otherTurnhandler.Activate(false);
         planCountDownCoroutine = StartCoroutine(CountDownPlanningTime());
-        
     }
+
     void InititializeGame()
     {
         leftGoal = GameObject.Find("LeftGoal").GetComponent<Goal>();
         rightGoal = GameObject.Find("RightGoal").GetComponent<Goal>();
         //event callbacks for scoring
-        if (leftGoal != null || rightGoal != null)
+        if (leftGoal != null && rightGoal != null)
         {
             Goal.OnGoalScored += new Goal.GoalScored(OnScore);
         }
         else {
             Debug.Log("couldint find goals :(");
         }
-        if(playerTurnhandler == rightTurnhandlerInScene){
-            activePlanTimeColor = rightGoal.scoreText.color;
-            otherTeamPlanColor = leftGoal.scoreText.color;
+        if (playerTurnhandler == rightTurnhandlerInScene){
+			activePlanTimeColor = ToolBox.Instance.rightTeamColor;
+			otherTeamPlanColor = ToolBox.Instance.leftTeamColor;
         }
-        else{
-            activePlanTimeColor = leftGoal.scoreText.color;
-            otherTeamPlanColor = rightGoal.scoreText.color;
+        else {
+            Debug.Log(leftGoal+ " rightGoal " + rightGoal);
+			activePlanTimeColor = ToolBox.Instance.leftTeamColor;
+			otherTeamPlanColor = ToolBox.Instance.rightTeamColor;
         }
         
         gameTimer = new GameTimer(matchTime);
@@ -118,8 +119,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         }
         planTimeText.text = "" + (int)playerTurnhandler.currentPlanTimeLeft;
         planTimeText.color = activePlanTimeColor;
-
     }
+
     public bool commandsSent = false;
     void Update()
     {
@@ -149,7 +150,6 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                         StartCoroutine(UnpauseGame());
                         
                         Debug.Log("unpausing since time ran out");
-                        
                     }
             }
             
@@ -264,6 +264,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             Debug.Log("breaking from unpause");
             yield break;
         }
+        playerTurnhandler.Activate(false);
         Time.timeScale = 1;
         paused = false;
         StopCoroutine(planCountDownCoroutine);
@@ -271,12 +272,12 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         ball.Unpause();
         playerTurnhandler.UnpauseGame();
         otherTurnhandler.UnpauseGame();
-        
-        playerTurnhandler.Activate(false);
-        gameTimerCoroutine = StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
-        playerTurnhandler.currentPlanTimeLeft = planTime;
         localIsReady = false;
         remoteIsReady = false;
+       
+        gameTimerCoroutine = StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
+        playerTurnhandler.currentPlanTimeLeft = planTime;
+        
         yield return new WaitForSeconds(roundTime);
         
       
@@ -289,6 +290,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             Debug.Log("game already paused, returning");
             return;
         }
+        StopCoroutine(gameTimerCoroutine);
         paused = true;
         commandsSent = false;
         server.recivedCommands = false;
@@ -419,9 +421,21 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         
         
     }
-    
+    public IEnumerator OnRecieveSyncStateCoroutine(NetworkMessage  netMsg){
+        //if game is not paused, then wait untill it is and then call the "real" OnRecieveSyncState
+        while(paused == false){
+            yield return new WaitForFixedUpdate();
+        }
+        OnRecieveSyncState(netMsg);
+    }
     //ASSUMES THERE IS EXACTLY 3 ROBOTS PER TEAM + ONE BALL
     public void OnRecieveSyncState(NetworkMessage netMsg){
+        if(!paused){
+            Debug.Log("OnRecieveSyncStatecouroutiney");
+            StartCoroutine(OnRecieveSyncStateCoroutine(netMsg));
+            
+            return;
+        }
         if(customIsServer == false){
             ServerBehaviour.SyncStateMsg msg = netMsg.ReadMessage<ServerBehaviour.SyncStateMsg>();
             //the buffer msg consists of
