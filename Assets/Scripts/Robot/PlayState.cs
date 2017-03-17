@@ -49,7 +49,7 @@ public class PlayState : IRobotState {
     public void UpdateState(){
         
         robotScript.ExecuteRobotCommand();
-        robotScript.UpdateAnimationAngle(robotrb.velocity.y, robotrb.velocity.x);
+       
        
         
     }

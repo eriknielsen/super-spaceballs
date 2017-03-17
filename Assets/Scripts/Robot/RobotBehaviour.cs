@@ -144,7 +144,7 @@ public class RobotBehaviour : MonoBehaviour {
     {
         startPosition = transform.position;
 
-        UpdateAnimationAngle(0f,0f); 
+        //UpdateAnimationAngle(0f,0f); 
         anim.enabled = false;
 
     }
