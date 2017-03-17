@@ -55,6 +55,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     
     void Start()
     {
+        
         if (customIsServer)
         {
             playerTurnhandler = rightTurnhandlerInScene;
@@ -83,8 +84,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         playerTurnhandler.Activate(true);
         otherTurnhandler.Activate(false);
         planCountDownCoroutine = StartCoroutine(CountDownPlanningTime());
+        
     }
-
     void InititializeGame()
     {
         leftGoal = GameObject.Find("LeftGoal").GetComponent<Goal>();
@@ -97,14 +98,14 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         else {
             Debug.Log("couldint find goals :(");
         }
-        if (playerTurnhandler == rightTurnhandlerInScene){
-			activePlanTimeColor = ToolBox.Instance.rightTeamColor;
-			otherTeamPlanColor = ToolBox.Instance.leftTeamColor;
+        if(playerTurnhandler == rightTurnhandlerInScene){
+            activePlanTimeColor = rightGoal.scoreText.color;
+            otherTeamPlanColor = leftGoal.scoreText.color;
         }
-        else {
+        else{
             Debug.Log(leftGoal+ " rightGoal " + rightGoal);
-			activePlanTimeColor = ToolBox.Instance.leftTeamColor;
-			otherTeamPlanColor = ToolBox.Instance.rightTeamColor;
+            activePlanTimeColor = leftGoal.scoreText.color;
+            otherTeamPlanColor = rightGoal.scoreText.color;
         }
         
         gameTimer = new GameTimer(matchTime);
@@ -119,11 +120,12 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         }
         planTimeText.text = "" + (int)playerTurnhandler.currentPlanTimeLeft;
         planTimeText.color = activePlanTimeColor;
-    }
 
+    }
     public bool commandsSent = false;
     void Update()
     {
+       
         if(gameTimer.IsGameOver()){
             StartCoroutine(HandleMatchEnd());
         }
@@ -150,6 +152,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                         StartCoroutine(UnpauseGame());
                         
                         Debug.Log("unpausing since time ran out");
+                        
                     }
             }
             
@@ -179,6 +182,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         if(gameTimerCoroutine != null)
             StopCoroutine(gameTimerCoroutine);
 
+        //if it was because we were descyned then idk, do something!
+        
         PauseGame();
     }
 
@@ -306,7 +311,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             List<GameObject> allRobots = new List<GameObject>();
             allRobots.AddRange(playerTurnhandler.Robots);
             allRobots.AddRange(otherTurnhandler.Robots);
-            server.SendSyncStateMsg(allRobots, ball.gameObject);
+            server.SendSyncStateMsg(allRobots, ball.gameObject, new Position(leftGoal.score,rightGoal.score));
            
         }
 
@@ -381,8 +386,10 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                     Vector2.zero,Vector2.zero);
                     scList.Add(sc);
                 }
+
             }
         }
+
         //Debug.Log(scList.Count + " commands added to the list, asking serverbheaviour to send them!");
         server.SendCommands(scList);
     }
@@ -416,15 +423,18 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         else{
             Debug.Log("game is paused: " + paused);
         }
+        
+        
     }
     public IEnumerator OnRecieveSyncStateCoroutine(NetworkMessage  netMsg){
+        NetworkMessage message = netMsg;
         //if game is not paused, then wait untill it is and then call the "real" OnRecieveSyncState
         while(paused == false){
             yield return new WaitForFixedUpdate();
         }
-        OnRecieveSyncState(netMsg);
+        OnRecieveSyncState(message);
     }
-    //ASSUMES THERE IS EXACTLY 3 ROBOTS PER TEAM + ONE BALL
+    //ASSUMES THERE IS EXACTLY 3 ROBOTS PER TEAM + ONE BALL + a score position vector
     public void OnRecieveSyncState(NetworkMessage netMsg){
         if(!paused){
             Debug.Log("OnRecieveSyncStatecouroutiney");
@@ -446,6 +456,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
             deserializedBuffer = bf.Deserialize(ms) as ServerBehaviour.SerializablePositionList;
 
+            
             int robotIndex = 0;
             for(int i = 0; i < deserializedBuffer.Count;i++){
               
@@ -479,17 +490,28 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                         robotIndex++;
                     }
                 }
-                //the last two things are the ball
+                //the last two things are the ball and score!
                 else {
                     ball.transform.position = deserializedBuffer[i].V2();
                     ball.GetComponent<Ball>().PreviousVelocity = deserializedBuffer[i+1].V2();
                     //tell ball to redraw it's linerenderthingy
                     ball.DrawTrajectory();
+
+                    if(leftGoal.score != deserializedBuffer[i+2].x || rightGoal.score != deserializedBuffer[i+2].y){
+                        leftGoal.score = (int)deserializedBuffer[i+2].x;
+                        rightGoal.score = (int)deserializedBuffer[i+2].y;
+                        OnScore();
+                    }
+
                     break;
-                }  
-            }   
-        }  
+                }
+               
+            }
+            
+        }
+        
     }
+    
     //####
     // Utility functions
     //####
@@ -511,6 +533,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         }
         return dict;
     }
+
     public void DeselectRobot()
     {
         playerTurnhandler.THDeselectRobot();

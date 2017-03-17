@@ -11,7 +11,7 @@ public class Goal : MonoBehaviour {
 	[SerializeField]
 	bool Left;
 
-	Text scoreText;
+	public Text scoreText;
 
 	void Start(){
 		if (Left)
