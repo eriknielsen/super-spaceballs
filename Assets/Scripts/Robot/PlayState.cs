@@ -38,7 +38,7 @@ public class PlayState : IRobotState {
         
         robotScript.angleAtPause = anim.GetFloat("DirectionAngle");
         
-        //anim.Play("IdleAnims",0);
+        
         anim.enabled = false;
     }
     

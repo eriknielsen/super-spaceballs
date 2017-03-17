@@ -208,6 +208,7 @@ public class RobotBehaviour : MonoBehaviour {
     {
         if(isPreview == false)
         {
+            UpdateAnimationAngle(rb.velocity.y,rb.velocity.x);
             if (other.gameObject.tag == "Robot")
             {
                 AudioManager.instance.PlayAudioWithRandomPitch(collideRobotSound, false, gameObject);
