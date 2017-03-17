@@ -381,10 +381,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                     Vector2.zero,Vector2.zero);
                     scList.Add(sc);
                 }
-
             }
         }
-
         //Debug.Log(scList.Count + " commands added to the list, asking serverbheaviour to send them!");
         server.SendCommands(scList);
     }
@@ -418,8 +416,6 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         else{
             Debug.Log("game is paused: " + paused);
         }
-        
-        
     }
     public IEnumerator OnRecieveSyncStateCoroutine(NetworkMessage  netMsg){
         //if game is not paused, then wait untill it is and then call the "real" OnRecieveSyncState
@@ -450,7 +446,6 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             System.IO.MemoryStream ms = new System.IO.MemoryStream(buffer);
             deserializedBuffer = bf.Deserialize(ms) as ServerBehaviour.SerializablePositionList;
 
-            
             int robotIndex = 0;
             for(int i = 0; i < deserializedBuffer.Count;i++){
               
@@ -491,14 +486,10 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                     //tell ball to redraw it's linerenderthingy
                     ball.DrawTrajectory();
                     break;
-                }
-               
-            }
-            
-        }
-        
+                }  
+            }   
+        }  
     }
-    
     //####
     // Utility functions
     //####
@@ -520,7 +511,6 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         }
         return dict;
     }
-
     public void DeselectRobot()
     {
         playerTurnhandler.THDeselectRobot();
