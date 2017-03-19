@@ -53,9 +53,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
     {
         swcs = GameObject.Find("ShockwaveCone").GetComponent<ShockwaveConeScript>();
         commmandDirectionPointer = GameObject.Find("CommandDirectionPointer").GetComponent<LineRenderer>();
-        //commmandDirectionPointer.gameObject.SetActive(false);
-        //pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
-        //ball = FindObjectOfType<Ball>().gameObject;
         selectedCommand = Command.AvailableCommands.None;
         moves = new List<Move>();
         robots = new List<GameObject>();
@@ -305,6 +302,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
                         //GameObject.Find("ShockwaveCone").GetComponent<ShockwaveConeScript>().f//(cursorScreenPosition, previewRobot);
                         swcs.SetPositions(cursorScreenPosition, previewRobot.transform.position);
                     }
+
                 }
                 if (previewRobot != null)
                 {

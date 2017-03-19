@@ -19,6 +19,7 @@ public class MovingBackground : MonoBehaviour {
 	List<GameObject> movingObjects = new List<GameObject>();
 
 	void Start(){
+        gameObject.GetComponent<SpriteRenderer>().sortingLayerName = "Background";
 		if (sortingOrder.Length == (movementSpeed.Length + rotationSpeed.Length + rotationSpeed.Length + scale.Length) / 4){
 			for (int i = 0; i < sprites.Length; i++){
 				movingObjects.Add(new GameObject());
@@ -26,6 +27,8 @@ public class MovingBackground : MonoBehaviour {
 				movingObjects[i].transform.position = new Vector3(Random.Range(-horizontalBounds, horizontalBounds), Random.Range(-verticalBounds, verticalBounds), 1);
 				movingObjects[i].transform.localScale = scale[i];
 				SpriteRenderer objectSR = movingObjects[i].AddComponent<SpriteRenderer>();
+                movingObjects[i].GetComponent<SpriteRenderer>().sortingLayerName = "Background";
+                movingObjects[i].name = "Background object";
 				objectSR.sprite = sprites[i];
 				objectSR.sortingOrder = sortingOrder[i];
 			}
