@@ -7,7 +7,6 @@ public class HaloScript : MonoBehaviour {
 	Light haloLight;
 	float deltaIntensity;
 	public float deltaValue;
-
 	public float minIntensity;
 	public float maxIntensity;
 	public float selectedIntensity;
@@ -63,7 +62,6 @@ public class HaloScript : MonoBehaviour {
 		
 	}
 	 void OnEnable(){
-		 
 		 if(gameObject.GetComponent<RobotBehaviour>().isPreview == false){
 		
 			RobotBehaviour.OnClick += ToggleSelectedIntensity;
@@ -71,15 +69,14 @@ public class HaloScript : MonoBehaviour {
 			if(haloLight == null)
 			{
 				haloLight = GetComponent<Light>();
-				
 			}
 			haloLight.enabled = true;
 		 }
-		
-		
 	}
 	 void OnDisable(){
+		 selected = false;
 		haloLight.enabled = false;
+		//ToggleSelectedIntensity(gameObject);
 		RobotBehaviour.OnClick -= ToggleSelectedIntensity;
 	}
 	void OnDestroy(){

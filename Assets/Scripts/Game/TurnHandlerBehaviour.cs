@@ -53,9 +53,6 @@ public class TurnHandlerBehaviour : MonoBehaviour
     {
         swcs = GameObject.Find("ShockwaveCone").GetComponent<ShockwaveConeScript>();
         commmandDirectionPointer = GameObject.Find("CommandDirectionPointer").GetComponent<LineRenderer>();
-        //commmandDirectionPointer.gameObject.SetActive(false);
-        //pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
-        //ball = FindObjectOfType<Ball>().gameObject;
         selectedCommand = Command.AvailableCommands.None;
         moves = new List<Move>();
         robots = new List<GameObject>();
@@ -170,7 +167,8 @@ public class TurnHandlerBehaviour : MonoBehaviour
         {
             if (selectedRobot != robot)
             {
-                THDeselectRobot();
+                if(selectedRobot != null)
+                    THDeselectRobot();
                 for (int i = 0; i < robots.Count; i++)
                 {
                     if (robot == robots[i])
@@ -266,7 +264,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
         {
             cursorPosition = Input.mousePosition;
             cursorScreenPosition = Camera.main.ScreenToWorldPoint(cursorPosition);
-            if (timeInput <= selectedRobot.GetComponent<RobotBehaviour>().freeTime && timer.Elapsed.TotalSeconds > timeBetweenPreivews)
+            if (timeInput > 0 && timeInput <= selectedRobot.GetComponent<RobotBehaviour>().freeTime && timer.Elapsed.TotalSeconds > timeBetweenPreivews)
             {
                 if (prevCursorPosition != cursorPosition || prevSelectedCommand != selectedCommand || RevertCommand() || lastRobot != selectedRobot)
                 {
@@ -290,7 +288,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
                         previewCommand = new MoveCommand(previewRobot, cursorScreenPosition, timeInput, Turns);
 
                     }
-                    else if (selectedCommand == Command.AvailableCommands.Push && timeInput <= selectedRobot.GetComponent<RobotBehaviour>().freeTime - shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime)
+                    else if (selectedCommand == Command.AvailableCommands.Push && timeInput > 0 && timeInput <= selectedRobot.GetComponent<RobotBehaviour>().freeTime - shockWavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime)
                     {
                         previewCommand = new PushCommand(previewRobot, cursorScreenPosition, timeInput, Turns);
                     }
@@ -305,6 +303,7 @@ public class TurnHandlerBehaviour : MonoBehaviour
                         //GameObject.Find("ShockwaveCone").GetComponent<ShockwaveConeScript>().f//(cursorScreenPosition, previewRobot);
                         swcs.SetPositions(cursorScreenPosition, previewRobot.transform.position);
                     }
+
                 }
                 if (previewRobot != null)
                 {

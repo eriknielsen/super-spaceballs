@@ -203,11 +203,11 @@ public class RobotBehaviour : MonoBehaviour {
             AudioManager.instance.PlayAudioWithRandomPitch(selectRobotSound, false, gameObject);
         }
     }
-
     void OnCollisionEnter2D(Collision2D other)
     {
         if(isPreview == false)
         {
+            UpdateAnimationAngle(rb.velocity.y,rb.velocity.x);
             if (other.gameObject.tag == "Robot")
             {
                 AudioManager.instance.PlayAudioWithRandomPitch(collideRobotSound, false, gameObject);

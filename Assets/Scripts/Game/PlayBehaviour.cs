@@ -102,10 +102,12 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 
 	void OnScore()
 	{
+        Debug.Log("ON SCORE CALLED");
 		//tell gametimer and the unpause to stop
 		StopAllCoroutines();
-		//do waht unpause does at the end
-		currentActiveTurnhandler = null;
+        //do waht unpause does at the end
+
+        currentActiveTurnhandler = null;
 		NewTurn();
 		PauseGame();
 		//robots reset their position by listening to the same event
@@ -230,8 +232,8 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 			yield break;
 		}
 		Debug.Log("GAME IS UNPAUSED!");
-
-		paused = false;
+        
+        paused = false;
 		Time.timeScale = 1;
 		ball.Unpause();
 

@@ -29,6 +29,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     public int planTime;
     public int overTime;
     public bool customIsServer;
+	public bool commandsSent = false;
     [HideInInspector]
     public ServerBehaviour server;
 
@@ -38,6 +39,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     
     Coroutine gameTimerCoroutine;
     Coroutine planCountDownCoroutine;
+    Coroutine UnpauseGameCoroutine;
     Goal leftGoal;
     Goal rightGoal;
     [SerializeField]
@@ -53,31 +55,26 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     Color activePlanTimeColor;
     Color otherTeamPlanColor;
     
-    void Start()
-    {
-        if (customIsServer)
-        {
+    void Start(){
+        if (customIsServer){
             playerTurnhandler = rightTurnhandlerInScene;
             otherTurnhandler = leftTurnhandlerInScene;   
         }
-        else
-        {
+        else {
             playerTurnhandler = leftTurnhandlerInScene;
             otherTurnhandler = rightTurnhandlerInScene;
         }
-        
-        inGameMenuHandler.SetActive(true);
+		matchmakingCanvas.SetActive(false);
+       
         ingameCanvas.SetActive(true);
-        matchmakingCanvas.SetActive(false);
-      
-        playerTurnhandler.gameObject.SetActive(true);
-        playerTurnhandler.currentPlanTimeLeft = planTime;
-        otherTurnhandler.gameObject.SetActive(true);
+         inGameMenuHandler.SetActive(true);
         playingField.SetActive(true);
-        robotDeselectionCollider.SetActive(true);
-        
-        
-        ball.gameObject.SetActive(true);
+		ball.gameObject.SetActive(true);
+		robotDeselectionCollider.SetActive(true);
+		otherTurnhandler.gameObject.SetActive(true);
+		playerTurnhandler.gameObject.SetActive(true);
+		playerTurnhandler.currentPlanTimeLeft = planTime;
+
         InititializeGame();
         //activate the playeturnhandler only
         playerTurnhandler.Activate(true);
@@ -85,13 +82,11 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         planCountDownCoroutine = StartCoroutine(CountDownPlanningTime());
     }
 
-    void InititializeGame()
-    {
+    void InititializeGame(){
         leftGoal = GameObject.Find("LeftGoal").GetComponent<Goal>();
         rightGoal = GameObject.Find("RightGoal").GetComponent<Goal>();
         //event callbacks for scoring
-        if (leftGoal != null && rightGoal != null)
-        {
+        if (leftGoal != null && rightGoal != null){
             Goal.OnGoalScored += new Goal.GoalScored(OnScore);
         }
         else {
@@ -103,15 +98,13 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         }
         else {
             Debug.Log(leftGoal+ " rightGoal " + rightGoal);
-			activePlanTimeColor = ToolBox.Instance.leftTeamColor;
+            activePlanTimeColor = ToolBox.Instance.leftTeamColor;
 			otherTeamPlanColor = ToolBox.Instance.rightTeamColor;
         }
         
         gameTimer = new GameTimer(matchTime);
-        if (gameTimeText == null)
-        {
+        if (gameTimeText == null){
             gameTimeText = GameObject.Find("GameTimeText").GetComponent<Text>();
-            
         }
         gameTimeText.text = "Time " + gameTimer.MinutesRemaining() + ":" + gameTimer.SecondsRemaining();
         if(planTimeText == null){
@@ -121,9 +114,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         planTimeText.color = activePlanTimeColor;
     }
 
-    public bool commandsSent = false;
-    void Update()
-    {
+    void Update(){
         if(gameTimer.IsGameOver()){
             StartCoroutine(HandleMatchEnd());
         }
@@ -133,28 +124,26 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             //if time is out then
             if(playerTurnhandler.currentPlanTimeLeft < 1){
                 Debug.Log("timeout!!");
-                    //only do this part once since we will go in here again
+                //only do this part once since we will go in here again
                     //while waiting for server.recivedCommands to be set to true
-                    if(commandsSent == false){
-                        Debug.Log("Send those commands!");
-                        SendCommands();
-                        localIsReady = true;
-                    } 
-                    //if we are the server, tell the other client to start as well since the time has run out
+                if(commandsSent == false){
+					Debug.Log("Send those commands!");
+					SendCommands();
+					localIsReady = true;
+				} 
+				//if we are the server, tell the other client to start as well since the time has run out
 
-                    //here we have to wait first for the commands to arrive before
+				//here we have to wait first for the commands to arrive before
                     //unpausing the clients
-                    if(customIsServer && server.recivedCommands){
-                        server.recivedCommands = false;
-                        server.SendUnpauseGame();
-                        StartCoroutine(UnpauseGame());
-                        
-                        Debug.Log("unpausing since time ran out");
-                    }
+				if(customIsServer && server.recivedCommands){
+					server.recivedCommands = false;
+					server.SendUnpauseGame();
+					UnpauseGameCoroutine = StartCoroutine(UnpauseGame());
+
+					Debug.Log("unpausing since time ran out");
+				}
             }
-            
-            else if (Input.GetKeyDown(KeyCode.Return) && paused == true && localIsReady == false)
-            {
+            else if (Input.GetKeyDown(KeyCode.Return) && paused == true && localIsReady == false){
                 SendCommands();
                 localIsReady = true;
                 //change color of the plantime to show that we are waiting for the other player
@@ -162,10 +151,9 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             }
             //if we are server, tell the other client to unpause 
             // as well as unpause the server
-            else if (remoteIsReady && localIsReady && customIsServer && paused == true)
-            {
+            else if (remoteIsReady && localIsReady && customIsServer && paused == true){
                 server.SendUnpauseGame();
-                StartCoroutine(UnpauseGame());
+                UnpauseGameCoroutine = StartCoroutine(UnpauseGame());
             }
         }
     }
@@ -175,11 +163,16 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     /// </summary>
     void OnScore()
     {
-        //pause game
-        if(gameTimerCoroutine != null)
-            StopCoroutine(gameTimerCoroutine);
+        if(customIsServer != false){
+             //pause game
+            if(gameTimerCoroutine != null)
+                StopCoroutine(gameTimerCoroutine);
 
-        PauseGame();
+            //if it was because we were descyned then idk, do something!
+            
+            PauseGame(true);
+        }
+       
     }
 
     IEnumerator CountDownPlanningTime(){
@@ -225,7 +218,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         //if possible, display winner!
         else
         {
-            PauseGame();
+            PauseGame(false);
             //left won!
             if (leftGoal.score > rightGoal.score)
             {
@@ -281,23 +274,25 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         yield return new WaitForSeconds(roundTime);
         
       
-        PauseGame();
+        PauseGame(false);
     }
-    void PauseGame()
+    void PauseGame(bool asGoalScored)
     {
      
         if(paused== true){
             Debug.Log("game already paused, returning");
             return;
         }
+        StopCoroutine(UnpauseGameCoroutine);
         StopCoroutine(gameTimerCoroutine);
         paused = true;
         commandsSent = false;
         server.recivedCommands = false;
-        playerTurnhandler.Activate(true);
+        
         planTimeText.color = activePlanTimeColor;
         playerTurnhandler.PauseGame();
         otherTurnhandler.PauseGame();
+        
         ball.Pause();
         planCountDownCoroutine = StartCoroutine(CountDownPlanningTime());
         
@@ -306,10 +301,10 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             List<GameObject> allRobots = new List<GameObject>();
             allRobots.AddRange(playerTurnhandler.Robots);
             allRobots.AddRange(otherTurnhandler.Robots);
-            server.SendSyncStateMsg(allRobots, ball.gameObject);
+            server.SendSyncStateMsg(allRobots, ball.gameObject, new Position(leftGoal.score,rightGoal.score), gameTimer.remainingTime);
            
         }
-
+        playerTurnhandler.Activate(true);
         
     }
     /// <summary>
@@ -330,7 +325,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                     break;
                 case SerializableCommand.CommandType.Push:
                     otherTurnhandler.Robots[sc.robotIndex].GetComponent<RobotBehaviour>().Commands.Add(
-                        new PushCommand(otherTurnhandler.Robots[sc.robotIndex], sc.targetPosition.V2(), sc.lifeDuration, 0));
+                        new PushCommand(otherTurnhandler.Robots[sc.robotIndex], sc.targetPosition.V2(), sc.force.V2(),sc.lifeDuration));
                     break;
                 default:
                     Debug.Log("no case for that commandtype: " + sc.type);
@@ -377,8 +372,10 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                 }
                 else if (t == typeof(PushCommand))
                 {
+                    PushCommand pc = c as PushCommand;
+                   
                     SerializableCommand sc = new SerializableCommand(pair.Key, c.targetPosition, c.lifeDuration, SerializableCommand.CommandType.Push, 0,
-                    Vector2.zero,Vector2.zero);
+                    pc.Velocity,Vector2.zero);
                     scList.Add(sc);
                 }
 
@@ -394,7 +391,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     {
         Debug.Log("unpause msg rec!");
         if(paused == true)
-            StartCoroutine(UnpauseGame());
+            UnpauseGameCoroutine = StartCoroutine(UnpauseGame());
     }
     /// <summary>
     /// Recieve and put the commands into the otherTurnhandler's robots
@@ -422,13 +419,14 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         
     }
     public IEnumerator OnRecieveSyncStateCoroutine(NetworkMessage  netMsg){
+        NetworkMessage message = netMsg;
         //if game is not paused, then wait untill it is and then call the "real" OnRecieveSyncState
         while(paused == false){
             yield return new WaitForFixedUpdate();
         }
-        OnRecieveSyncState(netMsg);
+        OnRecieveSyncState(message);
     }
-    //ASSUMES THERE IS EXACTLY 3 ROBOTS PER TEAM + ONE BALL
+    //ASSUMES THERE IS EXACTLY 3 ROBOTS PER TEAM + ONE BALL + a score position vector
     public void OnRecieveSyncState(NetworkMessage netMsg){
         if(!paused){
             Debug.Log("OnRecieveSyncStatecouroutiney");
@@ -484,12 +482,21 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                         robotIndex++;
                     }
                 }
-                //the last two things are the ball
+                //the last two things are the ball and score!
                 else {
                     ball.transform.position = deserializedBuffer[i].V2();
                     ball.GetComponent<Ball>().PreviousVelocity = deserializedBuffer[i+1].V2();
                     //tell ball to redraw it's linerenderthingy
                     ball.DrawTrajectory();
+
+                    if(leftGoal.score != deserializedBuffer[i+2].x || rightGoal.score != deserializedBuffer[i+2].y){
+                        leftGoal.score = (int)deserializedBuffer[i+2].x;
+                        rightGoal.score = (int)deserializedBuffer[i+2].y;
+                        //OnScore();
+                    }
+                    //last is the gametime
+                    gameTimer.remainingTime = (int)deserializedBuffer[i+3].x;
+
                     break;
                 }
                
