@@ -4,12 +4,14 @@ using UnityEngine.SceneManagement;
 
 public class PlayFieldMenu : MonoBehaviour {
 
-	public GameObject optionsMenu;
+	GameObject optionsMenu;
+
+	void Start(){
+		optionsMenu = GameObject.Find("IngameOptionsMenu");
+	}
 
 	public void MainMenu(){
-		
-		if(SceneManager.GetActiveScene().name == "OnlinePlay")
-		{
+		if (SceneManager.GetActiveScene().name == "OnlinePlay"){
 			GameObject.Find("Matchmaker").GetComponent<ServerBehaviour>().LeaveToMainMenu();
 		}
 		SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);

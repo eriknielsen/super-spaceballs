@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-
 public class Goal : MonoBehaviour {
 
 	public int score { get; set; }
@@ -10,25 +9,19 @@ public class Goal : MonoBehaviour {
 
 	[SerializeField]
 	bool Left;
-    [SerializeField]
 
-	public Text scoreText;
-
-    Animator goalAnimator;
-    GameObject ball;
+	Text scoreText;
+	GameObject ball;
+	Animator animator;
     float prevTimeScale;
 
 	void Start(){
 		if (Left)
-			scoreText = GameObject.Find("RightScore").GetComponent<Text>();
+			scoreText = GameObject.Find("RightScore").GetComponent<Text>(); //Opposite player gets increased score (obviously)
 		else
 			scoreText = GameObject.Find("LeftScore").GetComponent<Text>();
 		score = 0;
-        goalAnimator = gameObject.GetComponent<Animator>();
-        if(goalAnimator != null)
-        {
-            Debug.Log("NOT NULL");
-        }
+        animator = GetComponent<Animator>();
         ball = FindObjectOfType<Ball>().gameObject;
     }
 
@@ -36,15 +29,13 @@ public class Goal : MonoBehaviour {
         if (other.gameObject == ball){
             prevTimeScale = Time.timeScale;
             Time.timeScale = 0.5f;
-            goalAnimator.SetTrigger("Score");
+            animator.SetTrigger("Score");
         }
 	}
 
-    void Score()
-    {
+    void Score(){
         TurnHandlerBehaviour[] turnHandlers = FindObjectsOfType<TurnHandlerBehaviour>();
-        foreach(TurnHandlerBehaviour turnhandler in turnHandlers)
-        {
+        foreach(TurnHandlerBehaviour turnhandler in turnHandlers){
             turnhandler.Activate(false);
             Debug.Log(turnhandler.name);
         }
