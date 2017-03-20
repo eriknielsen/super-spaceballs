@@ -8,6 +8,6 @@ public class InstantiateRandomObject : MonoBehaviour {
 	GameObject[] objectArray;
 
 	void Start(){
-		Instantiate(objectArray[Random.Range(0, objectArray.Length-1)], transform);
+		Instantiate(objectArray[Random.Range(0, objectArray.Length)], transform);
 	}
 }
