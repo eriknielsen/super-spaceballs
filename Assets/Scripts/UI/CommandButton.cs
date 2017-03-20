@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class CommandButton : MonoBehaviour {
 
-//	[SerializeField]
-//	bool bounce = false;
 	[SerializeField]
 	float animationTime;
 	[SerializeField]
@@ -17,10 +15,7 @@ public class CommandButton : MonoBehaviour {
 	[SerializeField]
 	Sprite onMouseClickSprite;
 
-//	bool animate = false;
-//	bool firstUpdateSinceAnimationStart = false;
-//	float lerp;
-//	float timeSinceAnimationStart;
+	bool clicked = false;
 	Sprite normalSprite;
     IPlayBehaviour playBehaviour;
 
@@ -29,31 +24,16 @@ public class CommandButton : MonoBehaviour {
 		playBehaviour = GameObject.FindGameObjectWithTag("PlayController").GetComponent<IPlayBehaviour>();
     }
 
-	void Update(){
-//		if (animate) {
-//			if (firstUpdateSinceAnimationStart) {
-//				firstUpdateSinceAnimationStart = false;
-//			}
-//			if (bounce) {
-//
-//			} else {
-//				timeSinceAnimationStart += Time.deltaTime;
-//				lerp = Mathf.Lerp(0, animationTime, timeSinceAnimationStart);
-//				transform.localScale = new Vector3(lerp, lerp, 1);
-//			}
-//		}
-	}
-
 	void OnMouseDown(){
-		playBehaviour.SelectCommand(selectedCommand);
-		if (selectedCommand == Command.AvailableCommands.None)
-			commandWheelHandler.ToggleWithDelay(animationTime, animationTime);
-		else
-			commandWheelHandler.ToggleWithDelay(animationTime, animationTime);
+		if (!clicked){
+			playBehaviour.SelectCommand(selectedCommand);
+			if (selectedCommand == Command.AvailableCommands.None)
+				commandWheelHandler.ToggleWithDelay(animationTime, animationTime);
+			else
+				commandWheelHandler.ToggleWithDelay(animationTime, animationTime);
 		
-		GetComponent<SpriteRenderer>().sprite = onMouseClickSprite;
-//		animate = true;
-//		firstUpdateSinceAnimationStart = true;
+			GetComponent<SpriteRenderer>().sprite = onMouseClickSprite;
+		}
 	}
 
 	void OnMouseEnter(){	//For animation
