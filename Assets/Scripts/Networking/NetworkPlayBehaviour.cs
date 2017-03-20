@@ -45,7 +45,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     [SerializeField]
     Ball ball;
     GameTimer gameTimer;
-    
+    Animator endOfMatchAnimator;
+
     Text gameTimeText;
     Text planTimeText;
 
@@ -225,6 +226,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             if (leftGoal.score > rightGoal.score)
             {
                if(customIsServer){
+                    endOfMatchAnimator.SetTrigger("RightWin");
                     Debug.Log("local player won!!");
                 }
                 else{
@@ -235,6 +237,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             else if (rightGoal.score > leftGoal.score)
             {
                 if(customIsServer){
+                    endOfMatchAnimator.SetTrigger("LeftWin");
                     Debug.Log("local player won!!");
                 }
                 else{
@@ -243,7 +246,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             }
             else if(rightGoal.score == leftGoal.score)
             {
-                
+                endOfMatchAnimator.SetTrigger("Draw");
                 Debug.Log("match was even!");
             }
             //wait a bit and then change scene to mainmenu
@@ -287,6 +290,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         }
         StopCoroutine(UnpauseGameCoroutine);
         StopCoroutine(gameTimerCoroutine);
+
         paused = true;
         commandsSent = false;
         server.recivedCommands = false;
