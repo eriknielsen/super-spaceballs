@@ -43,18 +43,19 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	Coroutine unpauseGame;
 	Coroutine handleMatchEnd;
 	Coroutine countDownPlanningTime;
-	Coroutine gameTimerCoroutine;
 	[SerializeField]
 	TurnHandlerBehaviour turnHandler1;
 	[SerializeField]
 	TurnHandlerBehaviour turnHandler2;
 	TurnHandlerBehaviour currentActiveTurnhandler;
+    Animator endOfMatchAnimator;
 
 	void Start(){
 		Physics.queriesHitTriggers = true;
 		ball = GameObject.Find("Ball").GetComponent<Ball>();
 		leftGoalScript = GameObject.Find("LeftGoal").GetComponent<Goal>();
 		rightGoalScript = GameObject.Find("RightGoal").GetComponent<Goal>();
+        endOfMatchAnimator = GameObject.Find("EndOfMatchAnimation").GetComponent<Animator>();
 
 		//event callbacks for scoring
 		if (leftGoalScript != null || rightGoalScript != null){
@@ -74,7 +75,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		NewTurn();
 	}
 
-	void UpdateTimerTexts()
+    void UpdateTimerTexts()
 	{
 		string zeroBeforeMin;
 		string zeroBeforeSec;
@@ -106,7 +107,6 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
         Debug.Log("ON SCORE CALLED");
 		//tell gametimer and the unpause to stop
 		StopAllCoroutines();
-		
         //do waht unpause does at the end
 
         currentActiveTurnhandler = null;
@@ -114,9 +114,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		PauseGame();
 		//robots reset their position by listening to the same event
 	}
-	public void PreOnGoalScored(){
-		StopCoroutineIfNotNull(gameTimerCoroutine);
-	}
+
 	/// <summary>
 	/// decreases the plantime of the currentactiveturnhandler
 	/// </summary>
@@ -212,19 +210,27 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 			PauseGame();
 			if (leftGoalScript.score > rightGoalScript.score)
 			{
+                endOfMatchAnimator.SetTrigger("RightWin");
 				Debug.Log("left team won!");
 			}
 			else if (rightGoalScript.score > leftGoalScript.score)
 			{
+                endOfMatchAnimator.SetTrigger("LeftWin");
 				Debug.Log("right team won!");
 			}
 			else if(rightGoalScript.score == leftGoalScript.score)
 			{
-				Debug.Log("match was a draw!");
+                endOfMatchAnimator.SetTrigger("Draw");
+                Debug.Log("match was a draw!");
 			}
+
+            while(!endOfMatchAnimator.GetCurrentAnimatorStateInfo(0).IsName("End Game"))
+            {
+                yield return new WaitForSeconds(0.00001f);
+            }
 			//Wait a bit, then change scene to mainmenu
-			yield return new WaitForSeconds(1f);
-			
+			StopAllCoroutines();
+            
 			SceneManager.LoadSceneAsync("MainMenu");
 		}
 	}
@@ -247,7 +253,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		turnHandler1.UnpauseGame();
 		turnHandler2.UnpauseGame();
 
-		gameTimerCoroutine = StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
+		StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
 
 		yield return new WaitForSeconds(roundTime);
 
@@ -339,4 +345,6 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	public void SelectCommand(Command.AvailableCommands command){
 		currentActiveTurnhandler.THSelectCommand(command);
 	}
+
+    public void PreOnGoalScored() { }
 }
