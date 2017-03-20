@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class Goal : MonoBehaviour {
 
 	public int score { get; set; }
+
     public delegate void GoalScored();
     public static event GoalScored OnGoalScored;
 
@@ -44,9 +45,9 @@ public class Goal : MonoBehaviour {
           
         }
         Time.timeScale = prevTimeScale;
-
-        OnGoalScored();
         ball.GetComponent<Ball>().ResetPosition();
+        OnGoalScored();
+        
         score++;
         scoreText.text = "" + score;
     }

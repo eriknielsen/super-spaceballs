@@ -163,7 +163,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     /// </summary>
     void OnScore()
     {
-        if(paused == false){
+        if(customIsServer != false){
              //pause game
             if(gameTimerCoroutine != null)
                 StopCoroutine(gameTimerCoroutine);
@@ -301,7 +301,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             List<GameObject> allRobots = new List<GameObject>();
             allRobots.AddRange(playerTurnhandler.Robots);
             allRobots.AddRange(otherTurnhandler.Robots);
-            server.SendSyncStateMsg(allRobots, ball.gameObject, new Position(leftGoal.score,rightGoal.score));
+            server.SendSyncStateMsg(allRobots, ball.gameObject, new Position(leftGoal.score,rightGoal.score), gameTimer.remainingTime);
            
         }
         playerTurnhandler.Activate(true);
@@ -492,8 +492,10 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                     if(leftGoal.score != deserializedBuffer[i+2].x || rightGoal.score != deserializedBuffer[i+2].y){
                         leftGoal.score = (int)deserializedBuffer[i+2].x;
                         rightGoal.score = (int)deserializedBuffer[i+2].y;
-                        OnScore();
+                        //OnScore();
                     }
+                    //last is the gametime
+                    gameTimer.remainingTime = (int)deserializedBuffer[i+3].x;
 
                     break;
                 }
