@@ -39,6 +39,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     
     Coroutine gameTimerCoroutine;
     Coroutine planCountDownCoroutine;
+    Coroutine UnpauseGameCoroutine;
     Goal leftGoal;
     Goal rightGoal;
     [SerializeField]
@@ -64,8 +65,9 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             otherTurnhandler = rightTurnhandlerInScene;
         }
 		matchmakingCanvas.SetActive(false);
-
+       
         ingameCanvas.SetActive(true);
+         inGameMenuHandler.SetActive(true);
         playingField.SetActive(true);
 		ball.gameObject.SetActive(true);
 		robotDeselectionCollider.SetActive(true);
@@ -136,7 +138,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 				if(customIsServer && server.recivedCommands){
 					server.recivedCommands = false;
 					server.SendUnpauseGame();
-					StartCoroutine(UnpauseGame());
+					UnpauseGameCoroutine = StartCoroutine(UnpauseGame());
 
 					Debug.Log("unpausing since time ran out");
 				}
@@ -151,7 +153,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             // as well as unpause the server
             else if (remoteIsReady && localIsReady && customIsServer && paused == true){
                 server.SendUnpauseGame();
-                StartCoroutine(UnpauseGame());
+                UnpauseGameCoroutine = StartCoroutine(UnpauseGame());
             }
         }
     }
@@ -161,13 +163,16 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     /// </summary>
     void OnScore()
     {
-        //pause game
-        if(gameTimerCoroutine != null)
-            StopCoroutine(gameTimerCoroutine);
+        if(paused == false){
+             //pause game
+            if(gameTimerCoroutine != null)
+                StopCoroutine(gameTimerCoroutine);
 
-        //if it was because we were descyned then idk, do something!
-        
-        PauseGame();
+            //if it was because we were descyned then idk, do something!
+            
+            PauseGame(true);
+        }
+       
     }
 
     IEnumerator CountDownPlanningTime(){
@@ -213,7 +218,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         //if possible, display winner!
         else
         {
-            PauseGame();
+            PauseGame(false);
             //left won!
             if (leftGoal.score > rightGoal.score)
             {
@@ -269,23 +274,25 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         yield return new WaitForSeconds(roundTime);
         
       
-        PauseGame();
+        PauseGame(false);
     }
-    void PauseGame()
+    void PauseGame(bool asGoalScored)
     {
      
         if(paused== true){
             Debug.Log("game already paused, returning");
             return;
         }
+        StopCoroutine(UnpauseGameCoroutine);
         StopCoroutine(gameTimerCoroutine);
         paused = true;
         commandsSent = false;
         server.recivedCommands = false;
-        playerTurnhandler.Activate(true);
+        
         planTimeText.color = activePlanTimeColor;
         playerTurnhandler.PauseGame();
         otherTurnhandler.PauseGame();
+        
         ball.Pause();
         planCountDownCoroutine = StartCoroutine(CountDownPlanningTime());
         
@@ -297,7 +304,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             server.SendSyncStateMsg(allRobots, ball.gameObject, new Position(leftGoal.score,rightGoal.score));
            
         }
-
+        playerTurnhandler.Activate(true);
         
     }
     /// <summary>
@@ -384,7 +391,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     {
         Debug.Log("unpause msg rec!");
         if(paused == true)
-            StartCoroutine(UnpauseGame());
+            UnpauseGameCoroutine = StartCoroutine(UnpauseGame());
     }
     /// <summary>
     /// Recieve and put the commands into the otherTurnhandler's robots

@@ -15,6 +15,8 @@ public class Goal : MonoBehaviour {
 	Animator animator;
     float prevTimeScale;
 
+    public GameObject longestCheer;
+
 	void Start(){
 		if (Left)
 			scoreText = GameObject.Find("RightScore").GetComponent<Text>(); //Opposite player gets increased score (obviously)
@@ -30,14 +32,16 @@ public class Goal : MonoBehaviour {
             prevTimeScale = Time.timeScale;
             Time.timeScale = 0.5f;
             animator.SetTrigger("Score");
+            AudioManager.instance.PlayAudioWithRandomPitch(longestCheer, false, gameObject);
+            
         }
 	}
 
     void Score(){
         TurnHandlerBehaviour[] turnHandlers = FindObjectsOfType<TurnHandlerBehaviour>();
         foreach(TurnHandlerBehaviour turnhandler in turnHandlers){
-            turnhandler.Activate(false);
-            Debug.Log(turnhandler.name);
+            //turnhandler.Activate(false);
+          
         }
         Time.timeScale = prevTimeScale;
 
