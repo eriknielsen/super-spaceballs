@@ -43,6 +43,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	Coroutine unpauseGame;
 	Coroutine handleMatchEnd;
 	Coroutine countDownPlanningTime;
+	Coroutine gameTimerCoroutine;
 	[SerializeField]
 	TurnHandlerBehaviour turnHandler1;
 	[SerializeField]
@@ -105,6 +106,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
         Debug.Log("ON SCORE CALLED");
 		//tell gametimer and the unpause to stop
 		StopAllCoroutines();
+		
         //do waht unpause does at the end
 
         currentActiveTurnhandler = null;
@@ -112,7 +114,9 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		PauseGame();
 		//robots reset their position by listening to the same event
 	}
-
+	public void PreOnGoalScored(){
+		StopCoroutineIfNotNull(gameTimerCoroutine);
+	}
 	/// <summary>
 	/// decreases the plantime of the currentactiveturnhandler
 	/// </summary>
@@ -220,7 +224,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 			}
 			//Wait a bit, then change scene to mainmenu
 			yield return new WaitForSeconds(1f);
-			StopAllCoroutines();
+			
 			SceneManager.LoadSceneAsync("MainMenu");
 		}
 	}
@@ -243,7 +247,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		turnHandler1.UnpauseGame();
 		turnHandler2.UnpauseGame();
 
-		StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
+		gameTimerCoroutine = StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
 
 		yield return new WaitForSeconds(roundTime);
 

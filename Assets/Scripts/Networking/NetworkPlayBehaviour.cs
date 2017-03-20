@@ -174,7 +174,9 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         }
        
     }
-
+    public void PreOnGoalScored(){
+        StopCoroutine(gameTimerCoroutine);
+    }
     IEnumerator CountDownPlanningTime(){
         while(playerTurnhandler.currentPlanTimeLeft > 0 ){
             yield return new WaitForSecondsRealtime(1f);
