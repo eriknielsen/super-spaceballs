@@ -14,7 +14,7 @@ public class CommandButton : MonoBehaviour {
 	Sprite onMouseEnterSprite;
 	[SerializeField]
 	Sprite onMouseClickSprite;
-
+    
 	bool clicked = false;
 	Sprite normalSprite;
     IPlayBehaviour playBehaviour;

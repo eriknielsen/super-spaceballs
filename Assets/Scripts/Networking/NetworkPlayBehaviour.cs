@@ -66,7 +66,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             otherTurnhandler = rightTurnhandlerInScene;
         }
 		matchmakingCanvas.SetActive(false);
-       
+        endOfMatchAnimator = GameObject.Find("EndOfMatchAnimation").GetComponent<Animator>();
+
         ingameCanvas.SetActive(true);
          inGameMenuHandler.SetActive(true);
         playingField.SetActive(true);
@@ -225,8 +226,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             //left won!
             if (leftGoal.score > rightGoal.score)
             {
-               if(customIsServer){
-                    endOfMatchAnimator.SetTrigger("RightWin");
+                endOfMatchAnimator.SetTrigger("RightWin");
+                if (customIsServer){
                     Debug.Log("local player won!!");
                 }
                 else{
@@ -236,8 +237,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             //right won! 
             else if (rightGoal.score > leftGoal.score)
             {
-                if(customIsServer){
-                    endOfMatchAnimator.SetTrigger("LeftWin");
+                endOfMatchAnimator.SetTrigger("LeftWin");
+                if (customIsServer){
                     Debug.Log("local player won!!");
                 }
                 else{
@@ -249,8 +250,12 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                 endOfMatchAnimator.SetTrigger("Draw");
                 Debug.Log("match was even!");
             }
-            //wait a bit and then change scene to mainmenu
-            yield return new WaitForSeconds(1f);
+
+            while (!endOfMatchAnimator.GetCurrentAnimatorStateInfo(0).IsName("End Game"))
+            {
+                yield return new WaitForSeconds(0.00001f);
+            }
+
             StopAllCoroutines();
             SceneManager.LoadScene("MainMenu");
         }

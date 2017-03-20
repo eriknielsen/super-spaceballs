@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class Goal : MonoBehaviour {
 
@@ -7,7 +8,6 @@ public class Goal : MonoBehaviour {
 
 	public delegate void GoalScored();
 	public static event GoalScored OnGoalScored;
-
 
 	[SerializeField]
 	bool Left;
@@ -25,26 +25,45 @@ public class Goal : MonoBehaviour {
 		else
 			scoreText = GameObject.Find("LeftScore").GetComponent<Text>();
 		score = 0;
-		animator = GetComponent<Animator>();
-		ball = FindObjectOfType<Ball>().gameObject;
+		animator = GameObject.Find("GoalAnimator").GetComponent<Animator>();
+
+        ball = FindObjectOfType<Ball>().gameObject;
 	}
 
 	void OnTriggerEnter2D(Collider2D other){ //When ball enters goal ballposition is reset and score is increased
 		if (other.gameObject == ball){
 			GameObject.FindGameObjectWithTag("PlayController").GetComponent<IPlayBehaviour>().PreOnGoalScored();
-			prevTimeScale = Time.timeScale;
-			Time.timeScale = 0.5f;
-			animator.SetTrigger("Score");
-			AudioManager.instance.PlayAudioWithRandomPitch(longestCheer, false, gameObject);
+            StartCoroutine(GoalEvent());
 		}
 	}
 
-	void Score(){
-		Time.timeScale = prevTimeScale;
+    IEnumerator GoalEvent()
+    {
+        prevTimeScale = Time.timeScale;
+        Time.timeScale = 0.5f;
+
+        if (Left)
+        {
+            animator.SetTrigger("ScoreOnLeft");
+        }
+        else
+        {
+            animator.SetTrigger("ScoreOnRight");
+        }
+        AudioManager.instance.PlayAudioWithRandomPitch(longestCheer, false, gameObject);
+        while (!animator.GetCurrentAnimatorStateInfo(0).IsName("End State"))
+        {
+            yield return new WaitForSeconds(0.00001f);
+        }
+        animator.SetTrigger("ResetState");
+        Time.timeScale = prevTimeScale;
+        Score();
+    }
+
+    void Score(){
 		ball.GetComponent<Ball>().ResetPosition();
 		OnGoalScored();
-
-		score++;
+        score++;
 		scoreText.text = "" + score;
 	}
 }
