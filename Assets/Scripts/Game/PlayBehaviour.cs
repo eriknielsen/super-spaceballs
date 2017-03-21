@@ -194,7 +194,8 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	/// Displays who the winner was and goes back to the main menu.
 	/// </summary>
 	void MatchEnd(){
-		paused = false;
+        Debug.LogWarning("MATHC");
+        paused = false;
 		ToolBox.Instance.MatchOver = true;
 		//check if the score is tied, then add overtime (if not already overtime) and continue
 		if (leftGoalScript.score == rightGoalScript.score && gameTimer.InOvertime() == false && overTime > 0){
@@ -219,15 +220,21 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		}
 	}
 
+
+    void LoadMainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+
     void RunPlayerTurnAnimation()
     {
         if(currentActiveTurnhandler == turnHandler1)
         {
-            playerTurnAnim.GetComponent<Animator>().SetTrigger("GoalOnLeft");
+            playerTurnAnim.GetComponent<Animator>().SetTrigger("LeftTurn");
         }
         else if (currentActiveTurnhandler == turnHandler2)
         {
-            playerTurnAnim.GetComponent<Animator>().SetTrigger("GoalOnRight");
+            playerTurnAnim.GetComponent<Animator>().SetTrigger("RightTurn");
         }
     }
 
