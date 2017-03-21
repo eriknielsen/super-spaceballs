@@ -268,11 +268,13 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 
 		if (activate){
 			if (currentActiveTurnhandler == turnHandler1 && !isTH1Done){ //gives control to the current turnhandler
+				GameObject.Find("PlayerTurnAnimation").GetComponent<Animator>().SetTrigger("GoalOnLeft");
 				turnHandler1.Activate(true);
 				countDownPlanningTime = StartCoroutine(CountDownPlanningTime());
 				turnHandler2.Activate(false); //deactivates the other one
 			}
 			else if (currentActiveTurnhandler == turnHandler2 && !isTH2Done){
+				GameObject.Find("PlayerTurnAnimation").GetComponent<Animator>().SetTrigger("GoalOnRight");
 				turnHandler2.Activate(true);
 				countDownPlanningTime =  StartCoroutine(CountDownPlanningTime());
 				turnHandler1.Activate(false); //deactivates the other one
