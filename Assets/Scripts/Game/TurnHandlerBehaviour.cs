@@ -348,6 +348,8 @@ public class TurnHandlerBehaviour : MonoBehaviour {
                 robot.GetComponent<RobotBehaviour>().shouldSendEvent = true;
 				robot.GetComponent<HaloScript>().enabled = true; //visually indicate that this turnhandlers robots are now active
             }
+            
+            
         }
         else {
             THDeselectRobot();

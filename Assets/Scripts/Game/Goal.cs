@@ -39,7 +39,7 @@ public class Goal : MonoBehaviour {
 			scoreText.text = "" + score;
 			AudioManager.Instance.PlayAudioWithRandomPitch(longestCheer, false, gameObject);
 
-			goalAnimScript.GoalScored(left, gameObject);
+			goalAnimScript.GoalScored(left, this);
 		}
 	}
 
