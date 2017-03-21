@@ -19,12 +19,7 @@ public class GoalAnimScript : MonoBehaviour {
 			animator.SetTrigger("GoalOnRight");
 	}
 
-<<<<<<< HEAD
 	void AfterGoalAnim(){ //Animation event called at end of animation
-		goal.GetComponent<Goal>().ResetShit();
-=======
-	void AfterGoalAnim(){ //Animation event called at end of animation, same on both goals
 		goal.ResetShit();
->>>>>>> a9aa4de33aa7f2f09397b2726a5c8e39dd94c4c3
 	}
 }
