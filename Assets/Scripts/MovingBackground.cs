@@ -28,7 +28,6 @@ public class MovingBackground : MonoBehaviour {
 				movingObjects[i].transform.localScale = scale[i];
 				SpriteRenderer objectSR = movingObjects[i].AddComponent<SpriteRenderer>();
                 movingObjects[i].GetComponent<SpriteRenderer>().sortingLayerName = "Background";
-                movingObjects[i].name = "Background object";
 				objectSR.sprite = sprites[i];
 				objectSR.sortingOrder = sortingOrder[i];
 			}

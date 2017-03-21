@@ -4,79 +4,65 @@ using System.Collections;
 public class Ball : MonoBehaviour {
 
 	private Vector2 startPosition;
-    //audio
+
     [SerializeField]
     GameObject collideWithWallSound;
 
     Vector2 prevVelocity;
-    Rigidbody2D rb;
+	Rigidbody2D rb2D;
 
-    PreviewMarker pm;
+    PreviewMarker previewMarker;
     LineRenderer localLineRenderer;
     public Vector2 PreviousVelocity
     {
         get { return prevVelocity; }
         set{ prevVelocity = value;}
     }
-
-	void Awake(){
+		
+    void Start(){
 		startPosition = transform.position;
-        rb = GetComponent<Rigidbody2D>();
-        localLineRenderer = GetComponent<LineRenderer>();
-    }
-    void Start()
-    {
-        pm = GameObject.Find("PreviewMarker").GetComponent<PreviewMarker>();
-
+		rb2D = GetComponent<Rigidbody2D>();
+		localLineRenderer = GetComponent<LineRenderer>();
+		previewMarker = GameObject.FindObjectOfType<PreviewMarker>().GetComponent<PreviewMarker>();
     }
  
     public void ResetPosition(){
 		transform.position = startPosition;
         prevVelocity = Vector2.zero;
-        rb.velocity = Vector2.zero;
+        rb2D.velocity = Vector2.zero;
         localLineRenderer.enabled = false;
         
 	}
+
     public void DrawTrajectory(){
-          if(prevVelocity.x != 0 && prevVelocity.y != 0)
-        {
+          if (prevVelocity.x != 0 && prevVelocity.y != 0){
             localLineRenderer.enabled = true;
-            pm.showBallDirection(transform.position, prevVelocity, localLineRenderer);
+			previewMarker.showBallDirection(transform.position, prevVelocity, localLineRenderer);
         } 
     }
-    public void Pause()
-    {
-        prevVelocity = rb.velocity;
-        rb.velocity = Vector2.zero;
+
+    public void Pause(){
+        prevVelocity = rb2D.velocity;
+        rb2D.velocity = Vector2.zero;
        
-        rb.freezeRotation = true;
+        rb2D.freezeRotation = true;
         //if ball has a velocity, show it to the player
-         DrawTrajectory();
+        DrawTrajectory();
     }
-    public void Unpause()
-    {
-        rb.freezeRotation = false;
-        rb.velocity = prevVelocity;
+
+    public void Unpause(){
+        rb2D.freezeRotation = false;
+        rb2D.velocity = prevVelocity;
 
         localLineRenderer.enabled = false; 
-    
-
     }
-    void OnCollisionEnter2D(Collision2D other)
-    {
 
-        if (other.collider.tag == "Goal"){
-            ResetPosition();
+    void OnCollisionEnter2D(Collision2D other){
+        if (other.collider.tag == "Wall"){
+            AudioManager.Instance.PlayAudioWithRandomPitch(collideWithWallSound, false, gameObject);    
         }
-        if (other.collider.tag == "Wall")
-        {
-            AudioManager.instance.PlayAudioWithRandomPitch(
-                collideWithWallSound, false, gameObject);    
-        }
-        else if(other.collider.tag == "Robot")
-        {
-            AudioManager.instance.PlayAudioWithRandomPitch(
-               collideWithWallSound, false, gameObject);
+        else if (other.collider.tag == "Robot"){
+            AudioManager.Instance.PlayAudioWithRandomPitch(collideWithWallSound, false, gameObject);
         }
     }
 }

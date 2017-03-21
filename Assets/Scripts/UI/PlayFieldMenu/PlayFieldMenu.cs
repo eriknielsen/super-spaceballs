@@ -4,11 +4,11 @@ using UnityEngine.SceneManagement;
 
 public class PlayFieldMenu : MonoBehaviour {
 
-	[SerializeField]
 	GameObject optionsMenu;
 
 	void Start(){
-		//optionsMenu = GameObject.Find("IngameOptionsMenu");
+		optionsMenu = GameObject.Find("IngameOptionsMenu");
+		ToggleOptionsMenu();
 	}
 
 	public void MainMenu(){
@@ -19,7 +19,6 @@ public class PlayFieldMenu : MonoBehaviour {
 	}
 
 	public void ToggleOptionsMenu(){
-		Debug.Log(optionsMenu);
 		optionsMenu.SetActive(!optionsMenu.activeInHierarchy);
 	}
 

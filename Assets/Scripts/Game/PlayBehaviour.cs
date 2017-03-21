@@ -75,8 +75,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		NewTurn();
 	}
 
-    void UpdateTimerTexts()
-	{
+    void UpdateTimerTexts(){
 		string zeroBeforeMin;
 		string zeroBeforeSec;
 		if (gameTimer.MinutesRemaining() < 10)
@@ -88,12 +87,10 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		else
 			zeroBeforeSec = "";
 
-		if (gameTimeText != null)
-		{
+		if (gameTimeText != null){
 			gameTimeText.text = zeroBeforeMin + gameTimer.MinutesRemaining() + ":" + zeroBeforeSec + gameTimer.SecondsRemaining();
 		}
-		if (planTimeText != null && currentActiveTurnhandler != null && paused == true)
-		{
+		if (planTimeText != null && currentActiveTurnhandler != null && paused == true){
 			if (currentActiveTurnhandler == turnHandler2)
 				planTimeText.color = ToolBox.Instance.rightTeamColor;
 			else
@@ -104,7 +101,6 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 
 	void OnScore()
 	{
-        Debug.Log("ON SCORE CALLED");
 		//tell gametimer and the unpause to stop
 		StopAllCoroutines();
         //do waht unpause does at the end
@@ -119,34 +115,28 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	/// decreases the plantime of the currentactiveturnhandler
 	/// </summary>
 	/// <returns></returns>
-	IEnumerator CountDownPlanningTime()
-	{
-		while(currentActiveTurnhandler.CurrentPlanTimeLeft > 0)
-		{ 
+	IEnumerator CountDownPlanningTime(){
+		while(currentActiveTurnhandler.CurrentPlanTimeLeft > 0){ 
 			yield return new WaitForSecondsRealtime(1f);
 			currentActiveTurnhandler.CurrentPlanTimeLeft--;
-		} 
+		}
 	}
 
-	void StopCoroutineIfNotNull(Coroutine coroutine)
-	{
-		if (coroutine != null)
-		{
+	void StopCoroutineIfNotNull(Coroutine coroutine){
+		if (coroutine != null){
 			StopCoroutine(coroutine);
 		}
 	}
 
 	void Update(){
-		if (gameTimer.IsGameOver()) //if gametime has run out, do stuff!
-		{
+		if (gameTimer.IsGameOver()){ //if gametime has run out, do stuff!
 			StartCoroutine(HandleMatchEnd());
 		}
 		UpdateTimerTexts();
 		//restrict the amount of time a player has to plan
-		if (paused == true && currentActiveTurnhandler != null)
-		{
+		if (paused == true && currentActiveTurnhandler != null){
 			//if the player still hasn't run out of time, decrease it!
-			if(currentActiveTurnhandler.CurrentPlanTimeLeft <= 0) { 
+			if(currentActiveTurnhandler.CurrentPlanTimeLeft <= 0){ 
 				//if the player ran out of time, set them to ready
 				Debug.Log("current player ran out of plan time, setting it to ready");
 
@@ -181,8 +171,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 			}
 		}
 		// are both players done?
-		if (isTH1Done && isTH2Done)
-		{
+		if (isTH1Done && isTH2Done){
 			StopCoroutineIfNotNull(countDownPlanningTime);
 			//then play the game and pause again in roundTime seconds
 
@@ -190,7 +179,6 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 			isTH1Done = false;
 			isTH2Done = false;
 		}
-
 	}
 
 	/// <summary>
@@ -238,7 +226,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	//If we replayed the last turn, we dont want to do the newturn stuff
 	IEnumerator UnpauseGame(){
 		if(paused == false){
-			Debug.Log("game was already unpaused, breaking");
+			Debug.Log("game already unpaused, breaking");
 			yield break;
 		}
 		Debug.Log("GAME IS UNPAUSED!");
@@ -280,25 +268,19 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	/// also counts down the planning time activate false means to deactivate current turnhandler.
 	/// </summary>
 	void ActivateTurnHandler(bool activate){
-		//TurnOnColliders();
 		turnHandler1.gameObject.SetActive(true);
 		turnHandler2.gameObject.SetActive(true);
 
 		if (activate){
-			//gives control to the current turnhandler
-			if (currentActiveTurnhandler == turnHandler1 && !isTH1Done){
+			if (currentActiveTurnhandler == turnHandler1 && !isTH1Done){ //gives control to the current turnhandler
 				turnHandler1.Activate(true);
 				countDownPlanningTime = StartCoroutine(CountDownPlanningTime());
-
-				//make sure to deactivate the other one
-				turnHandler2.Activate(false);
+				turnHandler2.Activate(false); //deactivates the other one
 			}
 			else if (currentActiveTurnhandler == turnHandler2 && !isTH2Done){
 				turnHandler2.Activate(true);
 				countDownPlanningTime =  StartCoroutine(CountDownPlanningTime());
-
-				//make sure to deactivate the other one
-				turnHandler1.Activate(false);
+				turnHandler1.Activate(false); //deactivates the other one
 			}   
 		}
 		else {

@@ -69,7 +69,7 @@ public class ShockwaveBehaviour : MonoBehaviour {
     }
     void Start()
     {
-        AudioManager.instance.PlayAudio(awakeSound,false,gameObject);
+        AudioManager.Instance.PlayAudio(awakeSound,false,gameObject);
         
         rb2dCompontent.AddForce(moveVector);
         Vector3 diff = (Vector3)moveVector - transform.position; 

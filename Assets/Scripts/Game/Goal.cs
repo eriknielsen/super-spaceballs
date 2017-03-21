@@ -10,60 +10,42 @@ public class Goal : MonoBehaviour {
 	public static event GoalScored OnGoalScored;
 
 	[SerializeField]
-	bool Left;
+	bool left;
 
 	Text scoreText;
 	GameObject ball;
-	Animator animator;
+	GoalAnimScript goalAnimScript;
 	float prevTimeScale;
 
 	public GameObject longestCheer;
 
 	void Start(){
-		if (Left)
+		if (left)
 			scoreText = GameObject.Find("RightScore").GetComponent<Text>(); //Opposite player gets increased score (obviously)
 		else
 			scoreText = GameObject.Find("LeftScore").GetComponent<Text>();
 		score = 0;
-		animator = GameObject.Find("GoalAnimator").GetComponent<Animator>();
+		goalAnimScript = FindObjectOfType<GoalAnimScript>();
 
-        ball = FindObjectOfType<Ball>().gameObject;
+		ball = FindObjectOfType<Ball>().gameObject;
 	}
 
 	void OnTriggerEnter2D(Collider2D other){ //When ball enters goal ballposition is reset and score is increased
 		if (other.gameObject == ball){
 			GameObject.FindGameObjectWithTag("PlayController").GetComponent<IPlayBehaviour>().PreOnGoalScored();
-            StartCoroutine(GoalEvent());
+			prevTimeScale = Time.timeScale;
+			Time.timeScale = 0.5f;
+			score++;
+			scoreText.text = "" + score;
+			AudioManager.Instance.PlayAudioWithRandomPitch(longestCheer, false, gameObject);
+
+			goalAnimScript.GoalScored(left, gameObject);
 		}
 	}
 
-    IEnumerator GoalEvent()
-    {
-        prevTimeScale = Time.timeScale;
-        Time.timeScale = 0.5f;
-
-        if (Left)
-        {
-            animator.SetTrigger("ScoreOnLeft");
-        }
-        else
-        {
-            animator.SetTrigger("ScoreOnRight");
-        }
-        AudioManager.instance.PlayAudioWithRandomPitch(longestCheer, false, gameObject);
-        while (!animator.GetCurrentAnimatorStateInfo(0).IsName("End State"))
-        {
-            yield return new WaitForSeconds(0.00001f);
-        }
-        animator.SetTrigger("ResetState");
-        Time.timeScale = prevTimeScale;
-        Score();
-    }
-
-    void Score(){
+    public void ResetShit(){
 		ball.GetComponent<Ball>().ResetPosition();
+		Time.timeScale = prevTimeScale;
 		OnGoalScored();
-        score++;
-		scoreText.text = "" + score;
 	}
 }
