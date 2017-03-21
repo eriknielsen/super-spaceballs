@@ -279,8 +279,8 @@ public class TurnHandlerBehaviour : MonoBehaviour {
     }
 
     void Update(){
-		if (ToolBox.Instance.MatchOver)
-			return;
+//		if (ToolBox.Instance.MatchOver) //For endscreen
+//			return;
 		if (Input.GetKeyDown(KeyCode.Z)){
 			THSelectCommand(Command.AvailableCommands.Move);
 		}

@@ -30,6 +30,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 
 	int roundCount = 0; //number of rounds played
 	bool paused = true;
+	bool allowTurnEnd = true;
 	bool isTH1Done = false;
 	bool isTH2Done = false;
 
@@ -135,12 +136,12 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	}
 
 	void Update(){
-		if (gameTimer.IsGameOver()){ //Stops the game when time runs out ALSO STOPS OVERTIME - BUG
-			if (!ToolBox.Instance.MatchOver){ //Only ran first time IsGameOver returns true
-				UpdateTimerTexts();
-				MatchEnd();
-			}
-			return;
+		if (gameTimer.IsGameOver()){ //Stops the game when time runs out
+//			if (!ToolBox.Instance.MatchOver){ //Only ran first time IsGameOver returns true
+//				UpdateTimerTexts();
+			handleMatchEnd = StartCoroutine(MatchEnd());
+//			}
+//			return;
 		}
 		UpdateTimerTexts();
 		//restrict the amount of time a player has to plan
@@ -161,22 +162,8 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 				ActivateTurnHandler(true);
 			}
 		}
-		//listen for buttonpresses like wanting to send your move
-		if (Input.GetKeyDown(KeyCode.Return) && paused == true){
-			if (currentActiveTurnhandler == turnHandler1){
-				Debug.Log("1 is ready");
-				isTH1Done = true;
-			}
-			else if (currentActiveTurnhandler == turnHandler2){
-				Debug.Log("2 is ready");
-				isTH2Done = true;
-			}
-			StopCoroutineIfNotNull(countDownPlanningTime);
-			// if someone still isnt done then give control to that player
-			if (!isTH1Done || !isTH2Done){
-				ChooseNextCurrentTurnHandler();
-				ActivateTurnHandler(true);
-			}
+		if (Input.GetKeyDown(KeyCode.Return)){
+			EndTurn ();
 		}
 		// are both players done?
 		if (isTH1Done && isTH2Done){
@@ -192,10 +179,13 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	/// <summary>
 	/// Displays who the winner was and goes back to the main menu.
 	/// </summary>
-	void MatchEnd(){
+	IEnumerator MatchEnd(){
 		paused = false;
-		ToolBox.Instance.MatchOver = true;
+//		ToolBox.Instance.MatchOver = true;
 		//check if the score is tied, then add overtime (if not already overtime) and continue
+		StopCoroutineIfNotNull(unpauseGame);
+		StopCoroutineIfNotNull(countDownPlanningTime);
+		StopCoroutineIfNotNull(gameTimerCoroutine);
 		if (leftGoalScript.score == rightGoalScript.score && gameTimer.InOvertime() == false && overTime > 0){
 			Debug.Log("show that overtime is happening!!");
 
@@ -216,6 +206,9 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
                 Debug.Log("match was a draw!");
 			}
 		}
+		yield return new WaitForSecondsRealtime(2f);
+
+		SceneManager.LoadSceneAsync("MainMenu");
 	}
 
 	//If we replayed the last turn, we dont want to do the newturn stuff
@@ -247,7 +240,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	}
 
 	public void PauseGame(){
-		if(paused== true){
+		if(paused){
             Debug.Log("game already paused, returning");
             return;
         }
@@ -266,6 +259,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		turnHandler1.gameObject.SetActive(true);
 		turnHandler2.gameObject.SetActive(true);
 
+		AllowTurnEnd(false); //To prevent player from ending turn during animation
 		if (activate){
 			if (currentActiveTurnhandler == turnHandler1 && !isTH1Done){ //gives control to the current turnhandler
 				playerTurnAnim.SetTrigger("LeftTurn");
@@ -284,12 +278,38 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		turnHandler1.Activate(true);
 		countDownPlanningTime = StartCoroutine(CountDownPlanningTime());
 		turnHandler2.Activate(false); //deactivates
+		AllowTurnEnd(true);
 	}
 
 	public void RightTurnAnimCallback(){
 		turnHandler2.Activate(true);
 		countDownPlanningTime =  StartCoroutine(CountDownPlanningTime());
 		turnHandler1.Activate(false); //deactivates
+		AllowTurnEnd(true);
+	}
+
+	void AllowTurnEnd(bool allow){ //Visually disables End Turn button
+		//endTurnButton.button.interactable = allow;
+		allowTurnEnd = allow;
+	}
+
+	public void EndTurn(){ //Called through button
+		if (paused && allowTurnEnd){
+			if (currentActiveTurnhandler == turnHandler1){
+				Debug.Log("1 is ready");
+				isTH1Done = true;
+			}
+			else if (currentActiveTurnhandler == turnHandler2){
+				Debug.Log("2 is ready");
+				isTH2Done = true;
+			}
+			StopCoroutineIfNotNull(countDownPlanningTime);
+			// if someone still isnt done then give control to that player
+			if (!isTH1Done || !isTH2Done){
+				ChooseNextCurrentTurnHandler();
+				ActivateTurnHandler(true);
+			}
+		}
 	}
 
 	void NewTurn(){

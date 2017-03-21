@@ -145,14 +145,10 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 					Debug.Log("unpausing since time ran out");
 				}
             }
-            else if (Input.GetKeyDown(KeyCode.Return) && paused == true && localIsReady == false){
-                SendCommands();
-                localIsReady = true;
-                //change color of the plantime to show that we are waiting for the other player
-                planTimeText.color = otherTeamPlanColor;
+            else if (Input.GetKeyDown(KeyCode.Return)){
+				EndTurn();
             }
-            //if we are server, tell the other client to unpause 
-            // as well as unpause the server
+			//if we are server, unpause the server and tell the other client to unpause
             else if (remoteIsReady && localIsReady && customIsServer && paused == true){
                 server.SendUnpauseGame();
                 UnpauseGameCoroutine = StartCoroutine(UnpauseGame());
@@ -310,6 +306,15 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 
 	public void RightTurnAnimCallback(){
 		//Called after turn animation finishes, start counting down plantime here
+	}
+
+	public void EndTurn(){ //Called through button
+		if (paused == true && localIsReady == false){
+			SendCommands();
+			localIsReady = true;
+			//change color of the plantime to show that we are waiting for the other player
+			planTimeText.color = otherTeamPlanColor;
+		}
 	}
 
     /// <summary>
