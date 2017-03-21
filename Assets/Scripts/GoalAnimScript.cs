@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class GoalAnimScript : MonoBehaviour {
 
-	GameObject goal;
+	Goal goal;
 	Animator animator;
 
 	void Start(){
 		animator = GetComponent<Animator>();
 	}
 
-	public void GoalScored(bool left, GameObject goalE){
+	public void GoalScored(bool left, Goal goalE){
 		goal = goalE;
 		if (left)
 			animator.SetTrigger("GoalOnLeft");
@@ -20,6 +20,6 @@ public class GoalAnimScript : MonoBehaviour {
 	}
 
 	void AfterGoalAnim(){ //Animation event called at end of animation, same on both goals
-		goal.GetComponent<Goal>().ResetShit();
+		goal.ResetShit();
 	}
 }
