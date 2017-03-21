@@ -172,11 +172,12 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 
             //if it was because we were descyned then idk, do something!
             
-            PauseGame(true);
+            PauseGame();
         }
        
     }
     public void PreOnGoalScored(){
+        StopCoroutine(UnpauseGameCoroutine);
         StopCoroutine(gameTimerCoroutine);
     }
     IEnumerator CountDownPlanningTime(){
@@ -222,7 +223,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         //if possible, display winner!
         else
         {
-            PauseGame(false);
+            PauseGame();
             //left won!
             if (leftGoal.score > rightGoal.score)
             {
@@ -261,7 +262,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         }
     }
     
-    IEnumerator UnpauseGame()
+    public IEnumerator UnpauseGame()
     {
         if(paused == false){
             Debug.Log("breaking from unpause");
@@ -284,9 +285,9 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         yield return new WaitForSeconds(roundTime);
         
       
-        PauseGame(false);
+        PauseGame();
     }
-    void PauseGame(bool asGoalScored)
+    public void PauseGame()
     {
      
         if(paused== true){
