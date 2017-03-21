@@ -6,6 +6,8 @@ public interface IPlayBehaviour {
 
     void SelectCommand(Command.AvailableCommands command);
     void DeselectRobot();
+	void LeftTurnAnimCallback();
+	void RightTurnAnimCallback();
 
     void PreOnGoalScored();
 }

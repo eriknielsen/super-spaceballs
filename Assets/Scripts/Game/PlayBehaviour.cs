@@ -281,22 +281,28 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 
 		if (activate){
 			if (currentActiveTurnhandler == turnHandler1 && !isTH1Done){ //gives control to the current turnhandler
-                playerTurnAnim.GetComponent<Animator>().SetTrigger("GoalOnLeft");
-				turnHandler1.Activate(true);
-				countDownPlanningTime = StartCoroutine(CountDownPlanningTime());
-				turnHandler2.Activate(false); //deactivates the other one
+				playerTurnAnim.SetTrigger("LeftTurn");
 			}
 			else if (currentActiveTurnhandler == turnHandler2 && !isTH2Done){
-                playerTurnAnim.GetComponent<Animator>().SetTrigger("GoalOnRight");
-				turnHandler2.Activate(true);
-				countDownPlanningTime =  StartCoroutine(CountDownPlanningTime());
-				turnHandler1.Activate(false); //deactivates the other one
+				playerTurnAnim.SetTrigger("RightTurn");
 			}   
 		}
 		else {
 			turnHandler1.Activate(false);
 			turnHandler2.Activate(false);
 		}
+	}
+
+	public void LeftTurnAnimCallback(){
+		turnHandler1.Activate(true);
+		countDownPlanningTime = StartCoroutine(CountDownPlanningTime());
+		turnHandler2.Activate(false); //deactivates
+	}
+
+	public void RightTurnAnimCallback(){
+		turnHandler2.Activate(true);
+		countDownPlanningTime =  StartCoroutine(CountDownPlanningTime());
+		turnHandler1.Activate(false); //deactivates
 	}
 
 	void NewTurn(){
