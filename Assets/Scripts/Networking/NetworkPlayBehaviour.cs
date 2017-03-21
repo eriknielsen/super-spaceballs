@@ -120,7 +120,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         if(gameTimer.IsGameOver()){
             StartCoroutine(HandleMatchEnd());
         }
-         UpdateTimerTexts();
+        UpdateTimerTexts();
 
         if(paused){
             //if time is out then

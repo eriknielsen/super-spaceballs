@@ -21,14 +21,15 @@ public class TimeInput : MonoBehaviour {
 	Vector3 deltaPosition;
 	RobotBehaviour selectedRB;
 
-	void Start(){
+	void Awake(){
 		cursorText = GameObject.Find("CursorText").GetComponent<Text>();
 		shockwaveLife = shockwavePrefab.GetComponent<ShockwaveBehaviour>().intendedLifetime;
 		HideCursorText();
 	}
 
 	public void HideCursorText(){
-		cursorText.text = "";
+        Debug.Log(cursorText);
+        cursorText.text = "";
 		Cursor.visible = true;
 	}
 

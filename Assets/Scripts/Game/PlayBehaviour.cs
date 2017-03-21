@@ -40,6 +40,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	Ball ball;
 	Goal leftGoalScript;
 	Goal rightGoalScript;
+	Button endTurnButton;
 	GameTimer gameTimer;
 	Coroutine unpauseGame;
 	Coroutine handleMatchEnd;
@@ -50,7 +51,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	[SerializeField]
 	TurnHandlerBehaviour turnHandler2;
 	TurnHandlerBehaviour currentActiveTurnhandler;
-	Animator endOfMatchAnim, playerTurnAnim;
+	Animator endOfMatchAnim, playerTurnAnim, overtimeAnim;
 
 	void Start(){
 		Physics.queriesHitTriggers = true;
@@ -59,6 +60,8 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		rightGoalScript = GameObject.Find("RightGoal").GetComponent<Goal>();
         endOfMatchAnim = GameObject.Find("EndOfMatchAnimation").GetComponent<Animator>();
 		playerTurnAnim = GameObject.Find("PlayerTurnAnimation").GetComponent<Animator>();
+        overtimeAnim = GameObject.Find("OvertimeAnimation").GetComponent<Animator>();
+		endTurnButton = GameObject.Find("EndTurnButton").GetComponent<Button>();
 
 		//event callbacks for scoring
 		if (leftGoalScript != null || rightGoalScript != null){
@@ -182,13 +185,14 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	IEnumerator MatchEnd(){
 		paused = false;
 //		ToolBox.Instance.MatchOver = true;
-		//check if the score is tied, then add overtime (if not already overtime) and continue
+
 		StopCoroutineIfNotNull(unpauseGame);
 		StopCoroutineIfNotNull(countDownPlanningTime);
 		StopCoroutineIfNotNull(gameTimerCoroutine);
+		//check if the score is tied, then add overtime (if not already overtime) and continue
 		if (leftGoalScript.score == rightGoalScript.score && gameTimer.InOvertime() == false && overTime > 0){
 			Debug.Log("show that overtime is happening!!");
-
+            overtimeAnim.SetTrigger("Overtime");
 			gameTimer.AddOvertime(overTime);
 		}
 		else { //if possible, display winner!
@@ -206,9 +210,9 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
                 Debug.Log("match was a draw!");
 			}
 		}
-		yield return new WaitForSecondsRealtime(2f);
+		yield return new WaitForSecondsRealtime(5f);
 
-		SceneManager.LoadSceneAsync("MainMenu");
+		SceneManager.LoadScene("MainMenu");
 	}
 
 	//If we replayed the last turn, we dont want to do the newturn stuff
@@ -289,7 +293,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	}
 
 	void AllowTurnEnd(bool allow){ //Visually disables End Turn button
-		//endTurnButton.button.interactable = allow;
+		endTurnButton.interactable = allow;
 		allowTurnEnd = allow;
 	}
 
