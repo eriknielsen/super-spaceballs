@@ -43,6 +43,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	Coroutine unpauseGame;
 	Coroutine handleMatchEnd;
 	Coroutine countDownPlanningTime;
+    Coroutine gameTimerCoroutine;
 	[SerializeField]
 	TurnHandlerBehaviour turnHandler1;
 	[SerializeField]
@@ -186,7 +187,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 			StopCoroutineIfNotNull(countDownPlanningTime);
 			//then play the game and pause again in roundTime seconds
 
-			StartCoroutine(UnpauseGame());
+			unpauseGame = StartCoroutine(UnpauseGame());
 			isTH1Done = false;
 			isTH2Done = false;
 		}
@@ -236,7 +237,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	}
 
 	//If we replayed the last turn, we dont want to do the newturn stuff
-	IEnumerator UnpauseGame(){
+	public IEnumerator UnpauseGame(){
 		if(paused == false){
 			Debug.Log("game was already unpaused, breaking");
 			yield break;
@@ -253,7 +254,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		turnHandler1.UnpauseGame();
 		turnHandler2.UnpauseGame();
 
-		StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
+        gameTimerCoroutine = StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
 
 		yield return new WaitForSeconds(roundTime);
 
@@ -263,7 +264,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		PauseGame();
 	}
 
-	void PauseGame(){
+	public void PauseGame(){
 		if(paused== true){
             Debug.Log("game already paused, returning");
             return;
@@ -346,5 +347,9 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		currentActiveTurnhandler.THSelectCommand(command);
 	}
 
-    public void PreOnGoalScored() { }
+    public void PreOnGoalScored()
+    {
+        StopCoroutine(unpauseGame);
+        StopCoroutine(gameTimerCoroutine);
+    }
 }

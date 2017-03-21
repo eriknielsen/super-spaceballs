@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class TurnHandlerBehaviour : MonoBehaviour
 {
-
     public List<Move> moves;
 	public int Turns { get { return turns; } }
 	public int CurrentPlanTimeLeft { get; set; }

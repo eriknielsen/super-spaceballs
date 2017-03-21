@@ -8,6 +8,4 @@ public interface IPlayBehaviour  {
     void DeselectRobot();
 
     void PreOnGoalScored();
-
-
 }
