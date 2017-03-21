@@ -8,8 +8,8 @@ public class MainMenuQuitButton : MonoBehaviour {
 	private MainMenu menuHandler;
 
 	void Awake(){
-		menuHandler = GameObject.FindWithTag("MenuHandler").GetComponent<MainMenu>();
-		GetComponent<Button>().colors = ToolBox.Instance.buttonColors;
+		GetComponent<Button>().colors = ToolBox.Instance.ButtonColors;
+		menuHandler = FindObjectOfType<MainMenu>();
 	}
 
 	public void OnClick(){

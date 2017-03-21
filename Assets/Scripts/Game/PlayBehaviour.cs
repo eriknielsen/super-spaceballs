@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local play
 
@@ -49,14 +49,15 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	[SerializeField]
 	TurnHandlerBehaviour turnHandler2;
 	TurnHandlerBehaviour currentActiveTurnhandler;
-    Animator endOfMatchAnimator;
+	Animator endOfMatchAnim, playerTurnAnim;
 
 	void Start(){
 		Physics.queriesHitTriggers = true;
 		ball = GameObject.Find("Ball").GetComponent<Ball>();
 		leftGoalScript = GameObject.Find("LeftGoal").GetComponent<Goal>();
 		rightGoalScript = GameObject.Find("RightGoal").GetComponent<Goal>();
-        endOfMatchAnimator = GameObject.Find("EndOfMatchAnimation").GetComponent<Animator>();
+        endOfMatchAnim = GameObject.Find("EndOfMatchAnimation").GetComponent<Animator>();
+		playerTurnAnim = GameObject.Find("PlayerTurnAnimation").GetComponent<Animator>();
 
 		//event callbacks for scoring
 		if (leftGoalScript != null || rightGoalScript != null){
@@ -93,15 +94,14 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		}
 		if (planTimeText != null && currentActiveTurnhandler != null && paused == true){
 			if (currentActiveTurnhandler == turnHandler2)
-				planTimeText.color = ToolBox.Instance.rightTeamColor;
+				planTimeText.color = ToolBox.Instance.RightTeamColor;
 			else
-				planTimeText.color = ToolBox.Instance.leftTeamColor;
+				planTimeText.color = ToolBox.Instance.LeftTeamColor;
 			planTimeText.text = "" + (int)currentActiveTurnhandler.CurrentPlanTimeLeft;
 		}
 	}
 
-	void OnScore()
-	{
+	void OnScore(){
 		//tell gametimer and the unpause to stop
 		StopAllCoroutines();
         //do waht unpause does at the end
@@ -110,6 +110,11 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		NewTurn();
 		PauseGame();
 		//robots reset their position by listening to the same event
+	}
+
+	void OnDestroy(){
+		StopAllCoroutines();
+		Goal.OnGoalScored -= new Goal.GoalScored(OnScore); 
 	}
 
 	/// <summary>
@@ -130,8 +135,12 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	}
 
 	void Update(){
-		if (gameTimer.IsGameOver()){ //if gametime has run out, do stuff!
-			StartCoroutine(HandleMatchEnd());
+		if (gameTimer.IsGameOver()){ //Stops the game when time runs out ALSO STOPS OVERTIME - BUG
+			if (!ToolBox.Instance.MatchOver){ //Only ran first time IsGameOver returns true
+				UpdateTimerTexts();
+				MatchEnd();
+			}
+			return;
 		}
 		UpdateTimerTexts();
 		//restrict the amount of time a player has to plan
@@ -141,12 +150,10 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 				//if the player ran out of time, set them to ready
 				Debug.Log("current player ran out of plan time, setting it to ready");
 
-				if (currentActiveTurnhandler == turnHandler1)
-				{
+				if (currentActiveTurnhandler == turnHandler1){
 					isTH1Done = true;
 				}
-				else if (currentActiveTurnhandler == turnHandler2)
-				{
+				else if (currentActiveTurnhandler == turnHandler2){
 					isTH2Done = true;
 				}
 				StopCoroutineIfNotNull(countDownPlanningTime);
@@ -185,42 +192,29 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	/// <summary>
 	/// Displays who the winner was and goes back to the main menu.
 	/// </summary>
-	IEnumerator HandleMatchEnd()
-	{
+	void MatchEnd(){
+		paused = false;
+		ToolBox.Instance.MatchOver = true;
 		//check if the score is tied, then add overtime (if not already overtime) and continue
-		if (leftGoalScript.score == rightGoalScript.score && gameTimer.InOvertime() == false && overTime > 0)
-		{
+		if (leftGoalScript.score == rightGoalScript.score && gameTimer.InOvertime() == false && overTime > 0){
 			Debug.Log("show that overtime is happening!!");
 
 			gameTimer.AddOvertime(overTime);
 		}
-		else //if possible, display winner!
-		{
+		else { //if possible, display winner!
 			PauseGame();
-			if (leftGoalScript.score > rightGoalScript.score)
-			{
-                endOfMatchAnimator.SetTrigger("RightWin");
+			if (leftGoalScript.score > rightGoalScript.score){
+                endOfMatchAnim.SetTrigger("RightWin");
 				Debug.Log("left team won!");
 			}
-			else if (rightGoalScript.score > leftGoalScript.score)
-			{
-                endOfMatchAnimator.SetTrigger("LeftWin");
+			else if (rightGoalScript.score > leftGoalScript.score){
+                endOfMatchAnim.SetTrigger("LeftWin");
 				Debug.Log("right team won!");
 			}
-			else if(rightGoalScript.score == leftGoalScript.score)
-			{
-                endOfMatchAnimator.SetTrigger("Draw");
+			else if(rightGoalScript.score == leftGoalScript.score){
+                endOfMatchAnim.SetTrigger("Draw");
                 Debug.Log("match was a draw!");
 			}
-
-            while(!endOfMatchAnimator.GetCurrentAnimatorStateInfo(0).IsName("End Game"))
-            {
-                yield return new WaitForSeconds(0.00001f);
-            }
-			//Wait a bit, then change scene to mainmenu
-			StopAllCoroutines();
-            
-			SceneManager.LoadSceneAsync("MainMenu");
 		}
 	}
 

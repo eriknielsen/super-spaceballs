@@ -5,15 +5,11 @@ using UnityEngine.UI;
 
 public class PlayFieldToggleOptionsButton : MonoBehaviour {
 
-	private PlayFieldMenu menuHandler;
+	PlayFieldMenu menuHandler;
 
 	void Awake(){
-		menuHandler = GameObject.FindWithTag("MenuHandler").GetComponent<PlayFieldMenu>();
-		
-		
-	}
-	void Start(){
-GetComponent<Button>().colors = ToolBox.Instance.buttonColors;
+		GetComponent<Button>().colors = ToolBox.Instance.ButtonColors;
+		menuHandler = FindObjectOfType<PlayFieldMenu>();
 	}
 
 	public void OnClick(){

@@ -95,13 +95,13 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             Debug.Log("couldint find goals :(");
         }
         if (playerTurnhandler == rightTurnhandlerInScene){
-			activePlanTimeColor = ToolBox.Instance.rightTeamColor;
-			otherTeamPlanColor = ToolBox.Instance.leftTeamColor;
+			activePlanTimeColor = ToolBox.Instance.RightTeamColor;
+			otherTeamPlanColor = ToolBox.Instance.LeftTeamColor;
         }
         else {
             Debug.Log(leftGoal+ " rightGoal " + rightGoal);
-            activePlanTimeColor = ToolBox.Instance.leftTeamColor;
-			otherTeamPlanColor = ToolBox.Instance.rightTeamColor;
+            activePlanTimeColor = ToolBox.Instance.LeftTeamColor;
+			otherTeamPlanColor = ToolBox.Instance.RightTeamColor;
         }
         
         gameTimer = new GameTimer(matchTime);

@@ -8,8 +8,8 @@ public class PlayFieldQuitButton : MonoBehaviour {
 	private PlayFieldMenu menuHandler;
 
 	void Awake(){
-		menuHandler = GameObject.FindWithTag("MenuHandler").GetComponent<PlayFieldMenu>();
-		GetComponent<Button>().colors = ToolBox.Instance.buttonColors;
+		GetComponent<Button>().colors = ToolBox.Instance.ButtonColors;
+		menuHandler = FindObjectOfType<PlayFieldMenu>();
 	}
 
 	public void OnClick(){
