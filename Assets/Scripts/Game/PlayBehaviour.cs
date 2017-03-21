@@ -49,7 +49,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	[SerializeField]
 	TurnHandlerBehaviour turnHandler2;
 	TurnHandlerBehaviour currentActiveTurnhandler;
-	Animator endOfMatchAnim, playerTurnAnim;
+	Animator endOfMatchAnim, playerTurnAnim, overtimeAnim;
 
 	void Start(){
 		Physics.queriesHitTriggers = true;
@@ -58,6 +58,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		rightGoalScript = GameObject.Find("RightGoal").GetComponent<Goal>();
         endOfMatchAnim = GameObject.Find("EndOfMatchAnimation").GetComponent<Animator>();
 		playerTurnAnim = GameObject.Find("PlayerTurnAnimation").GetComponent<Animator>();
+        overtimeAnim = GameObject.Find("OvertimeAnimation").GetComponent<Animator>();
 
 		//event callbacks for scoring
 		if (leftGoalScript != null || rightGoalScript != null){
@@ -198,7 +199,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		//check if the score is tied, then add overtime (if not already overtime) and continue
 		if (leftGoalScript.score == rightGoalScript.score && gameTimer.InOvertime() == false && overTime > 0){
 			Debug.Log("show that overtime is happening!!");
-
+            overtimeAnim.SetTrigger("Overtime");
 			gameTimer.AddOvertime(overTime);
 		}
 		else { //if possible, display winner!
@@ -217,6 +218,18 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 			}
 		}
 	}
+
+    void RunPlayerTurnAnimation()
+    {
+        if(currentActiveTurnhandler == turnHandler1)
+        {
+            playerTurnAnim.GetComponent<Animator>().SetTrigger("GoalOnLeft");
+        }
+        else if (currentActiveTurnhandler == turnHandler2)
+        {
+            playerTurnAnim.GetComponent<Animator>().SetTrigger("GoalOnRight");
+        }
+    }
 
 	//If we replayed the last turn, we dont want to do the newturn stuff
 	public IEnumerator UnpauseGame(){
@@ -268,13 +281,13 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 
 		if (activate){
 			if (currentActiveTurnhandler == turnHandler1 && !isTH1Done){ //gives control to the current turnhandler
-				GameObject.Find("PlayerTurnAnimation").GetComponent<Animator>().SetTrigger("GoalOnLeft");
+                playerTurnAnim.GetComponent<Animator>().SetTrigger("GoalOnLeft");
 				turnHandler1.Activate(true);
 				countDownPlanningTime = StartCoroutine(CountDownPlanningTime());
 				turnHandler2.Activate(false); //deactivates the other one
 			}
 			else if (currentActiveTurnhandler == turnHandler2 && !isTH2Done){
-				GameObject.Find("PlayerTurnAnimation").GetComponent<Animator>().SetTrigger("GoalOnRight");
+                playerTurnAnim.GetComponent<Animator>().SetTrigger("GoalOnRight");
 				turnHandler2.Activate(true);
 				countDownPlanningTime =  StartCoroutine(CountDownPlanningTime());
 				turnHandler1.Activate(false); //deactivates the other one

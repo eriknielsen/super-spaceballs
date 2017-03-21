@@ -43,9 +43,9 @@ public class Goal : MonoBehaviour {
 		}
 	}
 
-    public void ResetShit(){
-		ball.GetComponent<Ball>().ResetPosition();
-		Time.timeScale = prevTimeScale;
-		OnGoalScored();
-	}
+    public void Score(){
+        ball.GetComponent<Ball>().ResetPosition();
+        Time.timeScale = prevTimeScale;
+        OnGoalScored();
+    }
 }
