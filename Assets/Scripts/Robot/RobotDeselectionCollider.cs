@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class RobotDeselectionCollider : MonoBehaviour {
 
-    IPlayBehaviour pb;
+    IPlayBehaviour playBehaviour;
 
     void Start(){
-        pb = GameObject.FindGameObjectWithTag("PlayController").GetComponent<IPlayBehaviour>();
+		playBehaviour = GameObject.FindGameObjectWithTag("PlayController").GetComponent<IPlayBehaviour>();
     }
 
 	void OnMouseDown(){
         if (Input.GetMouseButtonDown(0))
-            pb.DeselectRobot();
+			playBehaviour.DeselectRobot();
 	}
 }
