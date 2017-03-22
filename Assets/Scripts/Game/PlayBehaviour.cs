@@ -170,7 +170,8 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		if (gameTimer.NoRemainingTime()){
 			if (leftGoalScript.score == rightGoalScript.score && !gameTimer.InOvertime && overTime > 0){
 				gameTimer.AddOvertime(overTime);
-			} else {
+                gameTimeText.color = ToolBox.Instance.MatchTimeWhenOvertimeColor;
+            } else {
 				handleMatchEnd = StartCoroutine(MatchEnd());
 			}
 		}

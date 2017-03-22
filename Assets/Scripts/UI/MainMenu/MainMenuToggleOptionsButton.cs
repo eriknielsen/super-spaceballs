@@ -7,7 +7,7 @@ public class MainMenuToggleOptionsButton : MonoBehaviour {
 
 	private MainMenu menuHandler;
 
-	void Awake(){
+	void Start(){
 		GetComponent<Button>().colors = ToolBox.Instance.ButtonColors;
 		menuHandler = FindObjectOfType<MainMenu>();
 	}

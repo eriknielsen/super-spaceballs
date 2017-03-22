@@ -6,9 +6,13 @@ public class TurnCallback : MonoBehaviour {
 
 	IPlayBehaviour playBehaviour;
 
-	void Start(){
-		playBehaviour = GameObject.FindGameObjectWithTag("PlayController").GetComponent<PlayBehaviour>();
-	}
+	void Awake(){
+        playBehaviour = FindObjectOfType<PlayBehaviour>();
+        if(playBehaviour == null)
+        {
+            playBehaviour = FindObjectOfType<NetworkPlayBehaviour>();
+        }
+    }
 
 	void LeftTurn(){
 		playBehaviour.LeftTurnAnimCallback();

@@ -9,8 +9,16 @@ public class ToolBox : MonoBehaviour { //Not a true toolbox? http://wiki.unity3d
 	public ColorBlock ButtonColors; //For easy setting of all ingame button colors
 	public Color32 LeftTeamColor;
 	public Color32 RightTeamColor;
+    [SerializeField]
+    private Color32 matchTimeWhenOvertimeColor;
 
-	public static ToolBox Instance = null;
+    public Color32 MatchTimeWhenOvertimeColor
+    {
+        get { return matchTimeWhenOvertimeColor;  }
+    }
+
+
+    public static ToolBox Instance = null;
 
 	void Awake(){
 		if (Instance == null)

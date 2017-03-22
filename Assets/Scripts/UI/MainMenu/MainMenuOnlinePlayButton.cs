@@ -7,12 +7,13 @@ public class MainMenuOnlinePlayButton : MonoBehaviour {
 
 	private MainMenu menuHandler;
 
-	void Awake(){
-		GetComponent<Button>().colors = ToolBox.Instance.ButtonColors;
-		menuHandler = FindObjectOfType<MainMenu>();
-	}
+    void Start()
+    {
+        GetComponent<Button>().colors = ToolBox.Instance.ButtonColors;
+        menuHandler = FindObjectOfType<MainMenu>();
+    }
 
-	public void OnClick(){
+    public void OnClick(){
 		menuHandler.OnlinePlay();
 	}
 }
