@@ -13,11 +13,6 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	/// length of a whole match
 	/// </summary>
 	public int matchTime;
-	/// <summary>
-	/// length of a player's planing phase
-	/// </summary>
-	public float RoundTime { get { return roundTime; } }
-
 	/// length of overtime to be added ONCE
 	/// </summary>
 	public int overTime;
@@ -27,8 +22,13 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	/// </summary>
 	public int planTime;
 
+	[SerializeField]
+	TurnHandlerBehaviour turnHandler1;
+	[SerializeField]
+	TurnHandlerBehaviour turnHandler2;
 
 	int roundCount = 0; //number of rounds played
+	bool animatingOvertime = false;
 	bool paused = true;
 	bool allowTurnEnd = true;
 	bool isTH1Done = false;
@@ -46,12 +46,9 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	Coroutine handleMatchEnd;
 	Coroutine countDownPlanningTime;
     Coroutine gameTimerCoroutine;
-	[SerializeField]
-	TurnHandlerBehaviour turnHandler1;
-	[SerializeField]
-	TurnHandlerBehaviour turnHandler2;
 	TurnHandlerBehaviour currentActiveTurnhandler;
-	Animator endOfMatchAnim, playerTurnAnim, overtimeAnim;
+	Animator endOfMatchAnim, playerTurnAnim;
+	OvertimeAnimScript overtimeAnimScript;
 
 	void Start(){
 		Physics.queriesHitTriggers = true;
@@ -60,15 +57,14 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		rightGoalScript = GameObject.Find("RightGoal").GetComponent<Goal>();
         endOfMatchAnim = GameObject.Find("EndOfMatchAnimation").GetComponent<Animator>();
 		playerTurnAnim = GameObject.Find("PlayerTurnAnimation").GetComponent<Animator>();
-        overtimeAnim = GameObject.Find("OvertimeAnimation").GetComponent<Animator>();
+		overtimeAnimScript = GameObject.Find("OvertimeAnimation").GetComponent<OvertimeAnimScript>();
 		endTurnButton = GameObject.Find("EndTurnButton").GetComponent<Button>();
 
 		//event callbacks for scoring
 		if (leftGoalScript != null || rightGoalScript != null){
 			Goal.OnGoalScored += new Goal.GoalScored(OnScore); 
-		}
-		else {
-			Debug.Log("couldint find goals :(");
+		} else {
+			Debug.Log("couldn't find goals :(");
 		}
 		gameTimer = new GameTimer(matchTime);
 		if (gameTimeText == null){
@@ -96,7 +92,7 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		if (gameTimeText != null){
 			gameTimeText.text = zeroBeforeMin + gameTimer.MinutesRemaining() + ":" + zeroBeforeSec + gameTimer.SecondsRemaining();
 		}
-		if (planTimeText != null && currentActiveTurnhandler != null && paused == true){
+		if (planTimeText != null && currentActiveTurnhandler != null && paused){
 			if (currentActiveTurnhandler == turnHandler2)
 				planTimeText.color = ToolBox.Instance.RightTeamColor;
 			else
@@ -139,25 +135,18 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	}
 
 	void Update(){
-		if (gameTimer.IsGameOver()){ //Stops the game when time runs out
-//			if (!ToolBox.Instance.MatchOver){ //Only ran first time IsGameOver returns true
-//				UpdateTimerTexts();
-			handleMatchEnd = StartCoroutine(MatchEnd());
-//			}
-//			return;
+		if (ToolBox.Instance.MatchOver){ //Stop doing stuff if match is over
+			return;
 		}
+		OutOfGametimeCheck();
 		UpdateTimerTexts();
-		//restrict the amount of time a player has to plan
-		if (paused == true && currentActiveTurnhandler != null){
-			//if the player still hasn't run out of time, decrease it!
-			if(currentActiveTurnhandler.CurrentPlanTimeLeft <= 0){ 
-				//if the player ran out of time, set them to ready
-				Debug.Log("current player ran out of plan time, setting it to ready");
 
+		if (paused == true && currentActiveTurnhandler != null){ //Limit player plantime
+			if (currentActiveTurnhandler.CurrentPlanTimeLeft <= 0){ //Decrease remaining plantime if above 0
+				Debug.Log("current player ran out of plan time, setting it to ready");
 				if (currentActiveTurnhandler == turnHandler1){
 					isTH1Done = true;
-				}
-				else if (currentActiveTurnhandler == turnHandler2){
+				} else if (currentActiveTurnhandler == turnHandler2){
 					isTH2Done = true;
 				}
 				StopCoroutineIfNotNull(countDownPlanningTime);
@@ -166,12 +155,10 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 			}
 		}
 		if (Input.GetKeyDown(KeyCode.Return)){
-			EndTurn ();
+			EndTurn();
 		}
-		// are both players done?
 		if (isTH1Done && isTH2Done){
-			StopCoroutineIfNotNull(countDownPlanningTime);
-			//then play the game and pause again in roundTime seconds
+			StopCoroutineIfNotNull(countDownPlanningTime); //Start planning phases on both turn handlers when the play phase is finished?
 
 			unpauseGame = StartCoroutine(UnpauseGame());
 			isTH1Done = false;
@@ -179,50 +166,51 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		}
 	}
 
+	void OutOfGametimeCheck(){
+		if (gameTimer.NoRemainingTime()){
+			if (leftGoalScript.score == rightGoalScript.score && !gameTimer.InOvertime && overTime > 0){
+				gameTimer.AddOvertime(overTime);
+			} else {
+				handleMatchEnd = StartCoroutine(MatchEnd());
+			}
+		}
+	}
 	/// <summary>
 	/// Displays who the winner was and goes back to the main menu.
 	/// </summary>
 	IEnumerator MatchEnd(){
 		paused = false;
-//		ToolBox.Instance.MatchOver = true;
+		ToolBox.Instance.MatchOver = true;
 
 		StopCoroutineIfNotNull(unpauseGame);
 		StopCoroutineIfNotNull(countDownPlanningTime);
 		StopCoroutineIfNotNull(gameTimerCoroutine);
-		//check if the score is tied, then add overtime (if not already overtime) and continue
-		if (leftGoalScript.score == rightGoalScript.score && gameTimer.InOvertime() == false && overTime > 0){
-			Debug.Log("show that overtime is happening!!");
-            overtimeAnim.SetTrigger("Overtime");
-			gameTimer.AddOvertime(overTime);
+		PauseGame();
+
+		if (leftGoalScript.score > rightGoalScript.score){
+               endOfMatchAnim.SetTrigger("RightWin");
+			Debug.Log("left team won!");
 		}
-		else { //if possible, display winner!
-			PauseGame();
-			if (leftGoalScript.score > rightGoalScript.score){
-                endOfMatchAnim.SetTrigger("RightWin");
-				Debug.Log("left team won!");
-			}
-			else if (rightGoalScript.score > leftGoalScript.score){
-                endOfMatchAnim.SetTrigger("LeftWin");
-				Debug.Log("right team won!");
-			}
-			else if(rightGoalScript.score == leftGoalScript.score){
-                endOfMatchAnim.SetTrigger("Draw");
-                Debug.Log("match was a draw!");
-			}
+		else if (rightGoalScript.score > leftGoalScript.score){
+            endOfMatchAnim.SetTrigger("LeftWin");
+			Debug.Log("right team won!");
+		}
+		else if(rightGoalScript.score == leftGoalScript.score){
+            endOfMatchAnim.SetTrigger("Draw");
+            Debug.Log("match was a draw!");
 		}
 		yield return new WaitForSecondsRealtime(5f);
 
 		SceneManager.LoadScene("MainMenu");
+		ToolBox.Instance.MatchOver = false; //Resets it on scene change since the ToolBox is persistent
 	}
 
-	//If we replayed the last turn, we dont want to do the newturn stuff
-	public IEnumerator UnpauseGame(){
+	public IEnumerator UnpauseGame(){ //This is the hinge of the gameloop. The loop is "paused" if NewTurn & PauseGame aren't called here.
 		if(paused == false){
 			Debug.Log("game already unpaused, breaking");
 			yield break;
 		}
 		Debug.Log("GAME IS UNPAUSED!");
-        
         paused = false;
 		Time.timeScale = 1;
 		ball.Unpause();
@@ -235,17 +223,24 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 
         gameTimerCoroutine = StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
 
+		if (gameTimer.remainingTime <= roundTime && !gameTimer.InOvertime)
+			animatingOvertime = true;
+		
 		yield return new WaitForSeconds(roundTime);
 
 		currentActiveTurnhandler = null;
-		NewTurn();
-
-		PauseGame();
+		if (animatingOvertime){
+			overtimeAnimScript.StartAnimation(this);
+		} else if (gameTimer.remainingTime <= roundTime && gameTimer.InOvertime){ //If in overtime and last turn we don't want a new turn
+		} else {
+			NewTurn();
+			PauseGame();
+		}
 	}
 
 	public void PauseGame(){
 		if(paused){
-            Debug.Log("game already paused, returning");
+            Debug.Log("Already paused, returning");
             return;
         }
 		ball.Pause();
@@ -278,22 +273,28 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		}
 	}
 
-	public void LeftTurnAnimCallback(){
+	public void LeftTurnAnimCallback(){ //Activates next turn handler and countdown when animation is done
 		turnHandler1.Activate(true);
 		countDownPlanningTime = StartCoroutine(CountDownPlanningTime());
-		turnHandler2.Activate(false); //deactivates
+		turnHandler2.Activate(false);
 		AllowTurnEnd(true);
 	}
 
 	public void RightTurnAnimCallback(){
 		turnHandler2.Activate(true);
 		countDownPlanningTime =  StartCoroutine(CountDownPlanningTime());
-		turnHandler1.Activate(false); //deactivates
+		turnHandler1.Activate(false);
 		AllowTurnEnd(true);
 	}
 
-	void AllowTurnEnd(bool allow){ //Visually disables End Turn button
-		endTurnButton.interactable = allow;
+	public void OvertimeAnimCallback(){
+		animatingOvertime = false;
+		NewTurn();
+		PauseGame();
+	}
+
+	void AllowTurnEnd(bool allow){
+		endTurnButton.interactable = allow; //Visually disables End Turn button (also functionally disables the button, but it's already disabled by the boolean)
 		allowTurnEnd = allow;
 	}
 

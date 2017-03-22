@@ -19,7 +19,7 @@ public class GoalAnimScript : MonoBehaviour {
 			animator.SetTrigger("GoalOnRight");
 	}
 
-	void AfterAnimationAction(){ //Animation event called at end of animation, same on both goals
+	void AfterAnimationAction(){ //Animation event called at end of animation
 		goal.Score();
 	}
 }

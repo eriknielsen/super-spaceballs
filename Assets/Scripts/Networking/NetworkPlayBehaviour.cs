@@ -37,6 +37,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     //number of rounds played
     int roundCount = 0;
     
+	Coroutine handleMatchEnd;
     Coroutine gameTimerCoroutine;
 	Coroutine countDownPlanningTime;
     Coroutine UnpauseGameCoroutine;
@@ -117,9 +118,15 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     }
 
     void Update(){
-        if(gameTimer.IsGameOver()){
-            StartCoroutine(HandleMatchEnd());
-        }
+		if (ToolBox.Instance.MatchOver){ return; }
+		else if (gameTimer.NoRemainingTime()){
+//			if (leftGoalScript.score == rightGoalScript.score && !gameTimer.InOvertime && overTime > 0){
+//				overtimeAnim.SetTrigger("Overtime");
+//				gameTimer.AddOvertime(overTime);
+//			} else {
+				handleMatchEnd = StartCoroutine(MatchEnd());
+//			}
+		}
         UpdateTimerTexts();
 
         if(paused){
@@ -201,9 +208,9 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         }
     }
 
-    IEnumerator HandleMatchEnd(){
+    IEnumerator MatchEnd(){
         //check if the score is tied, then add overtime (if not already overtime) and continue
-        if (leftGoal.score == rightGoal.score && gameTimer.InOvertime() == false && overTime > 0){
+        if (leftGoal.score == rightGoal.score && !gameTimer.InOvertime && overTime > 0){
             Debug.Log("show that overtime is happening!!");
             
             gameTimer.AddOvertime(overTime);
@@ -306,6 +313,10 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 
 	public void RightTurnAnimCallback(){
 		//Called after turn animation finishes, start counting down plantime here
+	}
+
+	public void OvertimeAnimCallback(){
+//		animatingOvertime = false;
 	}
 
 	public void EndTurn(){ //Called through button

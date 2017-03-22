@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class ToolBox : MonoBehaviour { //Not a true toolbox? http://wiki.unity3d.com/index.php/Toolbox http://stackoverflow.com/questions/5985661/methods-inside-enum-in-c-sharp
 
-//	public bool MatchOver; //For endscreen
+	public bool MatchOver; //For endscreen
 	public ColorBlock ButtonColors; //For easy setting of all ingame button colors
 	public Color32 LeftTeamColor;
 	public Color32 RightTeamColor;

@@ -9,6 +9,7 @@ public interface IPlayBehaviour {
 	void EndTurn();
 	void LeftTurnAnimCallback();
 	void RightTurnAnimCallback();
+	void OvertimeAnimCallback();
 
     void PreOnGoalScored();
 }

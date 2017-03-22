@@ -2,10 +2,12 @@
 using System.Collections;
 
 public class GameTimer {
-	private int matchTime;
 
 	public int remainingTime;
-    bool inOvertime;
+	public bool InOvertime { get; private set; }
+
+	int matchTime;
+
     public GameTimer(int totalMatchTime){
         matchTime = totalMatchTime;
         remainingTime = matchTime;
@@ -29,18 +31,13 @@ public class GameTimer {
     /// </summary>
     public void AddOvertime(int overtime){
         remainingTime += overtime;
-        inOvertime = true;
-    }
-
-    public bool InOvertime(){
-        return inOvertime;
+        InOvertime = true;
     }
 
     /// <summary>
     /// called from the outside to check if the matchtime has run out
     /// </summary>
-    public bool IsGameOver()
-	{ //if remaining time > 0 then false else true
+    public bool NoRemainingTime(){ //if remaining time > 0 then false else true
         return remainingTime > 0 ? false : true;
     }
 

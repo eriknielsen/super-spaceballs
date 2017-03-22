@@ -38,7 +38,7 @@ public class AudioManager : MonoBehaviour {
         PlaySound(soundObject, follow, randomPitch, callingObject.transform);
     }
 
-	void PlaySound (GameObject soundObject, bool follow, float pitch, Transform emitter){
+	void PlaySound (GameObject soundObject, bool follow, float pitch, Transform emitter){ //Maybe return a reference to the object for higher control after instantiation?
 		GameObject go = (GameObject) Instantiate(soundObject, emitter.position, Quaternion.identity); //Instantiates the sound prefab at emitter position
 		if (follow)
 			go.transform.parent = emitter; //Sets calling game object as parent so that the audio source follows it

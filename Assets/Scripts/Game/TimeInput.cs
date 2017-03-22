@@ -28,14 +28,10 @@ public class TimeInput : MonoBehaviour {
 	}
 
 	public void HideCursorText(){
-        Debug.Log(cursorText);
         cursorText.text = "";
-		Cursor.visible = true;
 	}
 
 	public float SetAndDisplay(int selectedRobotIndex, GameObject selectedRobot, Command.AvailableCommands selectedCommand, List<List<MovingTrail>> robotMovingTrails){
-
-		Cursor.visible = false;
 
 		if (selectedRobot != null && selectedCommand != Command.AvailableCommands.None){
 			selectedRB = selectedRobot.GetComponent<RobotBehaviour>();
