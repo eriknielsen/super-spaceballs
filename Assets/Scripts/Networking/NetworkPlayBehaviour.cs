@@ -173,14 +173,14 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             if(gameTimerCoroutine != null)
                 StopCoroutine(gameTimerCoroutine);
 
-            //if it was because we were descyned then idk, do something!
+            
             
             PauseGame();
         }
     }
 
     public void PreOnGoalScored(){
-        StopCoroutine(UnpauseGameCoroutine);
+        //StopCoroutine(UnpauseGameCoroutine);
         StopCoroutine(gameTimerCoroutine);
     }
     IEnumerator CountDownPlanningTime(){
@@ -250,7 +250,9 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             {
                 yield return new WaitForSeconds(0.001f);
             }
-            StopAllCoroutines();
+            //will stop this coroutine as well
+            //StopAllCoroutines();
+
             SceneManager.LoadScene("MainMenu");
         }
     }
@@ -325,6 +327,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 			localIsReady = true;
 			//change color of the plantime to show that we are waiting for the other player
 			planTimeText.color = otherTeamPlanColor;
+            playerTurnhandler.Activate(false);
 		}
 	}
 
@@ -368,8 +371,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         
         for(int i = 0; i < playerTurnhandler.Robots.Count;i++){
             if(playerTurnhandler.Robots[i].GetComponent<RobotBehaviour>().Commands.Count > 0){
-  //Debug.Log(playerTurnhandler.Robots[i].GetComponent<RobotBehaviour>().Commands[0].targetPosition.x + " y: " +  //playerTurnhandler.Robots[i].GetComponent<RobotBehaviour>().Commands[0].targetPosition.y);
-            }
+           }
         }
         ServerBehaviour.SerializableCommandList scList = new ServerBehaviour.SerializableCommandList();
 
@@ -399,8 +401,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
                 }
             }
         }
-        //Debug.Log(scList.Count + " commands added to the list, asking serverbheaviour to send them!");
-        server.SendCommands(scList);
+       server.SendCommands(scList);
     }
 
     //Message callbacks
@@ -449,6 +450,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
             return;
         }
         if(customIsServer == false){
+            PauseGame();
             ServerBehaviour.SyncStateMsg msg = netMsg.ReadMessage<ServerBehaviour.SyncStateMsg>();
             //the buffer msg consists of
             //3 pairs of positions and a velocity (both type of Position)
@@ -513,11 +515,8 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 
                     break;
                 }
-               
             }
-            
         }
-        
     }
     
     //####
