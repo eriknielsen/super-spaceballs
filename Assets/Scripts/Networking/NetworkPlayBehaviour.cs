@@ -100,6 +100,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         otherTurnhandler.Activate(false);
         countDownPlanningTime = StartCoroutine(CountDownPlanningTime());
         allowTurnEnd = true;
+        
     }
 
     void InititializeGame(){
@@ -222,6 +223,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 			if (leftGoal.score == rightGoal.score && !gameTimer.InOvertime && overTime > 0){
 				gameTimer.AddOvertime(overTime);
                 gameTimeText.color = ToolBox.Instance.MatchTimeWhenOvertimeColor;
+                PauseGame();
             } else {
 				handleMatchEnd = StartCoroutine(MatchEnd());
 			}
@@ -287,7 +289,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
 			overtimeAnimScript.StartAnimation(this);
 		} else if (gameTimer.remainingTime <= roundTime && gameTimer.InOvertime){ //If in overtime and last turn we don't want a new turn
 		} else {
-            playerTurnhandler.currentPlanTimeLeft = planTime;
+            
 			PauseGame();
 		}
     }
@@ -305,6 +307,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         server.recivedCommands = false;
         
         planTimeText.color = activePlanTimeColor;
+        playerTurnhandler.currentPlanTimeLeft = planTime;
         playerTurnhandler.PauseGame();
         otherTurnhandler.PauseGame();
         
@@ -337,9 +340,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         playerTurnhandler.Activate(value);
     }
 	public void OvertimeAnimCallback(){
-        animatingOvertime = false;
-		PauseGame();
-        
+        animatingOvertime = false;  
 	}
     void AllowTurnEnd(bool allow){
 		endTurnButton.interactable = allow; //Visually disables End Turn button (also functionally disables the button, but it's already disabled by the boolean)

@@ -64,7 +64,6 @@ public class TurnHandlerBehaviour : MonoBehaviour {
 			robotMovingTrails.Add(new List<MovingTrail>());
             ballMovingTrails.Add(new List<MovingTrail>());
         }
-        turns = 1;
     }
 
     void Start(){
