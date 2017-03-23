@@ -68,41 +68,50 @@ public class MusicPlayer : MonoBehaviour {
 
 	public static MusicPlayer Instance = null;
 
-	void Awake(){
-		if (Instance == null)
-			Instance = this;
-		else if (Instance != this) //Makes sure there's only one instance of the script
-			Destroy(gameObject); //Goes nuclear
-		DontDestroyOnLoad(gameObject);
-	}
 
 	int nextTrackToPlay = 0;
 	bool paused = false;
 	bool repeat = false;
 	bool switchTrack = false;
 	bool firstUpdateSinceTrackSwitch = false;
-	float timeSinceFadeStart = 0;
+	float fadeTimeRemaining = 0;
 	float startVolume;
 
-	void Start(){
+	void Awake(){
+		if (Instance == null)
+			Instance = this;
+		else if (Instance != this) //Makes sure there's only one instance of the script
+			Destroy(gameObject); //Goes nuclear
+		DontDestroyOnLoad(gameObject);
 		audioSource = GetComponent<AudioSource>();
 		startVolume = audioSource.volume;
 	}
 
 	void Update(){
+		if (Input.GetKeyDown(KeyCode.RightArrow))
+			NextTrack();
+		if (Input.GetKeyDown(KeyCode.LeftArrow))
+			PreviousTrack();
+		if (Input.GetKeyDown(KeyCode.UpArrow))
+			Stop();
+		if (Input.GetKeyDown(KeyCode.DownArrow))
+			PlayPause();
+		if (Input.GetKeyDown(KeyCode.R))
+			Repeat();
+
 		if (switchTrack){
 			if (firstUpdateSinceTrackSwitch){
 				RepeatCheck ();
 				firstUpdateSinceTrackSwitch = false;
 			}
-			timeSinceFadeStart += Time.deltaTime;
-			audioSource.volume = Mathf.Lerp(fadeTime, 0, timeSinceFadeStart) * startVolume;
-			if (timeSinceFadeStart > fadeTime){
+			fadeTimeRemaining -= Time.unscaledDeltaTime;
+			audioSource.volume = Mathf.Lerp(fadeTime, 0, fadeTimeRemaining) * startVolume;
+			if (fadeTimeRemaining < 0){
 				audioSource.clip = audioClip[nextTrackToPlay];
 				if (!paused)
 					audioSource.Play();
 				audioSource.volume = startVolume;
-				timeSinceFadeStart = 0;
+				fadeTimeRemaining = 0;
 				switchTrack = false;
 			}
 		}

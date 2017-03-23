@@ -9,6 +9,7 @@ public class PlayFieldMenu : MonoBehaviour {
 	void Start(){
 		optionsMenu = GameObject.Find("IngameOptionsMenu");
 		ToggleOptionsMenu();
+		MusicPlayer.Instance.PlayPause();
 	}
 
 	public void MainMenu(){

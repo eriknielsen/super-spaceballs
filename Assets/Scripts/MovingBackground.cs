@@ -38,8 +38,8 @@ public class MovingBackground : MonoBehaviour {
 
 	void Update(){
 		for (int i = 0; i < movingObjects.Count; i++){ //Move all objects by their respective speeds and wrap them back around if out of bounds
-			movingObjects[i].transform.position = movingObjects[i].transform.position + movementSpeed[i] / (Time.deltaTime * 100000);
-//			movingObjects[i].transform.Rotate(rotationSpeed[i] / Time.deltaTime);
+			movingObjects[i].transform.position = movingObjects[i].transform.position + movementSpeed[i] * Time.unscaledDeltaTime;
+			movingObjects[i].transform.Rotate(rotationSpeed[i] * Time.unscaledDeltaTime);
 
 			if (movingObjects[i].transform.position.x > horizontalBounds){
 				HorizontalWrap(movingObjects[i], -horizontalBounds);
