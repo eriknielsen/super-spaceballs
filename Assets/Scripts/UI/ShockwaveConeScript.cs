@@ -16,20 +16,6 @@ public class ShockwaveConeScript : MonoBehaviour {
 		lastPreviewPosition = Vector2.zero;
 		sr = GetComponent<SpriteRenderer>();
 	}
-/* 
-	public void f(Vector2 point, GameObject pointToCompareWith, Vector2 hej){
-		//get direction from point and gameObject.transform.position
-		if(hej != Vector2.zero)
-			transform.position = hej;
-		else
-			transform.position = pointToCompareWith.transform.position;
-		enabled = true;
-		Vector3 diff = (Vector3)point - pointToCompareWith.transform.position; 
-
-        float rot_z = (Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg);
-        rb.rotation = rot_z;
-	}
-	*/
 	void g(){
 		sr.enabled = true;
 		if(lastPreviewPosition == Vector2.zero){

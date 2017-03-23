@@ -5,7 +5,7 @@ using UnityEngine;
 public class TurnCallback : MonoBehaviour {
 
 	IPlayBehaviour playBehaviour;
-
+	
 	void Awake(){
         playBehaviour = FindObjectOfType<PlayBehaviour>();
         if(playBehaviour == null)

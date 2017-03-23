@@ -21,8 +21,11 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     //recive commands from the server/client and give to this turnhandler
     TurnHandlerBehaviour otherTurnhandler;
 
+    public GameObject AnimationObjects;
+
     bool remoteIsReady = false;
     bool localIsReady = false;
+    bool animatingOvertime = false;
 
     public int matchTime;
     public int roundTime;
@@ -56,33 +59,47 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     //the color when the player is actually planning
     Color activePlanTimeColor;
     Color otherTeamPlanColor;
+
+    Animator endOfMatchAnim, playerTurnAnim;
+	OvertimeAnimScript overtimeAnimScript;
+    Button endTurnButton;
+    bool allowTurnEnd;
+    string localPlayerSide;
+
     
     void Start(){
         if (customIsServer){
             playerTurnhandler = rightTurnhandlerInScene;
             otherTurnhandler = leftTurnhandlerInScene;   
+            localPlayerSide = "RightTurn";
         }
         else {
             playerTurnhandler = leftTurnhandlerInScene;
             otherTurnhandler = rightTurnhandlerInScene;
+            localPlayerSide = "LeftTurn";
         }
 		matchmakingCanvas.SetActive(false);
-        endOfMatchAnimator = GameObject.Find("EndOfMatchAnimation").GetComponent<Animator>();
-
+   
+        
         ingameCanvas.SetActive(true);
-         inGameMenuHandler.SetActive(true);
+        inGameMenuHandler.SetActive(true);
         playingField.SetActive(true);
 		ball.gameObject.SetActive(true);
 		robotDeselectionCollider.SetActive(true);
 		otherTurnhandler.gameObject.SetActive(true);
 		playerTurnhandler.gameObject.SetActive(true);
 		playerTurnhandler.currentPlanTimeLeft = planTime;
-
+        AnimationObjects.SetActive(true);
+        endOfMatchAnim = GameObject.Find("EndOfMatchAnimation").GetComponent<Animator>();
+		playerTurnAnim = GameObject.Find("PlayerTurnAnimation").GetComponent<Animator>();
+		overtimeAnimScript = GameObject.Find("OvertimeAnimation").GetComponent<OvertimeAnimScript>();
+		endTurnButton = GameObject.Find("EndTurnButton").GetComponent<Button>();
         InititializeGame();
         //activate the playeturnhandler only
         playerTurnhandler.Activate(true);
         otherTurnhandler.Activate(false);
         countDownPlanningTime = StartCoroutine(CountDownPlanningTime());
+        allowTurnEnd = true;
     }
 
     void InititializeGame(){
@@ -120,12 +137,9 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     void Update(){
 		if (ToolBox.Instance.MatchOver){ return; }
 		else if (gameTimer.NoRemainingTime()){
-//			if (leftGoalScript.score == rightGoalScript.score && !gameTimer.InOvertime && overTime > 0){
-//				overtimeAnim.SetTrigger("Overtime");
-//				gameTimer.AddOvertime(overTime);
-//			} else {
-				handleMatchEnd = StartCoroutine(MatchEnd());
-//			}
+                //adds overtime or ends the game
+				OutOfGametimeCheck();
+
 		}
         UpdateTimerTexts();
 
@@ -168,19 +182,15 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     /// </summary>
     void OnScore()
     {
-        if(customIsServer != false){
+        //if(customIsServer == true){
              //pause game
             if(gameTimerCoroutine != null)
                 StopCoroutine(gameTimerCoroutine);
-
-            
-            
             PauseGame();
-        }
+        //}
     }
-
+  
     public void PreOnGoalScored(){
-        //StopCoroutine(UnpauseGameCoroutine);
         StopCoroutine(gameTimerCoroutine);
     }
     IEnumerator CountDownPlanningTime(){
@@ -207,56 +217,48 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
            planTimeText.text = "" + (int)playerTurnhandler.currentPlanTimeLeft;
         }
     }
-
+      void OutOfGametimeCheck(){
+		if (gameTimer.NoRemainingTime()){
+			if (leftGoal.score == rightGoal.score && !gameTimer.InOvertime && overTime > 0){
+				gameTimer.AddOvertime(overTime);
+                gameTimeText.color = ToolBox.Instance.MatchTimeWhenOvertimeColor;
+            } else {
+				handleMatchEnd = StartCoroutine(MatchEnd());
+			}
+		}
+	}
+    void StopCoroutineIfNotNull(Coroutine coroutine){
+		if (coroutine != null){
+			StopCoroutine(coroutine);
+		}
+	}
     IEnumerator MatchEnd(){
-        //check if the score is tied, then add overtime (if not already overtime) and continue
-        if (leftGoal.score == rightGoal.score && !gameTimer.InOvertime && overTime > 0){
-            Debug.Log("show that overtime is happening!!");
-            
-            gameTimer.AddOvertime(overTime);
-        }
-        //if possible, display winner!
-        else {
-            PauseGame();
-            //left won!
-            if (leftGoal.score > rightGoal.score)
-            {
-                endOfMatchAnimator.SetTrigger("RightWin");
-                if (customIsServer){
-                    Debug.Log("local player won!!");
-                }
-                else{
-                    Debug.Log("local player lost!");
-                }
-            }
-            //right won! 
-            else if (rightGoal.score > leftGoal.score)
-            {
-                endOfMatchAnimator.SetTrigger("LeftWin");
-                if (customIsServer){
-                    Debug.Log("local player won!!");
-                }
-                else{
-                    Debug.Log("local player lost!");
-                } 
-            }
-            else if(rightGoal.score == leftGoal.score)
-            {
-                endOfMatchAnimator.SetTrigger("Draw");
-                Debug.Log("match was even!");
-            }
+        paused = false;
+        ToolBox.Instance.MatchOver = true;
 
-            while (!endOfMatchAnimator.GetCurrentAnimatorStateInfo(0).IsName("End Game"))
-            {
-                yield return new WaitForSeconds(0.001f);
-            }
-            //will stop this coroutine as well
-            //StopAllCoroutines();
+        StopCoroutineIfNotNull(UnpauseGameCoroutine);
+        StopCoroutineIfNotNull(countDownPlanningTime);
+        StopCoroutineIfNotNull(gameTimerCoroutine);
+      
+        playerTurnhandler.PauseGame();
+        otherTurnhandler.PauseGame();
+        ball.Pause();
 
-            SceneManager.LoadScene("MainMenu");
-        }
+		if (leftGoal.score > rightGoal.score){
+               endOfMatchAnim.SetTrigger("RightWin");
+		}
+		else if (rightGoal.score > leftGoal.score){
+            endOfMatchAnim.SetTrigger("LeftWin");
+		}
+		else if(rightGoal.score == leftGoal.score){
+            endOfMatchAnim.SetTrigger("Draw");
+		}
+        yield return new WaitForSeconds(5f);
+
+        ToolBox.Instance.MatchOver = false; //Resets it on scene change since the ToolBox is persistent
+        SceneManager.LoadScene("MainMenu");
+        
     }
-    
     public IEnumerator UnpauseGame()
     {
         if(paused == false){
@@ -274,21 +276,30 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         localIsReady = false;
         remoteIsReady = false;
        
-        gameTimerCoroutine = StartCoroutine(gameTimer.CountDownSeconds((int)roundTime));
-        playerTurnhandler.currentPlanTimeLeft = planTime;
+        gameTimerCoroutine = StartCoroutine(gameTimer.CountDownSeconds(roundTime));
         
-        yield return new WaitForSeconds(roundTime);
-        PauseGame();
-    }
+		if (gameTimer.remainingTime <= roundTime && !gameTimer.InOvertime)
+			animatingOvertime = true;
 
+        yield return new WaitForSeconds(roundTime);
+
+		if (animatingOvertime){
+			overtimeAnimScript.StartAnimation(this);
+		} else if (gameTimer.remainingTime <= roundTime && gameTimer.InOvertime){ //If in overtime and last turn we don't want a new turn
+		} else {
+            playerTurnhandler.currentPlanTimeLeft = planTime;
+			PauseGame();
+		}
+    }
     public void PauseGame(){
         if(paused== true){
             Debug.Log("game already paused, returning");
             return;
         }
+        Debug.Log("pausing!");
         StopCoroutine(UnpauseGameCoroutine);
         StopCoroutine(gameTimerCoroutine);
-
+        playerTurnAnim.SetTrigger(localPlayerSide);
         paused = true;
         commandsSent = false;
         server.recivedCommands = false;
@@ -298,36 +309,50 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
         otherTurnhandler.PauseGame();
         
         ball.Pause();
-        countDownPlanningTime = StartCoroutine(CountDownPlanningTime());
-       
-        if(customIsServer){
+        
+        //if we are server
+        if(customIsServer == true){
             List<GameObject> allRobots = new List<GameObject>();
             allRobots.AddRange(playerTurnhandler.Robots);
             allRobots.AddRange(otherTurnhandler.Robots);
             server.SendSyncStateMsg(allRobots, ball.gameObject, new Position(leftGoal.score,rightGoal.score), gameTimer.remainingTime);
         }
-        playerTurnhandler.Activate(true);
+        
     }
 
 	public void LeftTurnAnimCallback(){
 		//Called after turn animation finishes, start counting down plantime here
+        countDownPlanningTime = StartCoroutine(CountDownPlanningTime());
+        AllowTurnEnd(true);
+        ActivatePlayerTurnhandler(true);
 	}
 
 	public void RightTurnAnimCallback(){
 		//Called after turn animation finishes, start counting down plantime here
+        countDownPlanningTime = StartCoroutine(CountDownPlanningTime());
+        AllowTurnEnd(true);
+        ActivatePlayerTurnhandler(true);
 	}
-
+    void ActivatePlayerTurnhandler(bool value){
+        playerTurnhandler.Activate(value);
+    }
 	public void OvertimeAnimCallback(){
-//		animatingOvertime = false;
+        animatingOvertime = false;
+		PauseGame();
+        
 	}
-
+    void AllowTurnEnd(bool allow){
+		endTurnButton.interactable = allow; //Visually disables End Turn button (also functionally disables the button, but it's already disabled by the boolean)
+		allowTurnEnd = allow;
+	}
 	public void EndTurn(){ //Called through button
-		if (paused == true && localIsReady == false){
+		if (paused == true && localIsReady == false && allowTurnEnd){
 			SendCommands();
 			localIsReady = true;
 			//change color of the plantime to show that we are waiting for the other player
 			planTimeText.color = otherTeamPlanColor;
             playerTurnhandler.Activate(false);
+            AllowTurnEnd(false);
 		}
 	}
 

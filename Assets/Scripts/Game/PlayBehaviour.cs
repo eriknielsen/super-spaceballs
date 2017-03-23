@@ -186,24 +186,22 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 		StopCoroutineIfNotNull(unpauseGame);
 		StopCoroutineIfNotNull(countDownPlanningTime);
 		StopCoroutineIfNotNull(gameTimerCoroutine);
+		
 		PauseGame();
 
 		if (leftGoalScript.score > rightGoalScript.score){
                endOfMatchAnim.SetTrigger("RightWin");
-			Debug.Log("left team won!");
 		}
 		else if (rightGoalScript.score > leftGoalScript.score){
             endOfMatchAnim.SetTrigger("LeftWin");
-			Debug.Log("right team won!");
 		}
 		else if(rightGoalScript.score == leftGoalScript.score){
             endOfMatchAnim.SetTrigger("Draw");
-            Debug.Log("match was a draw!");
 		}
 		yield return new WaitForSecondsRealtime(5f);
-
-		SceneManager.LoadScene("MainMenu");
 		ToolBox.Instance.MatchOver = false; //Resets it on scene change since the ToolBox is persistent
+		SceneManager.LoadScene("MainMenu");
+	
 	}
 
 	public IEnumerator UnpauseGame(){ //This is the hinge of the gameloop. The loop is "paused" if NewTurn & PauseGame aren't called here.
@@ -356,7 +354,6 @@ public class PlayBehaviour : MonoBehaviour, IPlayBehaviour { //class for local p
 	public void SelectCommand(Command.AvailableCommands command){
 		currentActiveTurnhandler.THSelectCommand(command);
 	}
-
     public void PreOnGoalScored()
     {
         StopCoroutine(unpauseGame);
