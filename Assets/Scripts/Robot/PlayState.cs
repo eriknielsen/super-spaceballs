@@ -6,10 +6,7 @@ public class PlayState : IRobotState {
 	
     private GameObject robot;
     private RobotBehaviour robotScript;
-
-    Rigidbody2D robotrb;
    
-    
 
     Vector2 zeroVector;
     Animator anim;
@@ -18,7 +15,6 @@ public class PlayState : IRobotState {
         robot = r;
         robotScript = robot.GetComponent<RobotBehaviour>();
         anim = robot.GetComponent<Animator>();
-        robotrb = r.GetComponent<Rigidbody2D>();
     }
 
     public void EnterPauseState(){

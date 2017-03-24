@@ -14,7 +14,6 @@ public class MovingTrailHandler : MonoBehaviour
     private MovingTrail latestBallTrail;
 
     private List<GameObject> robots;
-    private GameObject ball;
 
     private void Awake()
     {
@@ -26,7 +25,6 @@ public class MovingTrailHandler : MonoBehaviour
     public void Initialize(List<GameObject> robots, GameObject ball)
     {
         this.robots = robots;
-        this.ball = ball;
 
         for (int i = 0; i < robots.Count; i++)
         {

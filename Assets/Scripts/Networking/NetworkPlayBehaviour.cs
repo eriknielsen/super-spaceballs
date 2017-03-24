@@ -36,10 +36,7 @@ public class NetworkPlayBehaviour : NetworkBehaviour, IPlayBehaviour {
     [HideInInspector]
     public ServerBehaviour server;
 
-    
-    //number of rounds played
-    int roundCount = 0;
-    
+   
 	Coroutine handleMatchEnd;
     Coroutine gameTimerCoroutine;
 	Coroutine countDownPlanningTime;

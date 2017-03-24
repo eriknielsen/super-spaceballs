@@ -230,8 +230,6 @@ public class ServerBehaviour : NetworkManager {
     //**********************  
     public void SendCommands(SerializableCommandList commands)
     {
-        CommandMsg msg = new CommandMsg();
-
         byte[] result;
 
         BinaryFormatter bf = new BinaryFormatter();

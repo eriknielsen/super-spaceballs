@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 public class Move {
 
-	private int turn;
     public Vector2 position;
     public Quaternion rotation;
 	public List<Command> commands;
@@ -19,7 +18,6 @@ public class Move {
     public Move (GameObject robot, int turn, List<Command> commands)
 	{
         this.robot = robot;
-        this.turn = turn;
         this.position = robot.transform.position;
         this.velocity = robot.GetComponent<Rigidbody2D>().velocity;
         this.commands = new List<Command>();
