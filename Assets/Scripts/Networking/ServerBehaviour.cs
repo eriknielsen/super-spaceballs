@@ -54,9 +54,13 @@ public class ServerBehaviour : NetworkManager {
     int matchDomain = 0;
     //if isServer true then the networkplaybehaviour gets this set
     bool isServer = false;
-
+  
     void Start()
     {
+        if(GameObject.Find("SoundManager").GetComponent<MusicPlayer>().paused == true){
+            GameObject.Find("SoundManager").GetComponent<MusicPlayer>().PlayPause();
+        }
+        
         NetworkManager.singleton.StartMatchMaker();
     }
     //call this method to request a match to be created on the server

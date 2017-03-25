@@ -70,7 +70,8 @@ public class MusicPlayer : MonoBehaviour {
 
 
 	int nextTrackToPlay = 0; //Index
-	bool paused = false;
+	[HideInInspector]
+	public bool paused = false;
 	bool repeat = false;
 	float startVolume;
 	Coroutine switchTrackAfterFade = null;

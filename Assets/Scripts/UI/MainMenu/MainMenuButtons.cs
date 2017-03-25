@@ -13,7 +13,7 @@ public class MainMenuButtons : MonoBehaviour {
 	GameObject loadingScreen;
 	MainMenu menuHandler;
 
-	void Awake(){
+	void Start(){
 		GetComponent<Button>().colors = ToolBox.Instance.ButtonColors;
 		menuHandler = FindObjectOfType<MainMenu>();
 	}
