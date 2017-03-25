@@ -131,6 +131,7 @@ public class RobotBehaviour : MonoBehaviour {
 
         //UpdateAnimationAngle(0f,0f); 
         anim.enabled = false;
+        
     }
 
     void FixedUpdate(){
@@ -173,7 +174,7 @@ public class RobotBehaviour : MonoBehaviour {
     }
 
     void OnMouseDown(){
-        if (OnClick != null && shouldSendEvent){
+        if (OnClick != null && shouldSendEvent && isPreview == false){
             OnClick(gameObject);
             AudioManager.Instance.PlayAudioWithRandomPitch(selectRobotSound, false, gameObject);
         }
