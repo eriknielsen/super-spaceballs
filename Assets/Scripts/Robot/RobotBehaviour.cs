@@ -175,7 +175,7 @@ public class RobotBehaviour : MonoBehaviour {
     void OnMouseDown(){
         if (OnClick != null && shouldSendEvent){
             OnClick(gameObject);
-            AudioManager.Instance.PlayAudioWithRandomPitch(selectRobotSound, true, gameObject);
+            AudioManager.Instance.PlayAudioWithRandomPitch(selectRobotSound, false, gameObject);
         }
     }
 
