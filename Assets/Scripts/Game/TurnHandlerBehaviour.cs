@@ -231,7 +231,7 @@ public class TurnHandlerBehaviour : MonoBehaviour {
             prevCursorPosition = cursorPosition;
             prevSelectedCommand = selectedCommand;
             lastRobot = selectedRobot;
-            yield return new WaitForSeconds(0.01f);
+			yield return null;
         }
         DestroyLatestPreviewTrail();
     }
